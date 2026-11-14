@@ -27,4 +27,8 @@ A single self-contained `index.html` in vanilla JavaScript. It uses DuckDB-WASM 
 
 ## Author
 
-Raghav Raman, Data Engineer (SQL, PySpark, Snowflake, cloud ETL)
+Raghav Raman, Senior Software Engineer (data engineering)
+
+## License
+
+[MIT](LICENSE)
