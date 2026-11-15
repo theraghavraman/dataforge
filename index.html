@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DataForge — Browser ETL Studio</title>
 <meta name="description" content="Design ETL mappings visually and run them in your browser with DuckDB-WASM.">
+<meta name="theme-color" content="#0c1116">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta property="og:title" content="DataForge — Browser ETL Studio">
+<meta property="og:description" content="Design ETL mappings visually and run them locally with DuckDB-WASM. Nothing leaves your machine.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f5a524'/%3E%3Cstop offset='1' stop-color='%23f97316'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cg transform='translate(4.5 4.5) scale(.96)' fill='none' stroke='%231a1206' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 8h13a5 5 0 0 0 5-3H8'/%3E%3Cpath d='M8 5v6c0 2 1 3 3 3h2c2 0 3-1 3-3'/%3E%3Cpath d='M9 14l-2 5h10l-2-5'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -195,7 +201,7 @@ textarea.inp{resize:vertical;line-height:1.45;font-size:12px}
 .alignment th{background:var(--panel-3);color:var(--muted)}
 .alignment td.missing{color:var(--warn)}
 .sample-picker{position:relative;display:flex;align-items:center;gap:3px}
-.sample-menu{position:absolute;z-index:20;top:36px;right:0;min-width:255px;padding:4px;background:var(--panel-2);border:1px solid var(--line-2);border-radius:5px;box-shadow:var(--shadow)}
+.sample-menu{position:absolute;z-index:40;top:36px;right:0;min-width:255px;padding:4px;background:var(--panel-2);border:1px solid var(--line-2);border-radius:5px;box-shadow:var(--shadow)}
 .sample-menu button{display:block;width:100%;text-align:left;border:0;padding:9px 10px;border-radius:3px;background:transparent;color:var(--text)}
 .sample-menu button:hover{background:var(--accent-soft);color:var(--accent)}
 .sample-menu button small{display:block;color:var(--muted);margin-top:3px}
@@ -422,15 +428,26 @@ table.log a{color:var(--accent)}
 .upload-banner{position:fixed;right:16px;top:58px;z-index:100;width:min(340px,85vw);padding:11px;background:var(--panel);border:1px solid var(--accent);border-radius:5px;box-shadow:var(--shadow);font:11px var(--mono)}
 .upload-track{height:7px;background:var(--line);border-radius:4px;margin-top:7px;overflow:hidden}.upload-track>div{height:100%;background:var(--ok);width:0}
 .mobile-notice{display:none}
+.dialog-overlay{position:fixed;inset:0;z-index:130;background:rgba(0,0,0,.7);display:grid;place-items:center;padding:15px}
+.dialog-box{width:min(440px,96vw);max-height:88vh;overflow:auto;background:var(--panel);border:1px solid var(--line-2);border-radius:7px;box-shadow:var(--shadow);padding:18px}
+.dialog-box h3{font:600 19px/1.25 var(--disp);margin:0 0 8px}
+.dialog-box p{margin:0 0 12px;color:var(--muted);white-space:pre-line;overflow-wrap:anywhere}
+.dialog-box .btn-row{justify-content:flex-end;margin-top:16px}
+.dialog-box .btn,.dialog-box .tb{height:32px;padding:0 13px}
+.btn.danger{border-color:var(--err);color:var(--err)}
+.btn.danger:hover{background:var(--err);border-color:var(--err);color:#fff}
+.pill[data-state="error"]{cursor:pointer}
+.pill[data-state="error"]:hover{background:var(--panel-3)}
 .small-muted{font-size:11px;color:var(--faint)}
-@media(max-width:1500px){.mode-switch{width:133px}.topbar{gap:7px}.mapname{flex-basis:170px}.mapname label{display:none}}
-@media(max-width:1370px){.topbar .brand-name{display:none}.mapname{flex-basis:125px;padding-left:6px}.tb.export span{display:none!important}.tb.export{width:32px!important;padding:0!important;justify-content:center}.mode-switch{width:132px}}
-@media(max-width:1140px){.mapname{display:none}.topbar{gap:5px}.monitor-grid{grid-template-columns:1fr}.monitor-history,.monitor-details{max-height:none}.mode-switch{width:130px}}
+@media(max-width:1500px){.mode-switch{width:152px}.topbar{gap:7px}.mapname{flex-basis:170px}.mapname label{display:none}.pill:not([data-state="error"]) span:last-child{display:none}}
+@media(max-width:1370px){.topbar .brand-name{display:none}.mapname{flex-basis:125px;padding-left:6px}.tb.export span{display:none!important}.tb.export{width:32px!important;padding:0!important;justify-content:center}.mode-switch{width:150px}}
+@media(max-width:1140px){.mapname{display:none}.topbar{gap:5px}.monitor-grid{grid-template-columns:1fr}.monitor-history,.monitor-details{max-height:none}.mode-switch{width:150px}}
 @media(max-width:900px){:root{--pal-w:120px;--props-w:180px}.mobile-notice{display:flex;position:fixed;top:51px;left:0;right:0;z-index:42;background:var(--panel-3);border-bottom:1px solid var(--warn);padding:7px 11px;align-items:center;gap:9px;color:var(--warn);font-size:11px}.mobile-notice~*{}#app .pal-item,#app .props{pointer-events:none;opacity:.64}#app .node,#app .handle,#app .link-g{pointer-events:none}#app .wf-world .wf-node{pointer-events:none}.mode-switch{width:115px}.monitor-trends{grid-template-columns:1fr}.topbar .pill{display:none}}
 
 </style>
 </head>
 <body>
+<noscript><p style="padding:24px;font:15px system-ui,sans-serif">DataForge needs JavaScript to run. Enable it in your browser and reload this page.</p></noscript>
 <div id="app">
   <header class="topbar">
     <div class="brand">
@@ -448,7 +465,7 @@ table.log a{color:var(--accent)}
       <button class="tb" id="btnValidate" title="Validate mapping (Ctrl+Shift+V)"><i data-icon="check"></i><span>Validate</span></button>
       <button class="tb primary" id="btnRun" title="Run mapping (Ctrl+Enter)"><i data-icon="play"></i><span>Run</span></button>
       <button class="tb" id="btnStopWorkflow" title="Stop running workflow" hidden>Stop</button>
-      <button class="tb icon" id="btnRunValues" title="Run with parameter overrides" aria-label="Run with values"><i data-icon="settings"></i></button>
+      <button class="tb icon" id="btnRunValues" title="Run with parameter overrides" aria-label="Run with values"><i data-icon="sliders"></i></button>
       <button class="tb export" id="btnExportCode" title="Export Code · Snowflake, PySpark, dbt, DuckDB"><i data-icon="code"></i><span>Export Code</span></button>
       <span class="tb-sep"></span>
       <div class="sample-picker" id="samplePicker">
@@ -462,9 +479,9 @@ table.log a{color:var(--accent)}
       </div>
     </div>
     <div class="tb-right">
-      <div class="pill" id="enginePill" data-state="loading" role="status"><span class="pill-dot"></span><b id="engineState">Loading</b><span id="engineMsg">Starting DuckDB</span></div>
-      <button class="tb icon" id="btnCommand" title="Command palette (Ctrl+K)" aria-label="Command palette"><i data-icon="filter"></i></button>
-      <button class="tb icon" id="btnAbout" title="About DataForge" aria-label="About DataForge"><i data-icon="settings"></i></button>
+      <div class="pill" id="enginePill" data-state="loading" role="status" tabindex="0"><span class="pill-dot"></span><b id="engineState">Loading</b><span id="engineMsg">Starting DuckDB</span></div>
+      <button class="tb icon" id="btnCommand" title="Command palette (Ctrl+K)" aria-label="Command palette"><i data-icon="search"></i></button>
+      <button class="tb icon" id="btnAbout" title="About DataForge" aria-label="About DataForge"><i data-icon="info"></i></button>
       <button class="tb icon" id="btnTheme" title="Switch theme" aria-label="Switch theme"></button>
     </div>
   </header>
@@ -516,7 +533,7 @@ table.log a{color:var(--accent)}
 
   <footer class="statusbar">
     <span>DataForge · Built by Raghav Raman</span>
-    <a href="#" id="githubLink">GitHub</a>
+    <a href="https://github.com/theraghavraman/dataforge" id="githubLink" target="_blank" rel="noopener noreferrer">GitHub</a>
     <span class="sp legend"><span><i class="st-dot"></i>Not validated</span><span><i class="st-dot valid"></i>Valid</span><span><i class="st-dot error"></i>Error</span><span><i class="st-dot ran"></i>Ran</span></span>
     <span id="statCounts"></span>
   </footer>
@@ -528,6 +545,7 @@ table.log a{color:var(--accent)}
 <div id="toasts" aria-live="polite"></div>
 <div id="uploadBanner" class="upload-banner" hidden><div id="uploadBannerText"></div><div class="upload-track"><div id="uploadBar"></div></div></div>
 <div id="ctxMenu" class="ctx" hidden></div>
+<div id="dialogOverlay" class="dialog-overlay" hidden><div class="dialog-box" id="dialogBox" role="alertdialog" aria-modal="true" aria-labelledby="dialogTitle"></div></div>
 <input type="file" id="openInput" accept=".json,application/json" hidden>
 <input type="file" id="projectInput" accept=".dfproj.json,.json,application/json" hidden>
 <input type="file" id="xmlInput" accept=".xml,text/xml,application/xml" hidden>
@@ -572,7 +590,7 @@ table.log a{color:var(--accent)}
 /* ============================================================
    Constants & small utilities
    ============================================================ */
-const APP = { formatVersion: '1.0', duckdb: '1.32.0', storageKey: 'dataforge.mapping.v1', themeKey: 'dataforge.theme', runKey: 'dataforge.run_id.v1' };
+const APP = { version: '1.1.0', repoUrl: 'https://github.com/theraghavraman/dataforge', formatVersion: '1.0', duckdb: '1.32.0', storageKey: 'dataforge.mapping.v1', themeKey: 'dataforge.theme', activeKey: 'dataforge.active.v1', runKey: 'dataforge.run_id.v1' };
 function dfUuid(){const b=new Uint8Array(16);if(self.crypto?.getRandomValues)self.crypto.getRandomValues(b);else for(let i=0;i<16;i++)b[i]=Math.floor(Math.random()*256);b[6]=(b[6]&15)|64;b[8]=(b[8]&63)|128;const x=Array.from(b,n=>n.toString(16).padStart(2,'0')).join('');return x.slice(0,8)+'-'+x.slice(8,12)+'-'+x.slice(12,16)+'-'+x.slice(16,20)+'-'+x.slice(20);}
 const NODE_W = 200, NODE_H = 64, GRID = 10;
 const REJECT_COLUMNS = [{ name: 'reject_reason', type: 'VARCHAR' }, { name: 'reject_node', type: 'VARCHAR' }];
@@ -590,6 +608,8 @@ const fmtMs = (ms) => (ms == null ? '—' : ms < 10 ? ms.toFixed(1) : Math.round
 const fmtBytes = (b) => (b < 1024 ? b + ' B' : b < 1048576 ? (b / 1024).toFixed(1) + ' KB' : (b / 1048576).toFixed(1) + ' MB');
 const firstLines = (msg, n = 3) => String(msg || 'Unknown error').split('\n').filter((l) => l.trim()).slice(0, n).join('\n');
 const clockTime = () => { const d = new Date(); const p = (v, l = 2) => String(v).padStart(l, '0'); return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}.${p(d.getMilliseconds(), 3)}`; };
+// replaceChildren() renders a null argument as the text "null"; drop empty slots first.
+const present = (...kids) => kids.filter((k) => k != null && k !== false);
 const sameName = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
 
 function h(tag, attrs, ...kids) {
@@ -652,6 +672,11 @@ const ICONS = {
   scd2: '<path d="M4 5h16v5H4zM4 14h16v5H4zM8 10v4M12 10v4M16 10v4M20 12l2 0"/>',
   dataquality: '<path d="M4 4h16v16H4zM8 9l3 3 5-5M8 17h8"/>',
   code: '<path d="M8 4L2 12l6 8M16 4l6 8-6 8M14 3l-4 18"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  bell: '<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>',
+  search: '<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>',
+  sliders: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
   file: '<path d="M6 3h8l5 5v13H6zM14 3v5h5M9 12h7M9 16h5"/>',
   lineage: '<rect x="2" y="3" width="7" height="6" rx="1"/><rect x="15" y="3" width="7" height="6" rx="1"/><rect x="8.5" y="15" width="7" height="6" rx="1"/><path d="M9 6h6M5.5 9v3h6.5v3M18.5 9v3H12"/>' 
 };
@@ -669,6 +694,13 @@ function insertAtCursor(el, text) {
   el.selectionStart = el.selectionEnd = s + text.length;
   el.dispatchEvent(new Event('input', { bubbles: true }));
 }
+// Clipboard access needs a secure context and permission; fall back to the legacy command, and report the outcome.
+async function copyToClipboard(text) {
+  try { if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(text); return true; } } catch (_) { /* fall through */ }
+  const ta = h('textarea', { style: 'position:fixed;opacity:0', 'aria-hidden': 'true' }); ta.value = text; document.body.append(ta); ta.select();
+  let ok = false; try { ok = document.execCommand('copy'); } catch (_) { ok = false; }
+  ta.remove(); return ok;
+}
 function blurActive() { const a = document.activeElement; if (a && a !== document.body && typeof a.blur === 'function') a.blur(); }
 function downloadBlob(blob, fileName) {
   const url = URL.createObjectURL(blob);
@@ -676,6 +708,76 @@ function downloadBlob(blob, fileName) {
   document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
+
+/* In-app dialogs. Promise-based replacements for window.confirm / window.prompt,
+   so that destructive actions are named on the button and can always be cancelled. */
+const Dialog = {
+  _close: null,
+  open({ title, message = '', input = null, buttons }) {
+    if (this._close) this._close(null);
+    const overlay = $('#dialogOverlay'), box = $('#dialogBox'), opener = document.activeElement;
+    return new Promise((resolve) => {
+      const field = input ? h('input', { class: 'inp', type: 'text', value: input.value || '', placeholder: input.placeholder || '', maxlength: input.maxlength || 200000, 'aria-label': input.label || title }) : null;
+      const finish = (value) => {
+        if (this._close !== finish) return;
+        this._close = null; overlay.hidden = true; box.replaceChildren();
+        window.removeEventListener('keydown', onKey, true); overlay.removeEventListener('pointerdown', onBackdrop);
+        if (opener && document.contains(opener) && typeof opener.focus === 'function') opener.focus();
+        resolve(value);
+      };
+      const result = (b) => (field && b.value !== null ? field.value : b.value);
+      const primary = buttons.find((b) => b.primary) || buttons[buttons.length - 1];
+      const onKey = (e) => {
+        if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); finish(null); return; }
+        if (e.key === 'Enter' && (e.target === field || !box.contains(e.target))) { e.preventDefault(); e.stopImmediatePropagation(); finish(result(primary)); return; }
+        if (e.key === 'Tab') {
+          const items = [...box.querySelectorAll('input,button')];
+          const first = items[0], last = items[items.length - 1];
+          if (!box.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+          else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+          return;
+        }
+        // Keep application shortcuts (Delete, Ctrl+Z, Ctrl+Enter ...) away from the canvas while a dialog is open.
+        // Default actions such as typing or activating the focused button still happen.
+        e.stopImmediatePropagation();
+        if (e.ctrlKey || e.metaKey) { const k = e.key.toLowerCase(); if (!['a', 'c', 'v', 'x', 'z'].includes(k) || e.target !== field) e.preventDefault(); }
+      };
+      const onBackdrop = (e) => { if (e.target === overlay) finish(null); };
+      const btns = buttons.map((b) => h('button', { type: 'button', class: b.primary ? 'tb primary' : 'btn' + (b.danger ? ' danger' : ''), text: b.label, onclick: () => finish(result(b)) }));
+      box.replaceChildren(...[h('h3', { id: 'dialogTitle', text: title }), message ? h('p', { text: message }) : null, field, h('div', { class: 'btn-row' }, btns)].filter(Boolean));
+      this._close = finish; overlay.hidden = false;
+      window.addEventListener('keydown', onKey, true); overlay.addEventListener('pointerdown', onBackdrop);
+      if (field) { field.focus(); field.select(); } else (btns[buttons.indexOf(buttons.find((b) => b.danger ? false : b.primary) || buttons[0])] || btns[0]).focus();
+    });
+  },
+  // Resolves true only when the named action is chosen. Escape, backdrop and Cancel resolve false.
+  async confirm(title, message, { ok = 'OK', danger = false } = {}) {
+    return (await this.open({ title, message, buttons: [{ label: 'Cancel', value: false }, { label: ok, value: true, primary: !danger, danger }] })) === true;
+  },
+  // Resolves the entered text, or null when cancelled.
+  prompt(title, value = '', { message = '', ok = 'Save', placeholder = '' } = {}) {
+    return this.open({ title, message, input: { value, placeholder }, buttons: [{ label: 'Cancel', value: null }, { label: ok, value: '', primary: true }] });
+  }
+};
+
+/* Last-resort error reporting: an unexpected exception must never fail silently. */
+const Crash = {
+  last: 0,
+  report(err) {
+    const message = firstLines(err && (err.message || err.reason || err), 1);
+    if (/ResizeObserver loop/i.test(message)) return;
+    try { console.error('[DataForge]', err); } catch (_) { /* console unavailable */ }
+    const now = Date.now();
+    if (now - this.last < 4000) return;   // do not bury the screen under repeated toasts
+    this.last = now;
+    try { toast('Something went wrong: ' + message + ' Your work is saved in this browser; reload the page if the app misbehaves.', 'error'); } catch (_) { /* DOM not ready */ }
+  },
+  install() {
+    window.addEventListener('error', (e) => { if (e.error || e.message) this.report(e.error || e.message); });
+    window.addEventListener('unhandledrejection', (e) => this.report(e.reason));
+  }
+};
 
 /* ============================================================
    Application state & mapping document (pipeline JSON contract)
@@ -1095,13 +1197,21 @@ const Engine = {
       App.onEngineReady();
     } catch (e) {
       try { if (worker) worker.terminate(); } catch (_) { /* startup failed */ }
-      this.set('error', firstLines(e && e.message, 2) || 'DuckDB could not be loaded');
-      toast('DuckDB could not be loaded. You can still design and save mappings; check your connection and reload to run them.', 'error');
+      this.db = null; this.conn = null; this._jsonLoaded = false;
+      const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
+      this.set('error', offline ? 'Offline · click to retry' : (firstLines(e && e.message, 1) || 'DuckDB could not be loaded') + ' · click to retry');
+      toast('DuckDB could not be loaded' + (offline ? ' because this device is offline' : '') + '. You can still design and save mappings. Click the engine status to retry.', 'error');
     } finally {
       if (workerUrl) URL.revokeObjectURL(workerUrl);
     }
   },
+  retry() {
+    if (this.status !== 'error') return this._readyPromise;
+    this._readyPromise = this.init();
+    return this._readyPromise;
+  },
   async waitReady() {
+    if (this.status === 'error') this.retry();
     if (!this.ready && this._readyPromise) await this._readyPromise;
     if (!this.ready) throw new Error('DuckDB is unavailable: ' + this.message);
   },
@@ -1745,9 +1855,10 @@ Registry.register('router', {
       return h('div', { class: 'frow' },
         h('div', { class: 'frow-top' }, P.input(g, 'name', { placeholder: 'Group name' }),
           h('span', { class: 'tbadge', text: g.key }),
-          h('button', { class: 'icon-btn', type: 'button', title: 'Remove group', html: svgIcon('x', 14), onclick: () => {
+          h('button', { class: 'icon-btn', type: 'button', title: 'Remove group', html: svgIcon('x', 14), onclick: async () => {
             const active = Graph.outgoing(node.id).some((l) => Graph.outKey(l) === g.key);
-            if (active && !window.confirm('Remove this group and its outgoing links?')) return;
+            if (active && !(await Dialog.confirm('Remove routing group?', `"${g.name || g.key}" and its outgoing links will be removed.`, { ok: 'Remove group', danger: true }))) return;
+            if (c.groups[i] !== g) return;
             c.groups.splice(i, 1); state.doc.links = state.doc.links.filter((l) => !(l.from === node.id && Graph.outKey(l) === g.key));
             History.commit(); ui.rerender();
           } })), P.field('SQL boolean condition', editor),
@@ -4148,8 +4259,8 @@ const CodeGenUI = {
     filebar.replaceChildren(h('span',{class:'mono',text:files?this.file:(o.dialect==='pyspark'?'pipeline.py':'pipeline.sql')}),h('span',{class:'spacer'}),h('span',{class:'gen-tag',text:(code.split('\n').length)+' lines'}));
     pane.replaceChildren(h('pre',{html:this.highlight(code,type)}));
     const issues=[...this.result.warnings];if(error)issues.unshift(error);
-    warnings.replaceChildren(h('strong',{text:issues.length?`${issues.length} warning${issues.length===1?'':'s'}`:'No generator warnings'}),
-      issues.length?h('ul',null,issues.map((w)=>h('li',{text:w}))):null);
+    warnings.replaceChildren(...present(h('strong',{text:issues.length?`${issues.length} warning${issues.length===1?'':'s'}`:'No generator warnings'}),
+      issues.length?h('ul',null,issues.map((w)=>h('li',{text:w}))):null));
     $('#codegenStatus').textContent=error?'Generation blocked':`${state.doc.nodes.length} mapping nodes · ${o.scope==='selected'?'selected chain':'whole mapping'} · ${o.dialect==='dbt'?names.length+' project files':'standalone export'}`;
     $('#codegenDownload').textContent=o.dialect==='dbt'?'Download .zip':o.dialect==='pyspark'?'Download .py':'Download .sql';
     $('#codegenDownload').disabled=!!error || (!code&&!files);
@@ -4693,10 +4804,10 @@ const UI = {
       pv.sort = !pv.sort || pv.sort.col !== i ? { col: i, dir: 1 } : pv.sort.dir === 1 ? { col: i, dir: -1 } : null; this.renderPreview();
     } }, c.name, pv.sort && pv.sort.col === i ? h('span', { class: 'arr', text: pv.sort.dir === 1 ? '▲' : '▼' }) : null, h('small', { text: c.type }))));
     const body = rows.map((r, n) => h('tr', null, h('td', { class: 'rn', text: n + 1 }), r.map((v, i) => v == null ? h('td', { class: 'null', text: 'NULL' }) : h('td', { class: numeric(pv.columns[i].type) ? 'num' : '', text: v, title: v.length > 40 ? v : null }))));
-    pane.replaceChildren(
+    pane.replaceChildren(...present(
       h('div', { class: 'pane-bar' }, h('span', null, h('b', { text: pv.title }), ` · ${count} · ${pv.columns.length} column${pv.columns.length === 1 ? '' : 's'}${pv.note ? ' · ' + pv.note : ''}`)),
       rows.length || pv.columns.length ? h('table', { class: 'grid' }, h('thead', null, head), h('tbody', null, body)) : null,
-      rows.length ? null : h('div', { class: 'empty' }, h('b', { text: 'No rows' }), 'The query ran but returned no rows at this point in the mapping.'));
+      rows.length ? null : h('div', { class: 'empty' }, h('b', { text: 'No rows' }), 'The query ran but returned no rows at this point in the mapping.')));
   },
   renderLog() {
     if(typeof Studio !== 'undefined' && Studio.mode === 'workflow') return Workflow.renderLog();
@@ -4866,9 +4977,10 @@ const Actions = {
     Params.initialSnapshot(); state.dqReport = []; state.runContext = null;
     state.logicSig = logicSignature();
     History.reset(); UI.renderAll(); View.fit(); App.autosave(); Ports.schedule();
+    if (doc.nodes.length) { const welcome = $('#welcomeStage'); if (welcome) welcome.hidden = true; }
   },
-  newMapping() {
-    if (state.doc.nodes.length && !window.confirm('Start a new mapping? The current canvas will be cleared. Save first if you want to keep it.')) return;
+  async newMapping() {
+    if (state.doc.nodes.length && !(await Dialog.confirm('Start a new mapping?', 'The current canvas will be cleared. Save first if you want to keep it.', { ok: 'Clear canvas', danger: true }))) return;
     this.loadDoc(newDoc()); toast('New mapping created.');
   },
   save() {
@@ -4888,8 +5000,10 @@ const Actions = {
     } catch (e) { toast('Could not open the mapping: ' + firstLines(e.message, 1), 'error'); }
   },
   loadSample(choice = 'original') {
-    if (state.doc.nodes.length && !window.confirm('Replace the current mapping with the selected sample?')) return;
+    // Never overwrite work in progress: a sample opens as its own repository mapping.
+    if (state.doc.nodes.length || Studio.mode !== 'mapping') { if (!Repo.project) { toast('The repository is still loading. Try again in a moment.', 'warn'); return; } Repo.createMapping(); }
     const doc = choice === 'phase3' ? Sample.phase3Mapping() : choice === 'phase2' ? Sample.phase2Mapping() : Sample.mapping();
+    doc.mapping.sample = choice === 'phase3' || choice === 'phase2' ? choice : 'original';
     if (Repo.project && Studio.mode === 'mapping') {
       if (Repo.activeId) doc.mapping.id = Repo.activeId;
       else { Repo.project.mappings.push(doc); Repo.activeId = doc.mapping.id; }
@@ -4914,12 +5028,8 @@ const Actions = {
     toast(errs ? `Validation found ${errs} error${errs > 1 ? 's' : ''}.` : warns ? `Valid, with ${warns} warning${warns > 1 ? 's' : ''}.` : 'Mapping is valid.', errs ? 'error' : warns ? 'warn' : 'success');
   },
   async copyText(text) {
-    try { await navigator.clipboard.writeText(text); toast('SQL copied to the clipboard.', 'success'); }
-    catch (_) {
-      const ta = h('textarea', { style: 'position:fixed;opacity:0' }); ta.value = text; document.body.append(ta); ta.select();
-      let ok = false; try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
-      ta.remove(); toast(ok ? 'SQL copied to the clipboard.' : 'Copy failed. Select the SQL and copy it manually.', ok ? 'success' : 'error');
-    }
+    const ok = await copyToClipboard(text);
+    toast(ok ? 'SQL copied to the clipboard.' : 'Copy failed. Select the SQL and copy it manually.', ok ? 'success' : 'error');
   },
   toggleTheme() {
     const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
@@ -5082,7 +5192,14 @@ const App = {
     on('btnZoomOut', () => View.zoomCenter(1 / 1.2));
     on('btnFit', () => View.fit());
     on('btnDrawer', () => els.app.classList.toggle('drawer-min'));
-    on('githubLink', (e) => e.preventDefault());
+    const retryEngine = () => { if (Engine.status === 'error') Engine.retry(); };
+    els.enginePill.addEventListener('click', retryEngine);
+    els.enginePill.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); retryEngine(); } });
+    window.addEventListener('online', retryEngine);
+    // The repository save is debounced; never lose the last edit when the tab is closed or hidden.
+    const flush = () => { try { if (Studio.mode === 'mapping') Repo.track(); Repo.flush(); } catch (_) { /* nothing to flush */ } };
+    window.addEventListener('pagehide', flush);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
     els.openInput.addEventListener('change', () => { const f = els.openInput.files[0]; els.openInput.value = ''; if (f) Actions.open(f); });
     els.mapName.addEventListener('input', () => { if(Studio.mode === 'mapping') state.doc.mapping.name = els.mapName.value; });
     els.mapName.addEventListener('change', () => { if(Studio.mode !== 'mapping')return; if (!els.mapName.value.trim()) { state.doc.mapping.name = 'Untitled mapping'; els.mapName.value = state.doc.mapping.name; } History.commit(); });
@@ -5110,6 +5227,7 @@ const App = {
     });
   },
   start() {
+    Crash.install();
     Object.assign(els, {
       app: $('#app'), canvas: $('#canvas'), world: $('#world'), linkRoot: $('#linkRoot'), linkLayer: $('#linkLayer'), tempLink: $('#tempLink'), canvasEmpty: $('#canvasEmpty'),
       palette: $('#palette'), props: $('#props'), mapName: $('#mapName'), zoomVal: $('#zoomVal'), statCounts: $('#statCounts'), issueCnt: $('#issueCnt'),
@@ -5136,7 +5254,7 @@ const App = {
 
 /* Phase 5: local project repository */
 const Repo = {
-  db: null, mode: 'memory', project: null, activeId: null, timer: null, runs: [], filesTotal: 0, memoryFiles: new Map(),
+  db: null, mode: 'memory', project: null, activeId: null, timer: null, channel: null, tabId: dfUuid(), stale: false, persistAsked: false, runs: [], filesTotal: 0, memoryFiles: new Map(),
   fresh() { const now = new Date().toISOString(); return { projectVersion:'1.0', project:{ id: 'p_'+dfUuid(), name:'My DataForge Project', createdAt:now, updatedAt:now }, mappings:[], workflows:[], parameterSets:[], versions:{} }; },
   async init() {
     this.project = this.fresh();
@@ -5150,6 +5268,11 @@ const Repo = {
         });
         this.db.onversionchange = () => { this.db.close(); this.db=null; this.mode='memory'; toast('Repository database changed; using memory for this tab.','warn'); };
         this.mode='indexeddb';
+        // Two tabs editing the same local project would silently overwrite each other; tell the user instead.
+        if (typeof BroadcastChannel !== 'undefined') try {
+          this.channel = new BroadcastChannel('dataforge.repo');
+          this.channel.onmessage = (e) => { if (e.data?.type === 'saved' && e.data.tab !== this.tabId && !this.stale) { this.stale = true; toast('This project was changed in another DataForge tab. Reload this tab before editing, or the two tabs will overwrite each other.', 'warn'); } };
+        } catch (_) { this.channel = null; }
         const stored = await this.get('project','current');
         if (stored?.document?.projectVersion === '1.0') { this.project=this.normalize(stored.document);existingProject=true; }
         this.runs=(await this.all('runs')).sort((a,b) => String(b.started).localeCompare(String(a.started))).slice(0,200);
@@ -5159,7 +5282,8 @@ const Repo = {
       try { const raw=localStorage.getItem(APP.storageKey); if(raw) { const doc=normalizeDoc(JSON.parse(raw)).doc; if(doc.nodes.length || doc.mapping.name !== 'Untitled mapping') this.project.mappings.push(doc); } } catch(_) {}
     }
     if (this.project.mappings.length) {
-      const current=this.project.mappings.find(m=>m.mapping.id === state.doc.mapping.id) || this.project.mappings[0];
+      let last=null;try{last=localStorage.getItem(APP.activeKey);}catch(_){}
+      const current=this.project.mappings.find(m=>m.mapping.id === state.doc.mapping.id) || this.project.mappings.find(m=>m.mapping.id === last) || this.project.mappings[0];
       this.activeId=current.mapping.id; Actions.loadDoc(clone(current));
       await this.hydrateFiles(current);
     } else { UI.renderAll(); }
@@ -5181,12 +5305,19 @@ const Repo = {
   all(store) { if(!this.db) return Promise.resolve([]); return new Promise((resolve,reject) => {const r=this.db.transaction(store,'readonly').objectStore(store).getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);}); },
   put(store,value) { if(!this.db) return Promise.resolve();return new Promise((resolve,reject)=>{const t=this.db.transaction(store,'readwrite');t.objectStore(store).put(value);t.oncomplete=()=>resolve();t.onerror=()=>reject(t.error);}); },
   del(store,id) {if(!this.db)return Promise.resolve();return new Promise((resolve,reject)=>{const t=this.db.transaction(store,'readwrite');t.objectStore(store).delete(id);t.oncomplete=()=>resolve();t.onerror=()=>reject(t.error);});},
-  async writeProject() { if(!this.db)return; try{await this.put('project',{id:'current',document:clone(this.project)});}catch(e){toast('Project save failed: '+firstLines(e.message,1),'error');} },
-  save() { if(!this.project)return; clearTimeout(this.timer);this.timer=setTimeout(()=>{this.project.project.updatedAt=new Date().toISOString(); this.writeProject();this.render();},240); },
+  async writeProject() {
+    if(!this.db)return;
+    try{await this.put('project',{id:'current',document:clone(this.project)});try{this.channel?.postMessage({type:'saved',tab:this.tabId});}catch(_){}}
+    catch(e){toast(e?.name==='QuotaExceededError'?'Project save failed: this browser is out of storage space. Clear stored source files or export the project to keep your work.':'Project save failed: '+firstLines(e?.message,1),'error');}
+  },
+  save() { if(!this.project)return; clearTimeout(this.timer);this.timer=setTimeout(()=>{this.timer=null;this.project.project.updatedAt=new Date().toISOString(); this.writeProject();this.render();},240); },
+  // Reopen the mapping the user was last working on after a reload.
+  rememberActive() { try{ if(this.activeId)localStorage.setItem(APP.activeKey,this.activeId); }catch(_){ /* storage unavailable */ } },
+  flush() { this.rememberActive(); if(!this.project||!this.timer)return; clearTimeout(this.timer);this.timer=null;this.project.project.updatedAt=new Date().toISOString();this.writeProject(); },
   track() {
     if(!this.project || Studio.mode!=='mapping' || !this.activeId || Versions.readonly)return;
     const i=this.project.mappings.findIndex(d=>d.mapping.id===this.activeId);
-    if(i>=0) {this.project.mappings[i]=clone(state.doc);this.save();}
+    if(i>=0) {this.project.mappings[i]=clone(state.doc);this.rememberActive();this.save();}
   },
   acceptMapping(raw, {open=true}={}) {
     const doc=normalizeDoc(raw).doc;
@@ -5198,29 +5329,32 @@ const Repo = {
   },
   createMapping() {
     if(Studio.mode==='mapping')this.track();
+    // Leaving a read-only historical version: the new mapping must be editable.
+    Versions.readonly=false;els.app.classList.remove('readonly');$('#readonlyBar').hidden=true;
     const doc=newDoc('Untitled mapping');this.project.mappings.push(doc);this.activeId=doc.mapping.id;
-    Studio.switch('mapping');Actions.loadDoc(doc);this.save();return doc;
+    Studio.switch('mapping');Actions.loadDoc(doc);this.rememberActive();this.save();return doc;
   },
   createWorkflow() {const doc=Workflow.newDoc();this.project.workflows.push(doc);this.save();Workflow.open(doc.id);return doc;},
   createParamSet() {const set={id:'ps_'+dfUuid(),name:'New parameter set',values:{}};this.project.parameterSets.push(set);this.save();this.render();this.editSet(set.id);},
   async openMapping(id) {
     if(Studio.mode==='mapping')this.track();
     const doc=this.project.mappings.find(d=>d.mapping.id===id);if(!doc)return;
-    this.activeId=id;Versions.readonly=false;
+    this.activeId=id;Versions.readonly=false;this.rememberActive();
     els.app.classList.remove('readonly');$('#readonlyBar').hidden=true;
     Studio.switch('mapping');Actions.loadDoc(clone(doc));await this.hydrateFiles(doc);
     this.render();
   },
   open(id,type) {if(type==='mappings')this.openMapping(id);else if(type==='workflows')Workflow.open(id);else this.editSet(id);},
-  rename(id,type) {
+  async rename(id,type) {
     const item=this.item(id,type);if(!item)return;
-    const next=prompt('New name',type==='mappings'?item.mapping.name:item.name);
-    if(!next?.trim())return;
+    const next=await Dialog.prompt('Rename '+this.label(type),type==='mappings'?item.mapping.name:item.name,{ok:'Rename'});
+    if(!next?.trim()||this.item(id,type)!==item)return;
     if(type==='mappings') {item.mapping.name=next.trim();if(this.activeId===id && Studio.mode==='mapping'){state.doc.mapping.name=next.trim();els.mapName.value=next.trim();History.commit();}}
     else {item.name=next.trim();if(type==='workflows'&&Workflow.active?.id===id)Workflow.render();}
     this.save();this.render();
   },
   item(id,type) {return this.project[type]?.find(x=>(type==='mappings'?x.mapping.id:x.id)===id);},
+  label(type) {return {mappings:'mapping',workflows:'workflow',parameterSets:'parameter set'}[type]||'item';},
   duplicate(id,type) {
     const item=this.item(id,type);if(!item)return;
     const copy=clone(item), newid=(type==='mappings'?'m_':type==='workflows'?'wf_':'ps_')+dfUuid();
@@ -5228,7 +5362,9 @@ const Repo = {
     this.project[type].push(copy);this.save();this.open(newid,type);
   },
   async remove(id,type) {
-    const item=this.item(id,type);if(!item||!confirm(`Delete ${type.slice(0,-1)} "${type==='mappings'?item.mapping.name:item.name}"?`))return;
+    const item=this.item(id,type);if(!item)return;
+    const versions=type==='mappings'?(this.project.versions[id]||[]).length:0;
+    if(!(await Dialog.confirm(`Delete ${this.label(type)}?`,`"${type==='mappings'?item.mapping.name:item.name}" will be removed from this project`+(versions?` together with its ${versions} saved version${versions>1?'s':''}`:'')+'. This cannot be undone.',{ok:'Delete',danger:true}))||this.item(id,type)!==item)return;
     this.project[type]=this.project[type].filter(x=>(type==='mappings'?x.mapping.id:x.id)!==id);
     if(type==='mappings') { delete this.project.versions[id]; if(this.activeId===id){this.activeId=null;Actions.loadDoc(newDoc());} }
     if(type==='workflows'&&Workflow.active?.id===id){Workflow.active=null;Studio.switch('mapping');}
@@ -5248,10 +5384,12 @@ const Repo = {
   },
   async rememberFile(nodeId,fileName,bytes) {
     if(!this.activeId)return;
+    // Ask the browser not to evict remembered files under storage pressure (best effort, asked once).
+    if(!this.persistAsked){this.persistAsked=true;try{navigator.storage?.persist?.().catch(()=>{});}catch(_){}}
     const id=[this.activeId,nodeId,fileName].join('|');
     if(!this.db){this.memoryFiles.set(id,{id,mappingId:this.activeId,nodeId,fileName,bytes:bytes.slice(),size:bytes.byteLength});await this.storageStats();return;}
     try{await this.put('files',{id,mappingId:this.activeId,nodeId,fileName,bytes:bytes.slice(),size:bytes.byteLength});await this.storageStats();}
-    catch(e){toast('Unable to remember file: '+firstLines(e.message,1),'warn');}
+    catch(e){toast(e?.name==='QuotaExceededError'?`"${fileName}" is too large to remember: this browser is out of storage space. The file stays loaded for this session only.`:'Unable to remember file: '+firstLines(e?.message,1),'warn');}
   },
   async forgetFile(nodeId,filename=null) {
     if(!this.activeId)return;
@@ -5259,7 +5397,7 @@ const Repo = {
     const all=await this.all('files');await Promise.all(all.filter(f=>f.mappingId===this.activeId&&f.nodeId===nodeId&&(!filename||f.fileName===filename)).map(f=>this.del('files',f.id)));await this.storageStats();
   },
   async hydrateFiles(doc) {
-    try {const files=this.db?await this.all('files'):[...this.memoryFiles.values()];for(const n of doc.nodes)if(n.config?.rememberFile&&n.config.fileName){const f=files.find(f=>f.mappingId===doc.mapping.id&&f.nodeId===n.id&&f.fileName===n.config.fileName);if(f)Files.set(n.id,f.fileName,new Uint8Array(f.bytes));}UI.renderNodes();UI.renderProps(false);Ports.schedule();}
+    try {const files=this.db?await this.all('files'):[...this.memoryFiles.values()];for(const n of doc.nodes)if(n.config?.rememberFile&&n.config.fileName){const f=files.find(f=>f.mappingId===doc.mapping.id&&f.nodeId===n.id&&f.fileName===n.config.fileName);if(f)Files.set(n.id,f.fileName,new Uint8Array(f.bytes));}if(state.doc.mapping.id===doc.mapping.id)Share.attachSample(doc,{render:false});UI.renderNodes();UI.renderProps(false);Ports.schedule();}
     catch(e){toast('Stored files could not be loaded.','warn');}
   },
   async storageStats() {
@@ -5267,7 +5405,7 @@ const Repo = {
     catch(_){this.filesTotal=0;}
     const info=$('#repoFileSize');if(info)info.textContent=fmtBytes(this.filesTotal);return this.filesTotal;
   },
-  async clearFiles() {if(!confirm('Delete all remembered source files from this device?'))return;if(this.db){const files=await this.all('files');await Promise.all(files.map(f=>this.del('files',f.id)));}else this.memoryFiles.clear();await this.storageStats();toast('Stored source files cleared.');},
+  async clearFiles() {if(!(await Dialog.confirm('Clear stored source files?','All remembered source files will be deleted from this device. Mappings are kept; their sources will need their files uploaded again.',{ok:'Delete files',danger:true})))return;if(this.db){const files=await this.all('files');await Promise.all(files.map(f=>this.del('files',f.id)));}else this.memoryFiles.clear();await this.storageStats();toast('Stored source files cleared.');},
   async recordRun(run) {
     this.runs.unshift(run);this.runs=this.runs.slice(0,200);
     if(this.db)try{await this.put('runs',run);const all=await this.all('runs');if(all.length>200)await Promise.all(all.sort((a,b)=>String(b.started).localeCompare(String(a.started))).slice(200).map(r=>this.del('runs',r.id)));}
@@ -5302,12 +5440,18 @@ const Repo = {
     }
     host.replaceChildren(...sections);
   },
-  exportProject() {this.track();downloadBlob(new Blob([JSON.stringify(this.project,null,2)],{type:'application/json'}),slug(this.project.project.name).replace(/^n_/,'')+'.dfproj.json');},
+  exportProject(suffix='') {if(Studio.mode==='mapping')this.track();downloadBlob(new Blob([JSON.stringify(this.project,null,2)],{type:'application/json'}),slug(this.project.project.name).replace(/^n_/,'')+suffix+'.dfproj.json');},
   async importProject(file) {
     try {const raw=JSON.parse(await file.text());if(raw.version==='1.0'&&Array.isArray(raw.nodes)){this.acceptMapping(raw);toast('Mapping added to project.','success');return;}
       const p=this.normalize(raw);let report='';
-      const replace=confirm(`Import "${p.project.name}"?\nOK: replace current project\nCancel: merge into current project`);
-      if(replace){this.project=p;report=`Replaced project with ${p.mappings.length} mappings, ${p.workflows.length} workflows and ${p.parameterSets.length} parameter sets.`;}
+      const has=this.project.mappings.length+this.project.workflows.length+this.project.parameterSets.length;
+      const count=(n,word)=>`${n} ${word}${n===1?'':'s'}`;
+      const summary=`${count(p.mappings.length,'mapping')}, ${count(p.workflows.length,'workflow')} and ${count(p.parameterSets.length,'parameter set')}.`;
+      const choice=!has?'replace':await Dialog.open({title:`Import project "${p.project.name}"?`,message:`It contains ${summary}\n\nMerge adds them next to your current work. Replace discards the current project; a backup file is downloaded first.`,
+        buttons:[{label:'Cancel',value:null},{label:'Replace current project',value:'replace',danger:true},{label:'Merge',value:'merge',primary:true}]});
+      if(!choice)return;
+      const replace=choice==='replace';
+      if(replace){if(has){this.track();this.exportProject('-backup-'+new Date().toISOString().slice(0,19).replace(/[:T]/g,''));}this.project=p;report='Replaced project with '+summary;}
       else{
         const maps=new Map(),sets=new Map();
         for(const m of p.mappings){
@@ -5345,17 +5489,19 @@ const Repo = {
           }
           this.project.versions[id]=current;
         }
-        report=`Merged ${p.mappings.length} mappings, ${p.workflows.length} workflows and ${p.parameterSets.length} parameter sets.`;}
+        report='Merged '+summary;}
       this.activeId=null;this.save();this.render();if(this.project.mappings.length)this.openMapping(this.project.mappings[0].mapping.id);toast(report,'success');
     }catch(e){toast('Project import failed: '+firstLines(e.message,2),'error');}
   }
 };
 const Versions = {
   readonly:false,viewing:null,
-  save(label=null) {
+  async save(label=null) {
     if(!Repo.activeId||Studio.mode!=='mapping'){toast('Open a mapping to save a version.','warn');return;}
-    Repo.track();const id=Repo.activeId,history=Repo.project.versions[id] ||= [];
-    if(label===null)label=prompt('Version label (optional)','')??'';
+    if(this.readonly){toast('Return to the current mapping before saving a version.','warn');return;}
+    const id=Repo.activeId;
+    if(label===null){label=await Dialog.prompt('Save version','',{message:'Give this version an optional label, such as "before SCD change".',placeholder:'Label (optional)',ok:'Save version'});if(label===null||Repo.activeId!==id||Studio.mode!=='mapping'||this.readonly)return;}
+    Repo.track();const history=Repo.project.versions[id] ||= [];
     history.push({versionNo:history.length+1,label:String(label),savedAt:new Date().toISOString(),doc:clone(state.doc)});
     Repo.save();this.open(id);toast('Saved version '+history.length+'.','success');
   },
@@ -5417,7 +5563,7 @@ const WFUI = {
   parameterSet(label,config,key){return this.select(label,config,key,[['','None'],...Repo.project.parameterSets.map(s=>[s.id,s.name])]);},
   mappingSelect(config){return this.select('Mapping to run',config,'mappingId',[['','Choose mapping'],...Repo.project.mappings.map(m=>[m.mapping.id,m.mapping.name])]);},
   textArray(label,obj,key){const ta=h('textarea',{class:'inp mono',rows:3,value:Object.entries(obj[key]||{}).map(([k,v])=>`${k} = ${v}`).join('\n'),onchange:e=>{const vals={};e.target.value.split('\n').map(s=>s.trim()).filter(Boolean).forEach(line=>{const m=/^(\$\$[\w]+)\s*=\s*(.*)$/.exec(line);if(m)vals[m[1]]=m[2];});obj[key]=vals;Workflow.commit();}});return P.field(label,ta,'One $$VARIABLE = value per line.');},
-  nodeVarChips() {const vars=Object.keys(Workflow.active?.variables||{});return h('div',{class:'chips'},...vars.map(name=>h('button',{class:'chip',text:name,onclick:()=>navigator.clipboard?.writeText(name)})));},
+  nodeVarChips() {const vars=Object.keys(Workflow.active?.variables||{});return h('div',{class:'chips'},...vars.map(name=>h('button',{class:'chip',text:name,onclick:()=>copyToClipboard(name)})));},
   taskChips(onpick){return h('div',{},h('div',{class:'sub-l',text:'Previous task values'}),h('div',{class:'chips'},...(Workflow.active?.nodes||[]).flatMap(n=>['Status','SrcSuccessRows','TgtSuccessRows','TgtRejectedRows','DurationMs','StartTime','EndTime'].map(key=>h('button',{class:'chip',text:`$${n.name}.${key}`,onclick:()=>onpick(`$${n.name}.${key}`)})))));}
 };
 TaskRegistry.register('start',{label:'Start',icon:'play',category:'source',defaultConfig:()=>({}),renderProperties:()=>[P.hint('Entry point. Exactly one Start task exists in every workflow.')],validate:()=>[]});
@@ -5616,11 +5762,10 @@ const Workflow = {
     for(const n of d.nodes.filter(n=>Registry.get(n.type)?.category==='source')){
       let bytes=null,filename=n.config.fileName;
       const stored=rawFiles.find(f=>f.mappingId===mappingId&&f.nodeId===n.id&&f.fileName===filename);
+      const builtin=Share.sampleEntries(d).find(e=>e[0]===filename);
       if(stored)bytes=new Uint8Array(stored.bytes);
-      else if(d.mapping.name===Sample.mapping().mapping.name&&filename===SAMPLE_FILE)bytes=Sample.bytes();
-      else if(d.mapping.name===Sample.phase2Mapping().mapping.name){if(filename===SAMPLE_FILE)bytes=Sample.bytes();else if(filename===Sample.customersFile)bytes=new TextEncoder().encode(Sample.customersCsv());}
-      else if(d.mapping.name===Sample.phase3Mapping().mapping.name){if(filename===Sample.incomingFile)bytes=new TextEncoder().encode(Sample.incomingCsv());else if(filename===Sample.dimCurrentFile)bytes=new TextEncoder().encode(Sample.dimCurrentCsv());}
       else if(mappingId===Repo.activeId&&oldFiles[n.id]?.fileName===filename)bytes=oldFiles[n.id].bytes;
+      else if(builtin)bytes=builtin[1];
       if(bytes){
         Files.set(n.id,filename,bytes);
         if(!Graph.outPorts(n).length){
@@ -5650,6 +5795,8 @@ const Workflow = {
     if(!this.active||this.runState){toast('Workflow is already running.','warn');return;}
     const issues=this.validate();if(issues.some(i=>i.severity==='error')){this.validate(true);return;}
     const w=this.active,started=new Date().toISOString(),ctx={workflow:w,started,vars:{...(w.variables||{})},tasks:{},results:{},log:[],cancelled:false,failed:false,endReason:''};
+    // $$WF_ROWS counts the rows written by this run; workflow variables persist between runs, so start it from zero.
+    ctx.vars.$$WF_ROWS='0';
     for(const n of w.nodes)ctx.tasks[n.id]={status:'PENDING'};
     this.runState=ctx;this.renderNodes();this.renderLog();$('#btnStopWorkflow').hidden=false;
     const active=new Map(),finishStatuses=['SUCCEEDED','FAILED','SKIPPED','ABORTED'];
@@ -5812,6 +5959,7 @@ const Diagrams = {
   }
 };
 const Share = {
+  maxBytes:5*1024*1024,
   async copy(){if(Studio.mode!=='mapping'){toast('Only mappings can be shared by link.','warn');return;}
     try{
       if(typeof CompressionStream==='undefined')throw new Error('CompressionStream is unavailable in this browser.');
@@ -5820,8 +5968,9 @@ const Share = {
       let binary='';for(const byte of zipped)binary+=String.fromCharCode(byte);
       const code=btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
       const link=location.href.split('#')[0]+'#m='+code;
-      if(link.length>8000&&!confirm('This shareable URL is '+fmtNum(link.length)+' characters and may exceed browser or messaging limits. Copy anyway?'))return;
-      await navigator.clipboard.writeText(link);toast('Mapping share link copied (without file data).','success');
+      if(link.length>8000&&!(await Dialog.confirm('Long share link','This link is '+fmtNum(link.length)+' characters and may exceed browser or messaging limits. Sending the saved .json file is more reliable.',{ok:'Copy anyway'})))return;
+      if(await copyToClipboard(link))toast('Mapping share link copied (without file data).','success');
+      else await Dialog.prompt('Copy share link',link,{message:'Automatic copy is blocked in this browser. Copy the link below.',ok:'Done'});
     }catch(e){toast('Could not create share link: '+firstLines(e.message),'error');}
   },
   async openFromHash(){const m=/^#m=([A-Za-z0-9_-]+)$/.exec(location.hash);if(!m)return;
@@ -5829,21 +5978,30 @@ const Share = {
       if(typeof DecompressionStream==='undefined')throw new Error('This browser cannot decompress shared mappings.');
       const raw=atob(m[1].replace(/-/g,'+').replace(/_/g,'/')+'='.repeat((4-m[1].length%4)%4));
       const bytes=Uint8Array.from(raw,c=>c.charCodeAt(0));
-      const str=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();
+      // A share link is untrusted input: cap the inflated size so a crafted link cannot exhaust memory.
+      const reader=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw')).getReader(),chunks=[];let size=0;
+      for(;;){const{done,value}=await reader.read();if(done)break;size+=value.length;if(size>this.maxBytes){reader.cancel().catch(()=>{});throw new Error('The shared mapping is too large.');}chunks.push(value);}
+      const str=await new Blob(chunks).text();
       const doc=normalizeDoc(JSON.parse(str)).doc;
-      if(!confirm(`Import shared mapping "${doc.mapping.name}" into this project?`))return;
+      if(!(await Dialog.confirm('Import shared mapping?',`"${doc.mapping.name}" (${doc.nodes.length} nodes) will be added to this project as a new mapping. Only open links from people you trust.`,{ok:'Import mapping'})))return;
       const id=Repo.acceptMapping(doc);await Repo.openMapping(id);this.attachSample(doc);
       toast('Shared mapping opened as a new repository item.','success');
     }catch(e){toast('Invalid shared mapping link: '+firstLines(e.message),'error');}
     finally{history.replaceState(null,'',location.pathname+location.search);}
   },
-  attachSample(doc) {
-    let entries=[];
-    if(doc.mapping.name===Sample.mapping().mapping.name)entries=[[SAMPLE_FILE,Sample.bytes()]];
-    else if(doc.mapping.name===Sample.phase2Mapping().mapping.name)entries=[[SAMPLE_FILE,Sample.bytes()],[Sample.customersFile,new TextEncoder().encode(Sample.customersCsv())]];
-    else if(doc.mapping.name===Sample.phase3Mapping().mapping.name)entries=[[Sample.incomingFile,new TextEncoder().encode(Sample.incomingCsv())],[Sample.dimCurrentFile,new TextEncoder().encode(Sample.dimCurrentCsv())]];
-    for(const n of state.doc.nodes.filter(n=>Registry.get(n.type)?.category==='source')){const pair=entries.find(p=>p[0]===n.config.fileName);if(pair)Files.set(n.id,pair[0],pair[1]);}
-    Ports.schedule();UI.renderNodes();UI.renderProps(true);
+  // Bundled sample data for a mapping created by Load Sample (tagged with mapping.sample) or still carrying a sample's name.
+  sampleEntries(doc) {
+    const tag=doc.mapping.sample,name=doc.mapping.name;
+    if(tag==='original'||(!tag&&name===Sample.mapping().mapping.name))return [[SAMPLE_FILE,Sample.bytes()]];
+    if(tag==='phase2'||(!tag&&name===Sample.phase2Mapping().mapping.name))return [[SAMPLE_FILE,Sample.bytes()],[Sample.customersFile,new TextEncoder().encode(Sample.customersCsv())]];
+    if(tag==='phase3'||(!tag&&name===Sample.phase3Mapping().mapping.name))return [[Sample.incomingFile,new TextEncoder().encode(Sample.incomingCsv())],[Sample.dimCurrentFile,new TextEncoder().encode(Sample.dimCurrentCsv())]];
+    return [];
+  },
+  attachSample(doc,{render=true}={}) {
+    const entries=this.sampleEntries(doc);let attached=0;
+    if(entries.length)for(const n of state.doc.nodes.filter(n=>Registry.get(n.type)?.category==='source')){if(Files.has(n.id))continue;const pair=entries.find(p=>p[0]===n.config.fileName);if(pair){Files.set(n.id,pair[0],pair[1]);attached++;}}
+    if(render){Ports.schedule();UI.renderNodes();UI.renderProps(true);}
+    return attached;
   }
 };
 const XmlImport = {
@@ -5974,7 +6132,7 @@ const Studio = {
   },
   handleClick(e){if(this.mode==='mapping')return false;const id=e.target.closest('button')?.id;
     if(this.mode==='monitor'){if(['btnRun','btnSave','btnValidate','btnNew','btnUndo','btnRedo','btnZoomIn','btnZoomOut','btnFit'].includes(id)){e.preventDefault();e.stopImmediatePropagation();return true;}return false;}
-    const dispatch={btnNew:()=>Workflow.createWorkflow(),btnSave:()=>{Repo.save();toast('Workflow saved to repository.','success');},btnValidate:()=>Workflow.validate(true),btnRun:()=>Workflow.run(),btnUndo:()=>Workflow.undo(-1),btnRedo:()=>Workflow.undo(1),btnZoomIn:()=>Workflow.zoom(1.2),btnZoomOut:()=>Workflow.zoom(.83),btnFit:()=>Workflow.fit()};
+    const dispatch={btnNew:()=>Repo.createWorkflow(),btnSave:()=>{Repo.save();toast('Workflow saved to repository.','success');},btnValidate:()=>Workflow.validate(true),btnRun:()=>Workflow.run(),btnUndo:()=>Workflow.undo(-1),btnRedo:()=>Workflow.undo(1),btnZoomIn:()=>Workflow.zoom(1.2),btnZoomOut:()=>Workflow.zoom(.83),btnFit:()=>Workflow.fit()};
     if(dispatch[id]){e.preventDefault();e.stopImmediatePropagation();dispatch[id]();return true;}return false;
   }
 };
@@ -6007,7 +6165,7 @@ const About = {
       h('p',{text:'A visual ETL studio for mappings, workflows, parameter sets, data quality, SQL generation, lineage and local run monitoring.'}),
       h('div',{class:'about-features'},...['Visual mappings · DuckDB-WASM','Sequence, SCD1/SCD2 & Data Quality','Snowflake, PySpark and dbt exports','Workflow scheduling · run statistics','IndexedDB projects · offline repository','Single HTML file · vanilla JavaScript'].map(s=>h('div',{text:s}))),
       h('p',{class:'mono',text:'Ctrl+Enter  Run    Ctrl+S  Save    Ctrl+K  Commands    Ctrl+Shift+S  Save version    Ctrl+Z/Y  Undo/redo'}),
-      h('a',{href:'#',onclick:e=>e.preventDefault(),text:'GitHub'}),
+      h('p',{class:'small-muted'},`Version ${APP.version} · DuckDB-WASM ${APP.duckdb} · `,h('a',{href:APP.repoUrl,target:'_blank',rel:'noopener noreferrer',text:'GitHub'})),
       h('label',{class:'chk'},never,h('span',{text:"Don't show again"})),
       h('div',{class:'btn-row'},h('button',{class:'tb primary',text:'Continue',onclick:()=>{if(automatic||never.checked){try{localStorage.setItem('dataforge.about.seen','1');}catch(_){}}$('#generalModal').hidden=true;}})));
     $('#generalModal').hidden=false;
@@ -6042,7 +6200,7 @@ const Phase5 = {
       h('div',{class:'repo-title'},h('button',{class:'repo-toggle',text:'Repository ▾',onclick:()=>{$('#repoBody').hidden=!$('#repoBody').hidden;}}),h('button',{class:'icon-btn',title:'New mapping',html:svgIcon('plus',14),onclick:()=>Repo.createMapping()})),
       h('div',{id:'repoBody'},
         h('input',{id:'repoSearch',class:'inp',placeholder:'Search repository',oninput:()=>Repo.render()}),h('div',{id:'repoTree'}),
-        h('div',{class:'btn-row'},h('button',{class:'btn',text:'+ Mapping',onclick:()=>Repo.createMapping()}),h('button',{class:'btn',text:'+ Workflow',onclick:()=>Workflow.createWorkflow()}),h('button',{class:'btn',text:'+ Set',onclick:()=>Repo.createParamSet()})),
+        h('div',{class:'btn-row'},h('button',{class:'btn',text:'+ Mapping',onclick:()=>Repo.createMapping()}),h('button',{class:'btn',text:'+ Workflow',onclick:()=>Repo.createWorkflow()}),h('button',{class:'btn',text:'+ Set',onclick:()=>Repo.createParamSet()})),
         h('div',{class:'repo-storage'},h('span',{text:'Stored files: '}),h('b',{id:'repoFileSize',text:'0 B'}),h('button',{class:'linkish',text:'Clear',onclick:()=>Repo.clearFiles()})),
         h('div',{class:'btn-row'},h('button',{class:'btn',text:'Export Project',onclick:()=>Repo.exportProject()}),h('button',{class:'btn',text:'Import',onclick:()=>$('#projectInput').click()})),
         h('div',{class:'btn-row'},h('button',{class:'btn',text:'Mapping XML',onclick:()=>$('#xmlInput').click()}),h('button',{class:'btn',text:'Try sample XML',onclick:()=>XmlImport.demo()})),
@@ -6076,14 +6234,14 @@ const Phase5 = {
         if(mod&&key==='z'){e.preventDefault();e.stopImmediatePropagation();Workflow.undo(e.shiftKey?1:-1);return;}
         if(mod&&key==='y'){e.preventDefault();e.stopImmediatePropagation();Workflow.undo(1);return;}
         if(mod&&key==='d'){e.preventDefault();e.stopImmediatePropagation();Workflow.duplicate();return;}
-        if(mod&&key==='Enter'){e.preventDefault();e.stopImmediatePropagation();Workflow.run();return;}
+        if(mod&&e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();Workflow.run();return;}
         if(mod&&e.shiftKey&&key==='v'){e.preventDefault();e.stopImmediatePropagation();Workflow.validate(true);return;}
         if(!/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||'')){
           if(mod&&key==='a'){e.preventDefault();e.stopImmediatePropagation();Workflow.select(Workflow.active.nodes.map(n=>n.id));return;}
           if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();e.stopImmediatePropagation();Workflow.remove();return;}
         }
       }
-      if(Studio.mode==='monitor'&&mod&&key==='Enter'){e.preventDefault();e.stopImmediatePropagation();return;}
+      if(Studio.mode==='monitor'&&mod&&(e.key==='Enter'||key==='s')){e.preventDefault();e.stopImmediatePropagation();return;}
     },true);
     document.addEventListener('click',e=>{if(e.target.closest('.brand-mark')){e.preventDefault();About.open();}},true);
     $('#generalModal').addEventListener('pointerdown',e=>{if(e.target.id==='generalModal')e.target.hidden=true;});
