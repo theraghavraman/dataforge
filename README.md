@@ -1,69 +1,80 @@
-# DataForge v1.1.0 — Browser ETL Studio
+# DataForge — Browser ETL Studio
 
-[Live demo](https://theraghavraman.github.io/dataforge/) · [Source code](https://github.com/theraghavraman/dataforge) · [Changelog](CHANGELOG.md)
+A visual ETL designer that runs entirely in the browser. You build mappings visually on a canvas, they compile to SQL, and DuckDB-WASM executes them locally. Nothing leaves your machine.
 
-DataForge is a visual ETL designer that runs in a browser. Design mappings on a canvas, compile mappings to SQL, and execute them locally using DuckDB-WASM. The application itself is a **single `index.html` file with no build step and no backend**.
+**Live demo:** https://theraghavraman.github.io/dataforge/
 
 ## Features
 
-- **Mapping designer:** Source, Filter, Expression, Sorter, Joiner, Lookup, Aggregator, Router, Union, Rank, Sequence Generator, SCD Type 1, SCD Type 2, Data Quality, and Target transformations.
-- **In-browser execution:** SQL CTE compilation and DuckDB-WASM execution, including CSV and JSON source handling and node-level data previews.
-- **Warehouse patterns:** SCD1/SCD2, hash-based change detection, surrogate keys, rejects, and configurable data quality rules.
-- **Parameters and variables:** `$$PARAM` syntax and persistent mapping variables for incremental processing.
-- **Code export:** DuckDB SQL, Snowflake SQL, PySpark, and dbt project output.
-- **Lineage and documentation:** Column-level lineage, impact analysis, Source-to-Target Mapping (STTM), and Markdown mapping specifications.
-- **Workflow designer:** Sessions, decisions, assignments, timers, notifications, conditional links, and concurrent branches.
-- **Run monitor:** History, execution timeline, statistics, trends, and run comparison.
-- **Repository:** IndexedDB project storage, mapping versions, project import/export, share links, and SVG/PNG diagram export.
-- **Mapping XML import:** Best-effort conversion with an import report.
+- **Mapping Designer.** Drag-and-drop canvas with Source, Filter, Expression, Sorter, Joiner, Lookup, Aggregator, Router, Union, Rank, Sequence Generator, SCD Type 1, SCD Type 2, Data Quality and Target transformations.
+- **In-browser execution.** Every mapping compiles to a DuckDB SQL CTE chain and runs on CSV/JSON files through DuckDB-WASM, with data preview at any node.
+- **Warehouse patterns.** SCD1/SCD2 with hash-based change detection, surrogate keys, reject handling, and data quality rules (reject, flag or warn).
+- **Parameters and variables.** `$$PARAM` syntax, with persistent mapping variables for incremental loads.
+- **Code generation.** Export any mapping as Snowflake SQL (MERGE-based SCD), a runnable PySpark script, or a complete dbt project (models, snapshots, schema tests).
+- **Column-level lineage.** Impact analysis, plus Source-to-Target Mapping (STTM) export and Markdown mapping specifications.
+- **Workflow Designer.** Sessions, decisions, assignments, timers, notifications and conditional links, with concurrent branches.
+- **Monitor.** Run history, Gantt timeline, session statistics, trend charts and run comparison.
+- **Mapping XML import.** Best-effort conversion of repository mapping XML exports, with an import report.
+- **Project repository.** Stored in IndexedDB, with mapping versions and compare, project import/export (merge or replace), workflow export, shareable links, and SVG/PNG diagram export.
 
-## Getting started
+## Try it
 
-Open the [live demo](https://theraghavraman.github.io/dataforge/). Use **Load Sample** to choose retail orders, sales by region, or customer dimension SCD2. The workflow designer includes a sample **Daily retail load** workflow. Choose **Run** after DuckDB has initialized.
+Open the live demo. The Load Sample menu has three ready-to-run mappings (retail orders, sales by region, customer dimension SCD2), and the Workflow Designer has a sample "Daily retail load" workflow. Choose **Run**.
 
-To serve the single-file application yourself, place `index.html` on a static HTTP host, or run from the repository directory:
+## Tech
+
+A single self-contained `index.html` in vanilla JavaScript. It uses DuckDB-WASM, IndexedDB and inline SVG, with no build step and no backend. Projects, run history and (optionally) source files are stored in your browser only.
+
+It works on phones and tablets too: below 900px the side panels become drawers, palette items are added with a tap, and the canvas supports pinch zoom.
+
+## Running it yourself
+
+Serve the folder with any static web server (`npm run serve`, `python3 -m http.server`, GitHub Pages, ...). Opening `index.html` directly from disk also works in most browsers.
+
+### Network access
+
+| Host | Why | Avoidable? |
+| --- | --- | --- |
+| `cdn.jsdelivr.net` | DuckDB-WASM engine (pinned release) | Yes, by self-hosting (below) |
+| `extensions.duckdb.org` | DuckDB's JSON extension, downloaded the first time a JSON source or target runs | No |
+| `fonts.googleapis.com`, `fonts.gstatic.com` | UI fonts; system fonts are used if blocked | Optional |
+
+Your data never leaves the browser. A Content-Security-Policy in `index.html` limits the page to these hosts.
+
+### Self-hosting DuckDB-WASM
 
 ```sh
-python3 -m http.server 8000
+node scripts/vendor-duckdb.mjs        # downloads the pinned release into vendor/duckdb/ and updates index.html
+node scripts/vendor-duckdb.mjs --cdn  # switch back to the CDN
 ```
 
-Then visit <http://localhost:8000>. An internet connection is currently required for first-time loading of DuckDB-WASM from jsDelivr, and may be needed to load DuckDB extensions. Source file bytes are processed in the browser rather than sent to a DataForge backend; loading third-party dependencies still causes network requests to their hosts.
+Commit `vendor/duckdb/` (about 72 MB) and make sure your server sends `.wasm` as `application/wasm`. The CDN remains the fallback if the local copy cannot be loaded. To upgrade DuckDB, change `APP.duckdb` in `index.html` and run the script again.
 
-## Saving and sharing
-
-- **Mappings:** Ctrl/Cmd+S downloads the current mapping as JSON. Load Sample creates/opens a new repository mapping rather than replacing your current work.
-- **Workflows:** Changes are saved to the browser's local project repository. Ctrl/Cmd+S in workflow mode currently saves to that repository **without downloading a standalone workflow file**.
-- **Projects:** Use **Repository → Export Project** for a `.dfproj.json` backup. Import offers **Merge**, **Replace**, or **Cancel**. Replace initiates a backup download before replacement.
-- **Source files:** Source bytes are not included in mapping, project, or share-link JSON. Bundled samples reattach their own sample bytes after reload; user-provided files must be remembered in IndexedDB or selected again.
-- **Sharing:** Share links contain compressed mapping definitions, **not** uploaded source file bytes. Treat links as untrusted input and share only with people you intend to receive the mapping.
-
-Browser storage may be cleared by the browser/user. Export a project backup before clearing site data or replacing the project.
-
-## Tests and CI
-
-The application has no build step. Tests and CI are optional development tooling and do not change the single-file deployment.
+## Development
 
 ```sh
-python3 -m pip install pytest playwright
-python3 -m playwright install chromium
-python3 -m pytest tests/ -q
+npm install
+npx playwright install chromium
+npm test
 ```
 
-The test suite includes a source/syntax check and Playwright browser smoke checks for sample loading/reload, workflow creation, and project export. The browser tests do **not** establish full ETL engine correctness or validate generated Snowflake/PySpark/dbt code; they also do not currently exercise JSON-extension-backed execution. GitHub Actions runs these checks on pushes and pull requests.
+`npm test` drives the real app in headless Chromium: it runs the three samples and the sample workflow on DuckDB-WASM, exports every dialect, and checks persistence across reloads, project import/export, share links, the dialogs and the phone layout. The same test runs in GitHub Actions on every push. See [CHANGELOG.md](CHANGELOG.md) for release notes.
 
-## Known limitations (v1.1.0)
+## Keyboard shortcuts
 
-- DuckDB-WASM `1.32.0` is loaded from jsDelivr without self-hosted fallback or subresource integrity; a verified CSP has not yet been configured.
-- JSON execution via DuckDB's JSON extension has not been independently validated for this release.
-- Some older modal dialogs do not fully trap keyboard focus.
-- Under 900px, the mobile layout is view-only.
-- Ctrl/Cmd+S in workflow mode does not export a workflow file.
-- A scheduled workflow temporarily navigates to the running workflow; scheduling only works while the tab remains open.
-- Code generation has been exercised against sample mappings, but generated SQL/PySpark/dbt requires review and execution in its target environment.
+| Shortcut | Action |
+| --- | --- |
+| Ctrl+Enter | Run the mapping or workflow |
+| Ctrl+S | Save the mapping as JSON, or export the workflow |
+| Ctrl+Shift+S | Save a version of the mapping |
+| Ctrl+Shift+V | Validate |
+| Ctrl+K | Command palette |
+| Ctrl+Z / Ctrl+Y | Undo / redo |
+| Ctrl+D, Delete | Duplicate / delete the selection |
 
-## Technology
+## Author
 
-Vanilla JavaScript, inline CSS and SVG, DuckDB-WASM, IndexedDB. No application build process or server backend.
+Raghav Raman, Senior Software Engineer (data engineering)
 
 ## License
 

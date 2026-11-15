@@ -7,6 +7,12 @@
 <meta name="description" content="Design ETL mappings visually and run them in your browser with DuckDB-WASM.">
 <meta name="theme-color" content="#0c1116">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<!-- Defence in depth. The app is one inline script, so 'unsafe-inline' is required; everything else is limited to
+     the DuckDB CDN, the DuckDB extension host (JSON support) and Google Fonts. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://cdn.jsdelivr.net; worker-src 'self' blob:; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' blob: https://cdn.jsdelivr.net https://extensions.duckdb.org; base-uri 'none'; form-action 'none'; object-src 'none'">
+<!-- DuckDB-WASM location. Empty = jsDelivr CDN. Run "node scripts/vendor-duckdb.mjs" to self-host it under
+     vendor/duckdb/ (this value is then set for you); the CDN remains the fallback. -->
+<meta name="dataforge-duckdb" content="">
 <meta property="og:title" content="DataForge — Browser ETL Studio">
 <meta property="og:description" content="Design ETL mappings visually and run them locally with DuckDB-WASM. Nothing leaves your machine.">
 <meta property="og:type" content="website">
@@ -427,7 +433,6 @@ table.log a{color:var(--accent)}
 .about-logo{display:flex;align-items:center;gap:12px}.about-logo h2{font:700 24px var(--disp);margin:0}.about-features{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:14px 0}.about-features>div{background:var(--panel-2);padding:8px;border-radius:3px;font-size:11px;color:var(--muted)}
 .upload-banner{position:fixed;right:16px;top:58px;z-index:100;width:min(340px,85vw);padding:11px;background:var(--panel);border:1px solid var(--accent);border-radius:5px;box-shadow:var(--shadow);font:11px var(--mono)}
 .upload-track{height:7px;background:var(--line);border-radius:4px;margin-top:7px;overflow:hidden}.upload-track>div{height:100%;background:var(--ok);width:0}
-.mobile-notice{display:none}
 .dialog-overlay{position:fixed;inset:0;z-index:130;background:rgba(0,0,0,.7);display:grid;place-items:center;padding:15px}
 .dialog-box{width:min(440px,96vw);max-height:88vh;overflow:auto;background:var(--panel);border:1px solid var(--line-2);border-radius:7px;box-shadow:var(--shadow);padding:18px}
 .dialog-box h3{font:600 19px/1.25 var(--disp);margin:0 0 8px}
@@ -442,7 +447,28 @@ table.log a{color:var(--accent)}
 @media(max-width:1500px){.mode-switch{width:152px}.topbar{gap:7px}.mapname{flex-basis:170px}.mapname label{display:none}.pill:not([data-state="error"]) span:last-child{display:none}}
 @media(max-width:1370px){.topbar .brand-name{display:none}.mapname{flex-basis:125px;padding-left:6px}.tb.export span{display:none!important}.tb.export{width:32px!important;padding:0!important;justify-content:center}.mode-switch{width:150px}}
 @media(max-width:1140px){.mapname{display:none}.topbar{gap:5px}.monitor-grid{grid-template-columns:1fr}.monitor-history,.monitor-details{max-height:none}.mode-switch{width:150px}}
-@media(max-width:900px){:root{--pal-w:120px;--props-w:180px}.mobile-notice{display:flex;position:fixed;top:51px;left:0;right:0;z-index:42;background:var(--panel-3);border-bottom:1px solid var(--warn);padding:7px 11px;align-items:center;gap:9px;color:var(--warn);font-size:11px}.mobile-notice~*{}#app .pal-item,#app .props{pointer-events:none;opacity:.64}#app .node,#app .handle,#app .link-g{pointer-events:none}#app .wf-world .wf-node{pointer-events:none}.mode-switch{width:115px}.monitor-trends{grid-template-columns:1fr}.topbar .pill{display:none}}
+.panel-toggle,#panelScrim{display:none}
+/* Small screens: the canvas gets the full width; repository/palette and properties slide in as drawers. */
+@media(max-width:900px){
+  #app{grid-template-columns:minmax(0,1fr);grid-template-areas:"top" "canvas" "drawer" "foot"}
+  .palette,.props{position:fixed;top:50px;bottom:26px;z-index:46;width:min(310px,86vw);box-shadow:var(--shadow);visibility:hidden}
+  .palette{left:0;border-right:1px solid var(--line-2)}
+  .props{right:0;border-left:1px solid var(--line-2)}
+  #app.show-pal .palette,#app.show-props .props{visibility:visible}
+  #app.show-pal #panelScrim,#app.show-props #panelScrim{display:block;position:fixed;top:50px;left:0;right:0;bottom:26px;z-index:45;background:rgba(0,0,0,.55)}
+  .panel-toggle{display:inline-flex}
+  .topbar{overflow-x:auto;overflow-y:hidden;scrollbar-width:none;gap:6px}
+  .topbar::-webkit-scrollbar{display:none}
+  .tb-right{margin-left:6px;flex:none}
+  .pill span:last-child{display:none!important}
+  .sample-menu{position:fixed;top:46px;right:8px;left:auto;max-width:calc(100vw - 16px)}
+  .tabs{overflow-x:auto;scrollbar-width:none}.tabs .tab{white-space:nowrap;flex:none}
+  .pal-item{padding:10px 9px}
+  #readonlyBar{left:10px}
+  .monitor-trends{grid-template-columns:1fr}
+  .statusbar span:first-child{display:none}
+  #toasts{max-width:calc(100vw - 24px)}
+}
 
 </style>
 </head>
@@ -454,11 +480,12 @@ table.log a{color:var(--accent)}
       <span class="brand-mark"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h13a5 5 0 0 0 5-3H8"/><path d="M8 5v6c0 2 1 3 3 3h2c2 0 3-1 3-3"/><path d="M9 14l-2 5h10l-2-5"/></svg></span>
       <span class="brand-name">DataForge</span>
     </div>
+    <button class="tb icon panel-toggle" id="btnPanelLeft" title="Repository and palette" aria-label="Repository and palette" aria-expanded="false" aria-controls="palette"><i data-icon="panelLeft"></i></button>
     <select id="studioMode" class="mode-switch" title="Designer mode" aria-label="Designer mode"><option value="mapping">Mapping Designer</option><option value="workflow">Workflow Designer</option><option value="monitor">Monitor</option></select>
     <div class="mapname"><label for="mapName">Mapping</label><input id="mapName" type="text" spellcheck="false" aria-label="Mapping name" maxlength="80"></div>
     <div class="tb-actions">
       <button class="tb" id="btnNew" title="New mapping"><i data-icon="plus"></i><span>New</span></button>
-      <button class="tb" id="btnOpen" title="Open a mapping (.json)"><i data-icon="folder"></i><span>Open</span></button>
+      <button class="tb" id="btnOpen" title="Open a mapping, workflow or project file (.json)"><i data-icon="folder"></i><span>Open</span></button>
       <button class="tb" id="btnSave" title="Save mapping as .json (Ctrl+S)"><i data-icon="save"></i><span>Save</span></button>
       <button class="tb icon" id="btnSaveVersion" title="Save version (Ctrl+Shift+S)" aria-label="Save version"><i data-icon="copy"></i></button>
       <span class="tb-sep"></span>
@@ -483,6 +510,7 @@ table.log a{color:var(--accent)}
       <button class="tb icon" id="btnCommand" title="Command palette (Ctrl+K)" aria-label="Command palette"><i data-icon="search"></i></button>
       <button class="tb icon" id="btnAbout" title="About DataForge" aria-label="About DataForge"><i data-icon="info"></i></button>
       <button class="tb icon" id="btnTheme" title="Switch theme" aria-label="Switch theme"></button>
+      <button class="tb icon panel-toggle" id="btnPanelRight" title="Properties" aria-label="Properties" aria-expanded="false" aria-controls="props"><i data-icon="panelRight"></i></button>
     </div>
   </header>
 
@@ -537,11 +565,11 @@ table.log a{color:var(--accent)}
     <span class="sp legend"><span><i class="st-dot"></i>Not validated</span><span><i class="st-dot valid"></i>Valid</span><span><i class="st-dot error"></i>Error</span><span><i class="st-dot ran"></i>Ran</span></span>
     <span id="statCounts"></span>
   </footer>
+  <div id="panelScrim"></div>
   <div id="readonlyBar" hidden><b id="readonlyBarText"></b><button id="btnVersionClose" class="btn">Return to current</button></div>
   <section id="monitorStage" class="monitor-stage" hidden></section>
   <section id="welcomeStage" class="welcome-stage" hidden></section>
 </div>
-<div class="mobile-notice"><span>Viewer mode: use a screen 900px or wider to edit. The canvas remains pannable.</span></div>
 <div id="toasts" aria-live="polite"></div>
 <div id="uploadBanner" class="upload-banner" hidden><div id="uploadBannerText"></div><div class="upload-track"><div id="uploadBar"></div></div></div>
 <div id="ctxMenu" class="ctx" hidden></div>
@@ -549,8 +577,8 @@ table.log a{color:var(--accent)}
 <input type="file" id="openInput" accept=".json,application/json" hidden>
 <input type="file" id="projectInput" accept=".dfproj.json,.json,application/json" hidden>
 <input type="file" id="xmlInput" accept=".xml,text/xml,application/xml" hidden>
-<div id="generalModal" class="general-overlay" hidden><div class="general-modal" role="dialog" aria-modal="true"><div class="general-modal-head"><button id="generalModalClose" type="button" class="icon-btn" aria-label="Close dialog"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><div id="generalModalBody"></div></div></div>
-<div id="commandOverlay" class="command-overlay" hidden><div class="command-modal" role="dialog" aria-modal="true" aria-label="Command palette"><input id="commandInput" class="inp" placeholder="Search actions, mappings, workflows and nodes…" autocomplete="off"><div id="commandResults" class="command-results"></div></div></div>
+<div id="generalModal" class="general-overlay" hidden><div class="general-modal" role="dialog" aria-modal="true" aria-label="DataForge dialog"><div class="general-modal-head"><button id="generalModalClose" type="button" class="icon-btn" aria-label="Close dialog"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><div id="generalModalBody"></div></div></div>
+<div id="commandOverlay" class="command-overlay" hidden><div class="command-modal" role="dialog" aria-modal="true" aria-label="Command palette"><input id="commandInput" class="inp" placeholder="Search actions, mappings, workflows and nodes…" autocomplete="off"><div id="commandResults" class="command-results" role="listbox" aria-label="Results"></div></div></div>
 <div id="projectTools" hidden><button id="btnExportProject">Export Project</button><button id="btnImportProject">Import Project</button><button id="btnDiagramSVG">SVG</button><button id="btnDiagramPNG">PNG</button><button id="btnShareLink">Share</button></div>
 
 <div id="runDialog" class="run-overlay" hidden>
@@ -672,6 +700,8 @@ const ICONS = {
   scd2: '<path d="M4 5h16v5H4zM4 14h16v5H4zM8 10v4M12 10v4M16 10v4M20 12l2 0"/>',
   dataquality: '<path d="M4 4h16v16H4zM8 9l3 3 5-5M8 17h8"/>',
   code: '<path d="M8 4L2 12l6 8M16 4l6 8-6 8M14 3l-4 18"/>',
+  panelLeft: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M5.500 8h1.500M5.500 11h1.500"/>',
+  panelRight: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16M17 8h1.500M17 11h1.500"/>',
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   bell: '<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>',
@@ -682,10 +712,10 @@ const ICONS = {
 };
 const svgIcon = (name, size = 16) => `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
 
-function toast(message, type = 'info') {
+function toast(message, type = 'info', ms = 0) {
   const el = h('div', { class: 'toast ' + type, text: message, role: type === 'error' ? 'alert' : 'status' });
   $('#toasts').append(el);
-  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 280); }, type === 'error' ? 6000 : 3200);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 280); }, ms || (type === 'error' ? 6000 : 3200));
 }
 function insertAtCursor(el, text) {
   const s = el.selectionStart ?? el.value.length, e = el.selectionEnd ?? s;
@@ -758,6 +788,80 @@ const Dialog = {
   // Resolves the entered text, or null when cancelled.
   prompt(title, value = '', { message = '', ok = 'Save', placeholder = '' } = {}) {
     return this.open({ title, message, input: { value, placeholder }, buttons: [{ label: 'Cancel', value: null }, { label: ok, value: '', primary: true }] });
+  }
+};
+
+/* Focus management for the overlay dialogs (export, lineage, run values, about/reports, command palette):
+   focus moves into a dialog when it opens, Tab stays inside it, focus returns to the opener when it closes,
+   and canvas shortcuts cannot act on the mapping hidden behind it. */
+const Modals = {
+  ids: ['commandOverlay', 'generalModal', 'lineageOverlay', 'codegenOverlay', 'runDialog'], openers: new Map(),
+  top() { for (const id of this.ids) { const el = document.getElementById(id); if (el && !el.hidden) return el; } return null; },
+  focusables(root) { return [...root.querySelectorAll('a[href],button,input,select,textarea,[tabindex]:not([tabindex="-1"])')].filter((el) => !el.disabled && el.getClientRects().length); },
+  install() {
+    for (const id of this.ids) {
+      const el = document.getElementById(id); if (!el) continue;
+      new MutationObserver(() => {
+        if (!el.hidden) {
+          if (!this.openers.has(id)) this.openers.set(id, document.activeElement);
+          requestAnimationFrame(() => { if (!el.hidden && !el.contains(document.activeElement)) { const f = this.focusables(el); (f.find((x) => x.matches('input:not([type=checkbox]),textarea,.tb.primary')) || f[0])?.focus(); } });
+        } else {
+          const opener = this.openers.get(id); this.openers.delete(id);
+          if (!this.top() && $('#dialogOverlay').hidden && opener && document.contains(opener) && opener !== document.body) opener.focus();
+        }
+      }).observe(el, { attributes: true, attributeFilter: ['hidden'] });
+    }
+    window.addEventListener('keydown', (e) => {
+      const top = this.top(); if (!top || !$('#dialogOverlay').hidden) return;
+      if (e.key === 'Tab') {
+        const f = this.focusables(top); if (!f.length) return;
+        const first = f[0], last = f[f.length - 1], a = document.activeElement;
+        if (!top.contains(a)) { e.preventDefault(); first.focus(); }
+        else if (e.shiftKey && a === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && a === last) { e.preventDefault(); first.focus(); }
+        return;
+      }
+      const editable = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName || ''), mod = e.ctrlKey || e.metaKey, key = e.key.toLowerCase();
+      if (!editable && (e.key === 'Delete' || e.key === 'Backspace' || (mod && ['z', 'y', 'd', 'a'].includes(key)))) { e.stopImmediatePropagation(); if (mod) e.preventDefault(); }
+    }, true);
+  }
+};
+
+/* Two-finger pinch zoom for a canvas. begin() must cancel any one-finger drag in progress;
+   zoom(clientX, clientY, factor) zooms around the midpoint between the fingers. */
+function bindPinch(el, { begin, zoom }) {
+  const touches = new Map(); let last = 0;
+  const spread = () => { const [a, b] = [...touches.values()]; return { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }; };
+  el.addEventListener('pointerdown', (e) => {
+    if (e.pointerType !== 'touch') return;
+    touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (touches.size === 2) { begin(); last = spread().d; }
+  }, true);
+  window.addEventListener('pointermove', (e) => {
+    if (!touches.has(e.pointerId)) return;
+    touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (touches.size === 2 && last) { const s = spread(); zoom(s.x, s.y, s.d / last); last = s.d; }
+  });
+  const end = (e) => { touches.delete(e.pointerId); if (touches.size < 2) last = 0; };
+  window.addEventListener('pointerup', end); window.addEventListener('pointercancel', end);
+  return { active: () => touches.size >= 2 };
+}
+
+/* Small-screen drawers for the repository/palette (left) and properties (right). */
+const Panels = {
+  small() { return window.matchMedia('(max-width:900px)').matches; },
+  set(side, open) {
+    const app = $('#app');
+    app.classList.toggle('show-pal', side === 'left' && open); app.classList.toggle('show-props', side === 'right' && open);
+    $('#btnPanelLeft').setAttribute('aria-expanded', String(side === 'left' && open)); $('#btnPanelRight').setAttribute('aria-expanded', String(side === 'right' && open));
+  },
+  close() { this.set('left', false); },
+  toggle(side) { this.set(side, !$('#app').classList.contains(side === 'left' ? 'show-pal' : 'show-props')); },
+  install() {
+    $('#btnPanelLeft').addEventListener('click', () => this.toggle('left'));
+    $('#btnPanelRight').addEventListener('click', () => this.toggle('right'));
+    $('#panelScrim').addEventListener('pointerdown', () => this.close());
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') this.close(); });
   }
 };
 
@@ -1172,16 +1276,23 @@ const Engine = {
   _queue: Promise.resolve(), _readyPromise: null, _jsonLoaded: false, _out: 0,
   get ready() { return this.status === 'ready'; },
   set(status, message) { this.status = status; this.message = message; UI.renderEngine(); },
-  async init() {
-    this.set('loading', 'Starting DuckDB');
+  // Where DuckDB-WASM is loaded from, in order of preference: a self-hosted copy (when configured), then the CDN.
+  sources() {
+    const list = [];
+    const local = (document.querySelector('meta[name="dataforge-duckdb"]')?.content || '').trim();
+    if (local) try { const base = new URL(local.replace(/\/*$/, '/'), location.href).href; list.push({ label: 'self-hosted copy', module: base + 'duckdb.mjs', dist: base }); } catch (_) { /* malformed setting: use the CDN */ }
+    const cdn = `https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@${APP.duckdb}/`;
+    list.push({ label: 'CDN', module: cdn + '+esm', dist: cdn + 'dist/' });
+    return list;
+  },
+  async load(src) {
     let workerUrl = null, worker = null;
     try {
-      const duckdb = await import(`https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@${APP.duckdb}/+esm`);
-      // Pin workers and Wasm to exactly the same release as the ESM import.
-      const dist = `https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@${APP.duckdb}/dist/`;
+      const duckdb = await import(src.module);
+      // Workers and Wasm are pinned to exactly the same release as the ESM import.
       const bundles = {
-        mvp: { mainModule: dist + 'duckdb-mvp.wasm', mainWorker: dist + 'duckdb-browser-mvp.worker.js' },
-        eh: { mainModule: dist + 'duckdb-eh.wasm', mainWorker: dist + 'duckdb-browser-eh.worker.js' }
+        mvp: { mainModule: src.dist + 'duckdb-mvp.wasm', mainWorker: src.dist + 'duckdb-browser-mvp.worker.js' },
+        eh: { mainModule: src.dist + 'duckdb-eh.wasm', mainWorker: src.dist + 'duckdb-browser-eh.worker.js' }
       };
       const bundle = await duckdb.selectBundle(bundles);
       if (!bundle || !bundle.mainWorker) throw new Error('No compatible DuckDB-WASM bundle was found.');
@@ -1189,21 +1300,36 @@ const Engine = {
       worker = new Worker(workerUrl);
       const db = new duckdb.AsyncDuckDB(new duckdb.VoidLogger(), worker);
       await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
-      this.db = db;
-      this.conn = await db.connect();
+      const conn = await db.connect();
       let version = '';
       try { version = await db.getVersion(); } catch (_) { /* use pinned release */ }
-      this.set('ready', `DuckDB ${version || APP.duckdb}`);
-      App.onEngineReady();
+      return { db, conn, version };
     } catch (e) {
       try { if (worker) worker.terminate(); } catch (_) { /* startup failed */ }
-      this.db = null; this.conn = null; this._jsonLoaded = false;
-      const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
-      this.set('error', offline ? 'Offline · click to retry' : (firstLines(e && e.message, 1) || 'DuckDB could not be loaded') + ' · click to retry');
-      toast('DuckDB could not be loaded' + (offline ? ' because this device is offline' : '') + '. You can still design and save mappings. Click the engine status to retry.', 'error');
+      throw e;
     } finally {
       if (workerUrl) URL.revokeObjectURL(workerUrl);
     }
+  },
+  async init() {
+    this.set('loading', 'Starting DuckDB');
+    let lastError = null;
+    for (const src of this.sources()) {
+      try {
+        const { db, conn, version } = await this.load(src);
+        this.db = db; this.conn = conn; this._jsonLoaded = false;
+        this.set('ready', `DuckDB ${version || APP.duckdb}`);
+        App.onEngineReady();
+        return;
+      } catch (e) {
+        lastError = e;
+        try { console.warn(`[DataForge] DuckDB could not be loaded from the ${src.label}:`, e); } catch (_) { /* console unavailable */ }
+      }
+    }
+    this.db = null; this.conn = null; this._jsonLoaded = false;
+    const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
+    this.set('error', offline ? 'Offline · click to retry' : (firstLines(lastError && lastError.message, 1) || 'DuckDB could not be loaded') + ' · click to retry');
+    toast('DuckDB could not be loaded' + (offline ? ' because this device is offline' : '') + '. You can still design and save mappings. Click the engine status to retry.', 'error');
   },
   retry() {
     if (this.status !== 'error') return this._readyPromise;
@@ -1219,7 +1345,9 @@ const Engine = {
   async exec(sql) { if (!this.ready) throw new Error('The engine is not ready.'); return this.conn.query(sql); },
   async ensureJson() {
     if (!this._jsonLoaded) {
-      await this.exec('LOAD json');
+      // DuckDB-WASM downloads the JSON extension from extensions.duckdb.org on first use.
+      try { await this.exec('LOAD json'); }
+      catch (e) { throw new Error('JSON support could not be loaded. DuckDB downloads its JSON extension from extensions.duckdb.org on first use; check your connection or firewall and try again. (' + firstLines(e && e.message, 1) + ')'); }
       this._jsonLoaded = true;
     }
   },
@@ -3844,9 +3972,16 @@ CodeGen.dbtTarget = function(node,meta) {
   return `{{ config(materialized='${mat}') }}\n${sql.trim()}${incremental}\n`;
 };
 CodeGen.duckdb = function(nodes) {
+  // A standalone DuckDB script has no $$PARAM syntax: inline the current parameter values so the file runs as it is.
+  const used = new Map();
+  const inline = (sql) => Params.tokenized(sql, (name) => {
+    const v = Params.effective(name);
+    const literal = name === '$$SESSSTARTTIME' ? 'CAST(now() AS TIMESTAMP)' : Params.literal(v.type, v.value);
+    used.set(name, literal); return literal;
+  });
   const emit = (node, group) => {
     try {
-      const sql = Compiler.sql(node.id, { resolved: false, ...(group ? {group} : {}) });
+      const sql = inline(Compiler.sql(node.id, { resolved: false, ...(group ? {group} : {}) }));
       return `${this.options.comments ? '-- ' + node.name + (group ? ' · ' + group : '') + '\n' : ''}${sql.trim()};`;
     } catch(e) {
       this.warn(node, group || 'SQL', e.message);
@@ -3864,7 +3999,8 @@ CodeGen.duckdb = function(nodes) {
       if (code) scripts.push(code);
     }
   }
-  return {text:scripts.join('\n\n') + (scripts.length ? '\n' : ''),files:null};
+  const header = used.size && this.options.comments ? '-- Parameters are inlined with their current values. Edit them here before running:\n' + [...used].map(([name, literal]) => `--   ${name} = ${literal}`).join('\n') + '\n\n' : '';
+  return {text:(scripts.length ? header : '') + scripts.join('\n\n') + (scripts.length ? '\n' : ''),files:null};
 };
 const ZipStore = {
   crc32(bytes) {
@@ -4636,10 +4772,11 @@ const UI = {
           h('span', { class: 'pal-ic', html: svgIcon(d.icon, 17) }), h('span', { text: d.label }));
         item.addEventListener('dragstart', (e) => { e.dataTransfer.setData('application/x-dataforge', d.type); e.dataTransfer.setData('text/plain', d.type); e.dataTransfer.effectAllowed = 'copy'; });
         const addCentered = () => { const r = els.canvas.getBoundingClientRect(), w = View.toWorld(r.left + r.width / 2, r.top + r.height / 2), o = (state.doc.nodes.length % 6) * 24; Actions.addNode(d.type, w.x - NODE_W / 2 + o, w.y - NODE_H / 2 + o); };
-        item.addEventListener('dblclick', addCentered);
+        item.addEventListener('dblclick', () => { if (!Panels.small()) addCentered(); });
+        item.addEventListener('click', () => { if (Panels.small()) { addCentered(); Panels.close(); } });
         item.addEventListener('keydown', (e) => { if (e.key === 'Enter') addCentered(); });
         return item;
-      }))), h('p', { class: 'pal-note', text: 'Drag an item onto the canvas, or double-click it.' }));
+      }))), h('p', { class: 'pal-note', text: Panels.small() ? 'Tap an item to add it to the canvas.' : 'Drag an item onto the canvas, or double-click it.' }));
     if (repository) els.palette.prepend(repository);
   },
   nodeMeta(node, def) {
@@ -4950,7 +5087,7 @@ const Actions = {
     state.sel = new Set(Object.values(idMap)); state.selLink = null;
     History.commit(); UI.renderProps(true);
   },
-  rename(id) { this.select([id]); const el = $('#propName'); if (el) { el.focus(); el.select(); } },
+  rename(id) { this.select([id]); if (Panels.small()) Panels.set('right', true); const el = $('#propName'); if (el) { el.focus(); el.select(); } },
   async attachFile(nodeId, file) {
     const node = Graph.node(nodeId), doc = state.doc;
     if (!node) return;
@@ -4991,7 +5128,9 @@ const Actions = {
   },
   async open(file) {
     try {
-      const { doc, skipped } = normalizeDoc(JSON.parse(await file.text()));
+      const raw = JSON.parse(await file.text());
+      if (raw && raw.projectVersion && Repo.project) { await Repo.importProject(file); return; }
+      const { doc, skipped } = normalizeDoc(raw);
       if (Repo.project) { const id = Repo.acceptMapping(doc); toast(`Imported mapping "${doc.mapping.name}" into the repository.`, 'success'); return; }
       this.loadDoc(doc);
       const need = doc.nodes.filter((n) => Registry.get(n.type).category === 'source' && n.config.fileName && !Files.has(n.id)).length;
@@ -5000,6 +5139,7 @@ const Actions = {
     } catch (e) { toast('Could not open the mapping: ' + firstLines(e.message, 1), 'error'); }
   },
   loadSample(choice = 'original') {
+    if (Workflow.busy()) return;
     // Never overwrite work in progress: a sample opens as its own repository mapping.
     if (state.doc.nodes.length || Studio.mode !== 'mapping') { if (!Repo.project) { toast('The repository is still loading. Try again in a moment.', 'warn'); return; } Repo.createMapping(); }
     const doc = choice === 'phase3' ? Sample.phase3Mapping() : choice === 'phase2' ? Sample.phase2Mapping() : Sample.mapping();
@@ -5071,8 +5211,13 @@ const App = {
   bindCanvas() {
     const canvas = els.canvas;
     let drag = null;
+    const pinch = bindPinch(canvas, {
+      begin: () => { if (drag && drag.type === 'move' && drag.moved) History.commit(); drag = null; canvas.classList.remove('panning', 'connecting'); els.tempLink.setAttribute('hidden', ''); },
+      zoom: (x, y, factor) => { if (Studio.mode === 'mapping') View.zoomAt(x, y, factor); }
+    });
     canvas.addEventListener('pointerdown', (e) => {
       UI.hideContext();
+      if (pinch.active()) return;
       if (e.target.closest('.canvas-tools')) return;
       if (e.button === 2) return;
       const nodeEl = e.target.closest('.node'), handle = e.target.closest('.handle'), linkEl = e.target.closest('.link-g');
@@ -5227,7 +5372,7 @@ const App = {
     });
   },
   start() {
-    Crash.install();
+    Crash.install(); Modals.install(); Panels.install();
     Object.assign(els, {
       app: $('#app'), canvas: $('#canvas'), world: $('#world'), linkRoot: $('#linkRoot'), linkLayer: $('#linkLayer'), tempLink: $('#tempLink'), canvasEmpty: $('#canvasEmpty'),
       palette: $('#palette'), props: $('#props'), mapName: $('#mapName'), zoomVal: $('#zoomVal'), statCounts: $('#statCounts'), issueCnt: $('#issueCnt'),
@@ -5254,7 +5399,7 @@ const App = {
 
 /* Phase 5: local project repository */
 const Repo = {
-  db: null, mode: 'memory', project: null, activeId: null, timer: null, channel: null, tabId: dfUuid(), stale: false, persistAsked: false, runs: [], filesTotal: 0, memoryFiles: new Map(),
+  db: null, mode: 'memory', project: null, activeId: null, timer: null, channel: null, tabId: dfUuid(), stale: false, written: null, persistAsked: false, runs: [], filesTotal: 0, memoryFiles: new Map(),
   fresh() { const now = new Date().toISOString(); return { projectVersion:'1.0', project:{ id: 'p_'+dfUuid(), name:'My DataForge Project', createdAt:now, updatedAt:now }, mappings:[], workflows:[], parameterSets:[], versions:{} }; },
   async init() {
     this.project = this.fresh();
@@ -5271,10 +5416,10 @@ const Repo = {
         // Two tabs editing the same local project would silently overwrite each other; tell the user instead.
         if (typeof BroadcastChannel !== 'undefined') try {
           this.channel = new BroadcastChannel('dataforge.repo');
-          this.channel.onmessage = (e) => { if (e.data?.type === 'saved' && e.data.tab !== this.tabId && !this.stale) { this.stale = true; toast('This project was changed in another DataForge tab. Reload this tab before editing, or the two tabs will overwrite each other.', 'warn'); } };
+          this.channel.onmessage = (e) => { if (e.data?.type === 'saved' && e.data.tab !== this.tabId && !this.stale) { this.stale = true; toast('This project was changed in another DataForge tab. Reload this tab before editing, or the two tabs will overwrite each other.', 'warn', 12000); } };
         } catch (_) { this.channel = null; }
         const stored = await this.get('project','current');
-        if (stored?.document?.projectVersion === '1.0') { this.project=this.normalize(stored.document);existingProject=true; }
+        if (stored?.document?.projectVersion === '1.0') { this.project=this.normalize(stored.document);existingProject=true;this.written=this.signature(); }
         this.runs=(await this.all('runs')).sort((a,b) => String(b.started).localeCompare(String(a.started))).slice(0,200);
       } catch(e) { this.db=null; this.mode='memory'; toast('IndexedDB unavailable: repository will remain in memory for this tab.','warn'); }
     }
@@ -5305,9 +5450,13 @@ const Repo = {
   all(store) { if(!this.db) return Promise.resolve([]); return new Promise((resolve,reject) => {const r=this.db.transaction(store,'readonly').objectStore(store).getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);}); },
   put(store,value) { if(!this.db) return Promise.resolve();return new Promise((resolve,reject)=>{const t=this.db.transaction(store,'readwrite');t.objectStore(store).put(value);t.oncomplete=()=>resolve();t.onerror=()=>reject(t.error);}); },
   del(store,id) {if(!this.db)return Promise.resolve();return new Promise((resolve,reject)=>{const t=this.db.transaction(store,'readwrite');t.objectStore(store).delete(id);t.oncomplete=()=>resolve();t.onerror=()=>reject(t.error);});},
+  // Content fingerprint that ignores the "last saved" timestamp, so reopening a project does not count as a change.
+  signature() { return JSON.stringify({...this.project,project:{...this.project.project,updatedAt:''}}); },
   async writeProject() {
     if(!this.db)return;
-    try{await this.put('project',{id:'current',document:clone(this.project)});try{this.channel?.postMessage({type:'saved',tab:this.tabId});}catch(_){}}
+    const sig=this.signature();
+    if(sig===this.written)return;
+    try{await this.put('project',{id:'current',document:JSON.parse(JSON.stringify(this.project))});this.written=sig;try{this.channel?.postMessage({type:'saved',tab:this.tabId});}catch(_){}}
     catch(e){toast(e?.name==='QuotaExceededError'?'Project save failed: this browser is out of storage space. Clear stored source files or export the project to keep your work.':'Project save failed: '+firstLines(e?.message,1),'error');}
   },
   save() { if(!this.project)return; clearTimeout(this.timer);this.timer=setTimeout(()=>{this.timer=null;this.project.project.updatedAt=new Date().toISOString(); this.writeProject();this.render();},240); },
@@ -5323,11 +5472,12 @@ const Repo = {
     const doc=normalizeDoc(raw).doc;
     let id=doc.mapping.id;
     if(this.project.mappings.some(x=>x.mapping.id===id)) {id='m_'+dfUuid();doc.mapping.id=id; doc.mapping.name+=' (imported)';}
-    this.project.mappings.push(doc);this.save();
+    this.project.mappings.push(doc);this.save();this.render();
     if(open)this.openMapping(id);
     return id;
   },
   createMapping() {
+    if(Workflow.busy())return null;
     if(Studio.mode==='mapping')this.track();
     // Leaving a read-only historical version: the new mapping must be editable.
     Versions.readonly=false;els.app.classList.remove('readonly');$('#readonlyBar').hidden=true;
@@ -5337,6 +5487,7 @@ const Repo = {
   createWorkflow() {const doc=Workflow.newDoc();this.project.workflows.push(doc);this.save();Workflow.open(doc.id);return doc;},
   createParamSet() {const set={id:'ps_'+dfUuid(),name:'New parameter set',values:{}};this.project.parameterSets.push(set);this.save();this.render();this.editSet(set.id);},
   async openMapping(id) {
+    if(Workflow.busy())return;
     if(Studio.mode==='mapping')this.track();
     const doc=this.project.mappings.find(d=>d.mapping.id===id);if(!doc)return;
     this.activeId=id;Versions.readonly=false;this.rememberActive();
@@ -5362,7 +5513,7 @@ const Repo = {
     this.project[type].push(copy);this.save();this.open(newid,type);
   },
   async remove(id,type) {
-    const item=this.item(id,type);if(!item)return;
+    const item=this.item(id,type);if(!item||Workflow.busy())return;
     const versions=type==='mappings'?(this.project.versions[id]||[]).length:0;
     if(!(await Dialog.confirm(`Delete ${this.label(type)}?`,`"${type==='mappings'?item.mapping.name:item.name}" will be removed from this project`+(versions?` together with its ${versions} saved version${versions>1?'s':''}`:'')+'. This cannot be undone.',{ok:'Delete',danger:true}))||this.item(id,type)!==item)return;
     this.project[type]=this.project[type].filter(x=>(type==='mappings'?x.mapping.id:x.id)!==id);
@@ -5432,7 +5583,7 @@ const Repo = {
           ]);
         }});
         rows.push(h('div',{class:'repo-item'+(current?' current':''),title:name,ondblclick:()=>this.open(id,type)},
-          h('button',{class:'repo-open',text:name,title:'Double-click to open',ondblclick:()=>this.open(id,type)}),more));
+          h('button',{class:'repo-open',text:name,title:'Double-click to open',ondblclick:()=>this.open(id,type),onclick:()=>{if(Panels.small()){this.open(id,type);if(type!=='parameterSets')Panels.close();}}}),more));
       }
       const list=h('div',{'data-repo-list':type},...rows);
       const header=h('button',{class:'repo-folder-title',onclick:()=>list.hidden=!list.hidden},h('span',{html:svgIcon(icon,13)}),`${label} (${this.project[type].length})`);
@@ -5442,6 +5593,7 @@ const Repo = {
   },
   exportProject(suffix='') {if(Studio.mode==='mapping')this.track();downloadBlob(new Blob([JSON.stringify(this.project,null,2)],{type:'application/json'}),slug(this.project.project.name).replace(/^n_/,'')+suffix+'.dfproj.json');},
   async importProject(file) {
+    if(Workflow.busy())return;
     try {const raw=JSON.parse(await file.text());if(raw.version==='1.0'&&Array.isArray(raw.nodes)){this.acceptMapping(raw);toast('Mapping added to project.','success');return;}
       const p=this.normalize(raw);let report='';
       const has=this.project.mappings.length+this.project.workflows.length+this.project.parameterSets.length;
@@ -5516,11 +5668,13 @@ const Versions = {
       h('button',{class:'btn',text:'Close',onclick:()=>host.hidden=true}));
   },
   view(id,no) {
+    if(Workflow.busy())return;
     const v=(Repo.project.versions[id]||[]).find(v=>v.versionNo===no);if(!v)return;
     Repo.openMapping(id).then(()=>{this.readonly=true;Actions.loadDoc(clone(v.doc));this.readonly=true;els.app.classList.add('readonly');$('#readonlyBar').hidden=false;$('#readonlyBarText').textContent=`Viewing v${no} · read-only`;this.open(id);});
   },
   exitView() {if(!this.readonly)return;Repo.openMapping(Repo.activeId);},
   restore(id,no) {
+    if(Workflow.busy())return;
     const v=(Repo.project.versions[id]||[]).find(v=>v.versionNo===no);if(!v)return;
     const current=Repo.project.mappings.find(x=>x.mapping.id===id),next=clone(v.doc);
     next.mapping.id=id;next.mapping.updatedAt=new Date().toISOString();
@@ -5631,6 +5785,7 @@ const Workflow = {
   },
   normalize(d) { if(!d||!Array.isArray(d.nodes)||!Array.isArray(d.links))throw new Error('Invalid workflow.');const w={...this.newDoc(),...clone(d)};w.nodes=w.nodes.filter(n=>!!TaskRegistry.get(n.type)).map(n=>({...n,position:{x:Number(n.position?.x)||0,y:Number(n.position?.y)||0},config:{...TaskRegistry.get(n.type).defaultConfig(),...n.config}}));if(!w.nodes.some(n=>n.type==='start'))w.nodes.unshift({id:nextId('t',w.nodes),type:'start',name:'Start',position:{x:40,y:150},config:{}});w.variables=w.variables||{};return w;},
   open(id) {
+    if(this.runState&&this.active?.id!==id&&this.busy())return;
     if(Studio.mode==='mapping')Repo.track();
     const w=Repo.project.workflows.find(x=>x.id===id);if(!w)return;
     this.active=w;this.sel=new Set();this.selLink=null;this.resetHistory();Studio.switch('workflow');this.render();this.fit();Repo.render();
@@ -5688,7 +5843,9 @@ const Workflow = {
   toWorld(x,y){const r=this.layer.getBoundingClientRect();return{x:(x-r.left-this.view.x)/this.view.k,y:(y-r.top-this.view.y)/this.view.k};},
   zoom(factor,px=null,py=null){const r=this.layer.getBoundingClientRect(),v=this.view;px??=r.width/2;py??=r.height/2;const k=Math.min(2,Math.max(.25,v.k*factor));v.x=px-(px-v.x)/v.k*k;v.y=py-(py-v.y)/v.k*k;v.k=k;this.applyView();},
   fit(){if(!this.active||!this.layer)return;const r=this.layer.getBoundingClientRect(),ns=this.active.nodes;if(!ns.length)return;const x1=Math.min(...ns.map(n=>n.position.x)),y1=Math.min(...ns.map(n=>n.position.y)),x2=Math.max(...ns.map(n=>n.position.x+NODE_W)),y2=Math.max(...ns.map(n=>n.position.y+70));const k=Math.min(1.2,Math.max(.3,Math.min((r.width-110)/(x2-x1),(r.height-120)/(y2-y1))));this.view={k,x:(r.width-(x2-x1)*k)/2-x1*k,y:(r.height-(y2-y1)*k)/2-y1*k};this.applyView();},
-  bind(){let drag=null;this.layer.addEventListener('pointerdown',e=>{if(e.button===2||e.target.closest('.wf-tools'))return;const handle=e.target.closest('.handle'),node=e.target.closest('.wf-node'),link=e.target.closest('.link-g');
+  bind(){let drag=null;
+    const pinch=bindPinch(this.layer,{begin:()=>{if(drag?.type==='move'&&drag.moved)this.commit();drag=null;$('#wfTempLink')?.remove();},zoom:(x,y,factor)=>{const r=this.layer.getBoundingClientRect();this.zoom(factor,x-r.left,y-r.top);}});
+    this.layer.addEventListener('pointerdown',e=>{if(pinch.active()||e.button===2||e.target.closest('.wf-tools'))return;const handle=e.target.closest('.handle'),node=e.target.closest('.wf-node'),link=e.target.closest('.link-g');
     if(handle?.classList.contains('out')&&node){drag={type:'connect',from:node.dataset.id};e.preventDefault();return;}
     if(node){const id=node.dataset.id,was=this.sel.has(id);if(e.shiftKey){const s=new Set(this.sel);if(was)s.delete(id);else s.add(id);this.select([...s]);if(was)return;}else if(!was)this.select([id]);drag={type:'move',x:e.clientX,y:e.clientY,moved:false,entries:[...this.sel].map(id=>({n:this.node(id),x:this.node(id).position.x,y:this.node(id).position.y}))};e.preventDefault();return;}
     if(link){this.select([],link.dataset.link);e.preventDefault();return;}
@@ -5700,7 +5857,7 @@ const Workflow = {
     window.addEventListener('pointerup',e=>{if(!drag||Studio.mode!=='workflow')return;const old=drag;drag=null;$('#wfTempLink')?.remove();if(old.type==='move'&&old.moved)this.commit();else if(old.type==='connect'){const target=document.elementFromPoint(e.clientX,e.clientY)?.closest('.wf-node');if(target)this.link(old.from,target.dataset.id);}else if(old.type==='pan'&&!old.moved)this.select();});
     this.layer.addEventListener('wheel',e=>{e.preventDefault();const r=this.layer.getBoundingClientRect();this.zoom(Math.exp(-e.deltaY*.0014),e.clientX-r.left,e.clientY-r.top);},{passive:false});
     this.layer.addEventListener('dragover',e=>e.preventDefault());this.layer.addEventListener('drop',e=>{e.preventDefault();const type=e.dataTransfer.getData('application/x-dataforge-workflow');if(TaskRegistry.get(type)){const p=this.toWorld(e.clientX,e.clientY);this.add(type,p.x-100,p.y-35);}});
-    this.layer.addEventListener('contextmenu',e=>{const node=e.target.closest('.wf-node');if(!node)return;e.preventDefault();const id=node.dataset.id;this.select([id]);UI.showContext(e.clientX,e.clientY,[{label:'Rename',run:()=>{$('#props input')?.focus();}},{label:'Duplicate',run:()=>this.duplicate()},{label:'Delete',run:()=>this.remove()}]);});
+    this.layer.addEventListener('contextmenu',e=>{const node=e.target.closest('.wf-node');if(!node)return;e.preventDefault();const id=node.dataset.id;this.select([id]);UI.showContext(e.clientX,e.clientY,[{label:'Rename',run:()=>{if(Panels.small())Panels.set('right',true);$('#props input')?.focus();}},{label:'Duplicate',run:()=>this.duplicate()},{label:'Delete',run:()=>this.remove()}]);});
   },
   validate(show=false) {
     const w=this.active,issues=[];if(!w)return issues;const error=(id,msg)=>issues.push({severity:'error',node:id,message:msg}),warn=(id,msg)=>issues.push({severity:'warning',node:id,message:msg});
@@ -5829,6 +5986,22 @@ const Workflow = {
     }catch(e){toast('Workflow error: '+firstLines(e.message),'error');throw e;}
     finally {this.lastState=ctx;this.runState=null;$('#btnStopWorkflow').hidden=true;this.renderNodes();this.renderLog();if(Studio.mode==='workflow')$('#btnRun span').textContent='Run workflow';}
   },
+  // A workflow is only meaningful with the mappings and parameter sets it runs, so it is exported as a small
+  // project file that Open / Import can merge into any other project.
+  exportBundle(){
+    const w=this.active;if(!w){toast('Open a workflow to export it.','warn');return;}
+    const sessions=w.nodes.filter(n=>n.type==='session');
+    const mapIds=new Set(sessions.map(n=>n.config.mappingId).filter(Boolean)),setIds=new Set([w.parameterSetId,...sessions.map(n=>n.config.parameterSetId)].filter(Boolean));
+    const p=Repo.fresh();p.project.name=w.name;
+    p.mappings=Repo.project.mappings.filter(m=>mapIds.has(m.mapping.id)).map(clone);
+    p.parameterSets=Repo.project.parameterSets.filter(x=>setIds.has(x.id)).map(clone);
+    p.workflows=[clone(w)];
+    downloadBlob(new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),(slug(w.name).replace(/^n_/,'')||'workflow')+'.dfproj.json');
+    toast(`Workflow exported with ${p.mappings.length} mapping${p.mappings.length===1?'':'s'}. Use Open in another project to import it.`,'success');
+  },
+  // The workflow runner temporarily swaps the open mapping while a session executes, so navigation that loads
+  // another mapping must wait until the run has finished.
+  busy(){if(!this.runState)return false;toast('A workflow is running. Wait for it to finish or choose Stop first.','warn');return true;},
   stop(){if(this.runState){this.runState.cancelled=true;this.runState.endReason='Stopped by user';toast('Workflow stop requested.','warn');}},
   renderLog(){
     const pane=$('#pane-log');if(Studio.mode!=='workflow'||!pane)return;
@@ -5843,8 +6016,19 @@ const Workflow = {
       if(!Repo.project)return;
       for(const w of Repo.project.workflows){if(!(Number(w.scheduleMinutes)>0))continue;
         let due=this.scheduleAt[w.id];if(!due){due=Date.now()+Number(w.scheduleMinutes)*60000;this.scheduleAt[w.id]=due;}
-        if(Date.now()>=due){this.scheduleAt[w.id]=Date.now()+Number(w.scheduleMinutes)*60000;
-          if(!this.runState&&!state.running){const back=this.active?.id;this.open(w.id);this.run().finally(()=>{if(back&&back!==w.id)this.open(back);});}
+        if(Date.now()>=due){
+          // Never interrupt a run, an open dialog or someone who is typing: try again shortly.
+          const idle=!this.runState&&!state.running&&!Modals.top()&&$('#dialogOverlay').hidden&&!/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName||'');
+          if(!idle){this.scheduleAt[w.id]=Date.now()+15000;continue;}
+          this.scheduleAt[w.id]=Date.now()+Number(w.scheduleMinutes)*60000;
+          const back={mode:Studio.mode,workflow:this.active?.id,mapping:Repo.activeId};
+          this.open(w.id);toast(`Scheduled run of "${w.name}" started.`);
+          this.run().catch(()=>{}).finally(()=>{
+            const prev=Repo.project.workflows.find(x=>x.id===back.workflow);
+            if(prev&&prev.id!==w.id){if(back.mode==='workflow')this.open(prev.id);else this.active=prev;}
+            if(back.mode==='mapping'&&Repo.project.mappings.some(m=>m.mapping.id===back.mapping))Repo.openMapping(back.mapping);
+            else if(back.mode!=='workflow')Studio.switch(back.mode);
+          });
         }
       }
       if(Studio.mode==='workflow'&&this.active){const due=this.scheduleAt[this.active.id];const el=$('#scheduleCountdown');if(el)el.textContent=Number(this.active.scheduleMinutes)>0?'Next scheduled run in '+Math.max(0,Math.ceil((due-Date.now())/1000))+'s':'Schedule off';}
@@ -6103,6 +6287,7 @@ const Studio = {
   mode:'mapping',
   switch(mode) {
     if(!['mapping','workflow','monitor'].includes(mode)||!Repo.project)return;
+    if(mode==='mapping'&&this.mode!=='mapping'&&Workflow.busy()){const sel=$('#studioMode');if(sel)sel.value=this.mode;return;}
     if(this.mode==='mapping'&&mode!=='mapping')Repo.track();
     if(mode==='workflow'&&!Workflow.active){if(Repo.project.workflows.length)Workflow.active=Repo.project.workflows[0];else return Repo.createWorkflow();}
     this.mode=mode;const selector=$('#studioMode');if(selector)selector.value=mode;
@@ -6121,18 +6306,18 @@ const Studio = {
     if(mode==='monitor'){Monitor.show();els.mapName.value='Run Monitor';els.mapName.disabled=true;}
     UI.renderPalette();Repo.render();this.updateToolbar();
   },
-  updateToolbar(){const mode=this.mode;$('#btnNew').title=mode==='workflow'?'New workflow':'New mapping';$('#btnSave').title=mode==='workflow'?'Save workflow':'Save mapping as JSON (Ctrl+S)';$('#btnValidate').title=mode==='workflow'?'Validate workflow':'Validate mapping';},
+  updateToolbar(){const mode=this.mode;$('#btnNew').title=mode==='workflow'?'New workflow':'New mapping';$('#btnSave').title=mode==='workflow'?'Export workflow with its mappings as .dfproj.json (Ctrl+S)':'Save mapping as JSON (Ctrl+S)';$('#btnValidate').title=mode==='workflow'?'Validate workflow':'Validate mapping';},
   palette(){const palette=els.palette,repo=$('#repoNav');
     if(this.mode==='workflow'){
       palette.replaceChildren(...TaskRegistry.list().map(d=>h('div',{class:'pal-group'},h('h3',{text:d.label}),
-        h('div',{class:'pal-item cat-'+(d.category==='source'?'source':d.category==='target'?'target':'transformation'),draggable:d.type!=='start',title:`Drag ${d.label} to workflow canvas · double-click to add`,ondragstart:e=>{e.dataTransfer.setData('application/x-dataforge-workflow',d.type);},ondblclick:()=>{const r=Workflow.layer.getBoundingClientRect(),p=Workflow.toWorld(r.left+r.width/2,r.top+r.height/2);Workflow.add(d.type,p.x-100,p.y-30);}},h('span',{class:'pal-ic',html:svgIcon(d.icon)}),h('span',{text:d.label})))));
+        h('div',{class:'pal-item cat-'+(d.category==='source'?'source':d.category==='target'?'target':'transformation'),draggable:d.type!=='start',title:`Drag ${d.label} to workflow canvas · double-click to add`,ondragstart:e=>{e.dataTransfer.setData('application/x-dataforge-workflow',d.type);},ondblclick:()=>{if(Panels.small())return;const r=Workflow.layer.getBoundingClientRect(),p=Workflow.toWorld(r.left+r.width/2,r.top+r.height/2);Workflow.add(d.type,p.x-100,p.y-30);},onclick:()=>{if(!Panels.small()||d.type==='start')return;const r=Workflow.layer.getBoundingClientRect(),p=Workflow.toWorld(r.left+r.width/2,r.top+r.height/2);Workflow.add(d.type,p.x-100,p.y-30);Panels.close();}},h('span',{class:'pal-ic',html:svgIcon(d.icon)}),h('span',{text:d.label})))));
     } else if(this.mode==='monitor')palette.replaceChildren(h('div',{class:'pal-note',text:'Search and open repository objects below.'}));
     else return;
     if(repo)palette.prepend(repo);
   },
   handleClick(e){if(this.mode==='mapping')return false;const id=e.target.closest('button')?.id;
     if(this.mode==='monitor'){if(['btnRun','btnSave','btnValidate','btnNew','btnUndo','btnRedo','btnZoomIn','btnZoomOut','btnFit'].includes(id)){e.preventDefault();e.stopImmediatePropagation();return true;}return false;}
-    const dispatch={btnNew:()=>Repo.createWorkflow(),btnSave:()=>{Repo.save();toast('Workflow saved to repository.','success');},btnValidate:()=>Workflow.validate(true),btnRun:()=>Workflow.run(),btnUndo:()=>Workflow.undo(-1),btnRedo:()=>Workflow.undo(1),btnZoomIn:()=>Workflow.zoom(1.2),btnZoomOut:()=>Workflow.zoom(.83),btnFit:()=>Workflow.fit()};
+    const dispatch={btnNew:()=>Repo.createWorkflow(),btnSave:()=>Workflow.exportBundle(),btnValidate:()=>Workflow.validate(true),btnRun:()=>Workflow.run(),btnUndo:()=>Workflow.undo(-1),btnRedo:()=>Workflow.undo(1),btnZoomIn:()=>Workflow.zoom(1.2),btnZoomOut:()=>Workflow.zoom(.83),btnFit:()=>Workflow.fit()};
     if(dispatch[id]){e.preventDefault();e.stopImmediatePropagation();dispatch[id]();return true;}return false;
   }
 };
@@ -6187,10 +6372,13 @@ const Commands = {
     return commands;
   },
   score(s,q){s=s.toLowerCase();q=q.toLowerCase();if(s.includes(q))return 100-s.indexOf(q);let i=0,score=0;for(const c of s){if(c===q[i]){score+=2;i++;if(i===q.length)break;}}return i===q.length?score:-1;},
+  index:0,
   open(){const overlay=$('#commandOverlay'),input=$('#commandInput');overlay.hidden=false;input.value='';this.render();input.focus();},
+  move(delta){const rows=[...$('#commandResults').children];if(!rows.length)return;this.index=(this.index+delta+rows.length)%rows.length;rows.forEach((r,i)=>{r.classList.toggle('active',i===this.index);r.setAttribute('aria-selected',String(i===this.index));});rows[this.index].scrollIntoView({block:'nearest'});},
   close(){$('#commandOverlay').hidden=true;},
   render(){const q=$('#commandInput').value.trim(),res=this.list().map(([title,act])=>({title,act,score:this.score(title,q)})).filter(x=>x.score>=0).sort((a,b)=>b.score-a.score).slice(0,14);
-    $('#commandResults').replaceChildren(...res.map((item,i)=>h('button',{class:'command-row'+(i===0?' active':''),onclick:()=>{this.close();item.act();}},h('span',{html:svgIcon(item.title.startsWith('Node')?'expression':'check',15)}),h('span',{text:item.title}))));
+    this.index=0;
+    $('#commandResults').replaceChildren(...res.map((item,i)=>h('button',{class:'command-row'+(i===0?' active':''),role:'option','aria-selected':String(i===0),tabindex:'-1',onclick:()=>{this.close();item.act();}},h('span',{html:svgIcon(item.title.startsWith('Node')?'expression':'check',15)}),h('span',{text:item.title}))));
   }
 };
 const Phase5 = {
@@ -6221,7 +6409,7 @@ const Phase5 = {
     $('#btnVersionClose').onclick=()=>Versions.exitView();
     $('#generalModalClose').onclick=()=>{$('#generalModal').hidden=true;};
     $('#commandInput').oninput=()=>Commands.render();
-    $('#commandInput').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('#commandResults button')?.click();}if(e.key==='Escape'){e.preventDefault();Commands.close();}};
+    $('#commandInput').onkeydown=e=>{if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();Commands.move(e.key==='ArrowDown'?1:-1);return;}if(e.key==='Enter'){e.preventDefault();($('#commandResults .active')||$('#commandResults button'))?.click();}if(e.key==='Escape'){e.preventDefault();Commands.close();}};
     $('#projectInput').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)Repo.importProject(f);};
     $('#xmlInput').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)XmlImport.import(f);};
     document.addEventListener('keydown',e=>{
@@ -6230,7 +6418,7 @@ const Phase5 = {
       if(e.key==='Escape'){Commands.close();$('#generalModal').hidden=true;}
       if(mod&&e.shiftKey&&key==='s'){e.preventDefault();e.stopImmediatePropagation();Versions.save();return;}
       if(Studio.mode==='workflow'){
-        if(mod&&key==='s'){e.preventDefault();e.stopImmediatePropagation();Repo.save();toast('Workflow saved.','success');return;}
+        if(mod&&key==='s'){e.preventDefault();e.stopImmediatePropagation();Workflow.exportBundle();return;}
         if(mod&&key==='z'){e.preventDefault();e.stopImmediatePropagation();Workflow.undo(e.shiftKey?1:-1);return;}
         if(mod&&key==='y'){e.preventDefault();e.stopImmediatePropagation();Workflow.undo(1);return;}
         if(mod&&key==='d'){e.preventDefault();e.stopImmediatePropagation();Workflow.duplicate();return;}

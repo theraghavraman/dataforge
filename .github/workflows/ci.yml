@@ -1,26 +1,24 @@
-name: DataForge smoke tests
+name: CI
 
 on:
   push:
+    branches: [main]
   pull_request:
-  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  test:
+  smoke-test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
-      - name: Install test dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install pytest playwright
-          python -m playwright install --with-deps chromium
-      - name: Static and browser smoke tests
-        run: python -m pytest tests/ -q
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      # Loads DuckDB-WASM the way a visitor does (vendor/duckdb/ if committed, otherwise the jsDelivr CDN).
+      - run: npm test
