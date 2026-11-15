@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.2
+
+### Changed
+- **Opens in the light theme.** Dark is used only if you switched to it before on this device; the theme button still toggles.
+
 ## 1.1.1
 
 Found by running the generated code instead of only generating it.

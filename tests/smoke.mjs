@@ -66,6 +66,10 @@ await check('engine starts', async () => {
   expect(state === 'ready', 'engine state is ' + state + ': ' + await page.textContent('#enginePill'));
   return (await page.textContent('#engineMsg')).trim();
 });
+await check('opens in the light theme', async () => {
+  const theme = await page.evaluate(() => document.documentElement.dataset.theme);
+  expect(theme === 'light', 'theme is ' + theme);
+});
 await check('first run: welcome screen and about dialog', async () => {
   expect(await page.isVisible('#welcomeStage'), 'welcome screen missing');
   await page.click('#generalModal >> text=Continue');
