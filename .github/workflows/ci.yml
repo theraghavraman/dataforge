@@ -22,3 +22,28 @@ jobs:
       - run: npx playwright install --with-deps chromium
       # Loads DuckDB-WASM the way a visitor does (vendor/duckdb/ if committed, otherwise the jsDelivr CDN).
       - run: npm test
+
+  generated-code:
+    # Runs the code DataForge generates for the three samples and compares every target with the app's own output.
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: tests/codegen/requirements.txt
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: pip install -r tests/codegen/requirements.txt
+      - run: node tests/codegen/export.mjs codegen-out
+      - run: python tests/codegen/verify.py codegen-out

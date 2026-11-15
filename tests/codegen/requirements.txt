@@ -1,0 +1,6 @@
+# Engines used by tests/codegen/verify.py to run the code DataForge generates.
+duckdb==2.0.0
+sqlglot==30.31.0
+pyspark==4.3.0
+dbt-core==1.12.7
+dbt-duckdb==1.11.1

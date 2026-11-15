@@ -58,7 +58,27 @@ npx playwright install chromium
 npm test
 ```
 
-`npm test` drives the real app in headless Chromium: it runs the three samples and the sample workflow on DuckDB-WASM, exports every dialect, and checks persistence across reloads, project import/export, share links, the dialogs and the phone layout. The same test runs in GitHub Actions on every push. See [CHANGELOG.md](CHANGELOG.md) for release notes.
+`npm test` drives the real app in headless Chromium: it runs the three samples and the sample workflow on DuckDB-WASM, runs JSON sources and targets (array and newline-delimited), exports every dialect, and checks persistence across reloads, project import/export, share links, the dialogs and the phone layout.
+
+### Generated code is executed, not just generated
+
+```sh
+pip install -r tests/codegen/requirements.txt   # DuckDB, PySpark (needs Java 17+), dbt, sqlglot
+npm run test:codegen
+```
+
+This exports the code for the three samples and compares every target with the file the app itself produced:
+
+| Export | How it is checked |
+| --- | --- |
+| DuckDB SQL | Executed in native DuckDB. |
+| PySpark | Executed on a local Spark session. |
+| Snowflake SQL | Parsed as Snowflake SQL, every column resolved under Snowflake's identifier rules, and the logic executed on DuckDB through a sqlglot translation. |
+| dbt | `dbt compile`, then the same three Snowflake checks on the compiled models. |
+
+No Snowflake account is involved, so the Snowflake and dbt checks cover logic and name resolution, not warehouse-specific runtime behaviour: review those two exports before running them in production. Generated Snowflake and dbt SQL uses upper-case column and table names, the Snowflake default.
+
+Both test suites run in GitHub Actions on every push. See [CHANGELOG.md](CHANGELOG.md) for release notes.
 
 ## Keyboard shortcuts
 

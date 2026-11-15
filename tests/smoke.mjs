@@ -189,6 +189,41 @@ await check('uploaded CSV: run, remember on this device, reload, run again', asy
   await page.waitForTimeout(400); await page.close(); page = await open();
   await run(page); s = await summary(page); expect(s?.ok && s.rows === 2, 'run after reload ' + JSON.stringify(s));
 });
+// JSON sources and targets need DuckDB's JSON extension, which the engine downloads from extensions.duckdb.org on first use.
+// An offline run (DATAFORGE_TEST_MIRROR) cannot reach that host, so these checks only run online.
+const jsonMapping = (fileName, text, sourceFormat, targetFormat) => page.evaluate(async ([fileName, text, sourceFormat, targetFormat]) => {
+  const { Actions: A, state, History } = DataForge;
+  A.addNode('json_source', 60, 100); A.addNode('filter', 340, 100); A.addNode('json_target', 620, 100);
+  const [src, fil, tgt] = state.doc.nodes; A.link(src.id, fil.id); A.link(fil.id, tgt.id);
+  src.config.format = sourceFormat; fil.config.condition = 'qty > 1'; tgt.config.format = targetFormat; tgt.config.fileName = 'out.json'; History.commit();
+  await A.attachFile(src.id, new File([text], fileName, { type: 'application/json' }));
+  return tgt.id;
+}, [fileName, text, sourceFormat, targetFormat]);
+const targetText = (id) => page.evaluate(async (id) => { const o = DataForge.state.outputs[id]; return o ? (await fetch(o.url)).text() : null; }, id);
+const ROWS = [{ id: 1, name: 'O\'Brien, "Al"', qty: 2, tags: ['a', 'b'] }, { id: 2, name: '<b>x</b>', qty: 1, tags: [] }, { id: 3, name: 'ünïcode', qty: 5, tags: ['c'] }];
+if (mirror) console.log('  skip JSON source and target (offline run: the JSON extension cannot be downloaded)');
+else {
+  await check('JSON array source → JSON array target (downloads the JSON extension)', async () => {
+    await page.click('#btnNew'); await page.waitForTimeout(300);
+    const id = await jsonMapping('orders.json', JSON.stringify(ROWS), 'auto', 'array');
+    await page.waitForTimeout(800); await run(page);
+    const s = await summary(page); expect(s?.ok && s.rows === 2, 'run ' + JSON.stringify(s) + ' · ' + await page.evaluate(() => DataForge.state.log.slice(-3).map((l) => l.text || l.message || '').join(' | ')));
+    const out = JSON.parse(await targetText(id));
+    expect(Array.isArray(out) && out.length === 2 && out[0].name === ROWS[0].name && out[1].name === 'ünïcode' && out[0].tags.join() === 'a,b', 'unexpected JSON output ' + JSON.stringify(out).slice(0, 200));
+    return '2 of 3 rows written as a JSON array';
+  });
+  await check('newline-delimited JSON source → newline-delimited JSON target', async () => {
+    await page.click('#btnNew'); await page.waitForTimeout(300);
+    const id = await jsonMapping('orders.ndjson', ROWS.map((r) => JSON.stringify(r)).join('\n') + '\n', 'newline_delimited', 'newline_delimited');
+    await page.waitForTimeout(800); await run(page);
+    const s = await summary(page); expect(s?.ok && s.rows === 2, 'run ' + JSON.stringify(s));
+    const lines = (await targetText(id)).trim().split('\n').map((l) => JSON.parse(l));
+    expect(lines.length === 2 && lines[0].id === 1 && lines[1].id === 3, 'unexpected NDJSON output ' + JSON.stringify(lines).slice(0, 200));
+    const code = await page.evaluate(() => ['snowflake', 'pyspark', 'dbt', 'duckdb'].map((d) => { try { const g = DataForge.CodeGen.generate(d); return (g.files ? Object.values(g.files).join('') : g.text).length; } catch (e) { return 'error: ' + e.message; } }));
+    expect(code.every((n) => typeof n === 'number' && n > 200), 'JSON mapping export: ' + JSON.stringify(code));
+    return '2 of 3 rows written as NDJSON; exports to every dialect';
+  });
+}
 await check('share link opens in another tab; the first tab is warned about the change', async () => {
   await page.click('#repoBody button:text-is("Share link")'); await page.waitForTimeout(400);
   const link = await page.evaluate(() => navigator.clipboard.readText());

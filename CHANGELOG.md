@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.1.1
+
+Found by running the generated code instead of only generating it.
+
+### Fixed
+- **PySpark export crashed on its first line of logic.** Parameters were written as JSON (`null`, `true`, `false`), which is not Python. Every generated script failed with `NameError: name 'null' is not defined`.
+- **PySpark SCD Type 2** failed with an unresolved `__change_type` column.
+- **PySpark targets** are written to a folder named after the chosen format (`orders.parquet`), not to a Parquet folder called `orders.csv`.
+- **Snowflake and dbt: column names did not resolve.** Generated SQL quoted names in lower case (`"qty"`) while expressions used them unquoted (`qty`, which Snowflake reads as `QTY`). Quoted names are now upper-case throughout, the Snowflake default.
+- **Snowflake and dbt: regular expressions lost their backslashes** (`'\s'` is `'s'` in a Snowflake string), so a "valid email" rule rejected every row. Backslashes in string literals are now doubled.
+- **Snowflake and dbt: `regexp_matches` became `REGEXP_LIKE`**, which must match the whole value. It is now `REGEXP_INSTR(...) > 0`, which finds the pattern anywhere, as DuckDB does.
+- **dbt: `strftime` became Spark's `date_format`**, which Snowflake does not have. It is now `TO_VARCHAR` with a Snowflake format.
+
+### Added
+- **Generated-code test** (`npm run test:codegen`, also in GitHub Actions): executes the DuckDB SQL and PySpark exports of the three samples and checks the Snowflake and dbt exports by parser, name resolution and a DuckDB translation, comparing every target with the app's own output.
+- **JSON in the smoke test:** JSON array and newline-delimited sources and targets now run in CI, including the download of DuckDB's JSON extension.
+
 ## 1.1.0
 
 ### Fixed
