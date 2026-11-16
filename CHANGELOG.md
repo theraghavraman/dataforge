@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.3
+
+### Changed
+- **Opens in the dark theme again.** Light is used only if you switched to it before on this device; the theme button still toggles.
+
 ## 1.1.2
 
 ### Changed
