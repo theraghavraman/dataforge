@@ -378,6 +378,58 @@ table.log a{color:var(--accent)}
 .repo-storage{font-size:10.5px;display:flex;gap:5px;align-items:center;color:var(--muted);border-top:1px solid var(--line);margin-top:8px;padding-top:6px}
 .repo-storage .linkish{margin-left:auto}
 .repo-inline-editor{position:relative;max-height:300px;overflow:auto;border-top:1px solid var(--line);margin-top:6px;padding:8px 0;font-size:11px}
+/* Project section: the open project, its file state and the .dfproj save / open actions */
+.project-nav{background:var(--panel-2);border-bottom:1px solid var(--line);padding:9px 8px 10px}
+.project-head{display:flex;align-items:center;justify-content:space-between;gap:5px;margin-bottom:6px}
+.project-label{display:flex;align-items:center;gap:6px;padding:2px 3px;color:var(--text);font:600 13px var(--disp);text-transform:uppercase;letter-spacing:.04em}
+.project-label span{display:inline-flex;color:var(--accent)}
+.project-name{width:100%;min-height:28px;padding:5px 7px;font:600 12.5px var(--ui)}
+.project-meta{margin-top:6px;font-size:10.5px;line-height:1.45;color:var(--muted)}
+.project-state{display:flex;align-items:flex-start;gap:6px;margin-top:3px;font-size:10.5px;line-height:1.4;color:var(--muted)}
+.project-state i{flex:none;width:7px;height:7px;margin-top:4px;border-radius:50%;background:var(--warn)}
+.project-state[data-state="clean"] i{background:var(--ok)}
+.project-state[data-state="empty"] i{background:var(--faint)}
+.project-state span{min-width:0;overflow-wrap:anywhere}
+.project-nav .btn-row{margin-top:8px;gap:4px;flex-wrap:nowrap}
+.project-nav .btn{flex:1;justify-content:center;gap:5px;padding:4px 6px;font-size:11px;white-space:nowrap}
+.project-nav .btn.primary{border-color:var(--accent);color:var(--accent)}
+.project-nav .btn.primary:hover{background:var(--accent);color:var(--accent-ink)}
+/* Profile and Tests panes */
+.profile-scroll{overflow:auto;max-height:calc(100% - 44px)}
+.profile-table td{vertical-align:top}
+.fill-cell{display:flex;align-items:center;gap:6px;min-width:110px}.fill-cell .dq-bar{flex:1}
+.profile-note{display:inline-block;margin:0 4px 3px 0;padding:1px 6px;border-radius:9px;background:var(--panel-3);color:var(--muted);font-size:10.5px;white-space:nowrap}
+.profile-note.pii{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.test-list{display:flex;flex-direction:column;gap:8px;padding:8px 10px 14px;overflow:auto;max-height:calc(100% - 44px)}
+.test-card{border:1px solid var(--line);border-left:3px solid var(--faint);border-radius:5px;padding:7px 9px;background:var(--panel)}
+.test-card[data-status="pass"]{border-left-color:var(--ok)}.test-card[data-status="fail"],.test-card[data-status="error"]{border-left-color:var(--err)}
+.test-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.test-head .test-name{flex:1;min-width:140px;max-width:320px;font-weight:600}
+.test-dot{width:9px;height:9px;border-radius:50%;background:var(--faint);flex:none}
+.test-card[data-status="pass"] .test-dot{background:var(--ok)}.test-card[data-status="fail"] .test-dot,.test-card[data-status="error"] .test-dot{background:var(--err)}
+.test-results{margin-top:6px;display:flex;flex-direction:column;gap:5px;font-size:11.5px}
+.test-detail.pass b{color:var(--ok)}.test-detail.fail b,.test-detail.error b{color:var(--err)}
+.test-sample{margin-top:3px}
+.test-body{margin-top:6px}.test-body summary{cursor:pointer;color:var(--muted);font-size:11.5px}
+.test-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:6px}
+.test-grid textarea{font-size:11px;min-height:70px}
+#testCnt.bad{background:var(--err);color:#fff}
+/* Project lineage, governance and contracts */
+.plin h2{margin:0 0 4px;font:600 18px var(--disp)}
+.plin-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:10px 0}
+.plin-sentence{font-weight:600;margin:6px 0 8px}
+.plin-scroll,.plin-result{overflow:auto;max-height:40vh}
+.plin-diagram{margin-top:10px;padding:6px;border:1px solid var(--line);border-radius:6px;background:var(--panel-2);overflow:auto}
+.plin-svg{display:block}
+.plin-link{fill:none;stroke:var(--line-2);stroke-width:1.4}.plin-link.on{stroke:var(--accent);stroke-width:2.4}
+.plin-node{stroke-width:1.2}.plin-node.dataset{fill:var(--panel);stroke:var(--src)}.plin-node.dataset.output{stroke:var(--tgt)}.plin-node.dataset.intermediate{stroke:var(--info)}
+.plin-node.mapping{fill:var(--panel-3);stroke:var(--line-2)}.plin-node.on{stroke:var(--accent);stroke-width:2.6}
+.plin-label{fill:var(--text);font:11px var(--ui);pointer-events:auto}
+td.masked{color:var(--muted);letter-spacing:.04em}
+.contract-rows{display:flex;flex-direction:column;gap:5px;margin-bottom:4px}
+.contract-row{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto auto auto;gap:4px;align-items:center}
+.contract-row .inp{padding:4px 6px;min-height:26px;font-size:11px}
+.contract-row .chk span{font-size:10.5px}
 .repo-editor-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;color:var(--text)}
 .repo-set-row{display:grid;grid-template-columns:1fr 1fr 24px;gap:3px;align-items:center;margin-bottom:4px}
 .repo-set-row .inp{padding:4px;min-height:26px;width:100%;min-width:0;font-size:10px}
@@ -485,7 +537,7 @@ table.log a{color:var(--accent)}
     <div class="mapname"><label for="mapName">Mapping</label><input id="mapName" type="text" spellcheck="false" aria-label="Mapping name" maxlength="80"></div>
     <div class="tb-actions">
       <button class="tb" id="btnNew" title="New mapping"><i data-icon="plus"></i><span>New</span></button>
-      <button class="tb" id="btnOpen" title="Open a mapping, workflow or project file (.json)"><i data-icon="folder"></i><span>Open</span></button>
+      <button class="tb" id="btnOpen" title="Open a project (.dfproj), mapping or workflow file"><i data-icon="folder"></i><span>Open</span></button>
       <button class="tb" id="btnSave" title="Save mapping as .json (Ctrl+S)"><i data-icon="save"></i><span>Save</span></button>
       <button class="tb icon" id="btnSaveVersion" title="Save version (Ctrl+Shift+S)" aria-label="Save version"><i data-icon="copy"></i></button>
       <span class="tb-sep"></span>
@@ -549,6 +601,8 @@ table.log a{color:var(--accent)}
       <button class="tab" data-tab="log" role="tab">Run Log</button>
       <button class="tab" data-tab="dq" role="tab">Data Quality</button>
       <button class="tab" data-tab="lineage" role="tab">Lineage</button>
+      <button class="tab" data-tab="profile" role="tab">Profile</button>
+      <button class="tab" data-tab="tests" role="tab">Tests <span class="cnt" id="testCnt" hidden></span></button>
       <button class="icon-btn" id="btnDrawer" title="Collapse or expand panel" data-icon="chevron"></button>
     </div>
     <div class="pane" id="pane-preview"></div>
@@ -557,6 +611,8 @@ table.log a{color:var(--accent)}
     <div class="pane" id="pane-log"></div>
     <div class="pane" id="pane-dq"></div>
     <div class="pane" id="pane-lineage"></div>
+    <div class="pane" id="pane-profile"></div>
+    <div class="pane" id="pane-tests"></div>
   </section>
 
   <footer class="statusbar">
@@ -574,8 +630,8 @@ table.log a{color:var(--accent)}
 <div id="uploadBanner" class="upload-banner" hidden><div id="uploadBannerText"></div><div class="upload-track"><div id="uploadBar"></div></div></div>
 <div id="ctxMenu" class="ctx" hidden></div>
 <div id="dialogOverlay" class="dialog-overlay" hidden><div class="dialog-box" id="dialogBox" role="alertdialog" aria-modal="true" aria-labelledby="dialogTitle"></div></div>
-<input type="file" id="openInput" accept=".json,application/json" hidden>
-<input type="file" id="projectInput" accept=".dfproj.json,.json,application/json" hidden>
+<input type="file" id="openInput" accept=".json,.dfproj,application/json" hidden>
+<input type="file" id="projectInput" accept=".dfproj,.dfproj.json,.json,application/json" hidden>
 <input type="file" id="xmlInput" accept=".xml,text/xml,application/xml" hidden>
 <div id="generalModal" class="general-overlay" hidden><div class="general-modal" role="dialog" aria-modal="true" aria-label="DataForge dialog"><div class="general-modal-head"><button id="generalModalClose" type="button" class="icon-btn" aria-label="Close dialog"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><div id="generalModalBody"></div></div></div>
 <div id="commandOverlay" class="command-overlay" hidden><div class="command-modal" role="dialog" aria-modal="true" aria-label="Command palette"><input id="commandInput" class="inp" placeholder="Search actions, mappings, workflows and nodes…" autocomplete="off"><div id="commandResults" class="command-results" role="listbox" aria-label="Results"></div></div></div>
@@ -618,7 +674,7 @@ table.log a{color:var(--accent)}
 /* ============================================================
    Constants & small utilities
    ============================================================ */
-const APP = { version: '1.1.3', repoUrl: 'https://github.com/theraghavraman/dataforge', formatVersion: '1.0', duckdb: '1.32.0', storageKey: 'dataforge.mapping.v1', themeKey: 'dataforge.theme', activeKey: 'dataforge.active.v1', runKey: 'dataforge.run_id.v1' };
+const APP = { version: '1.4.0', repoUrl: 'https://github.com/theraghavraman/dataforge', formatVersion: '1.0', duckdb: '1.32.0', storageKey: 'dataforge.mapping.v1', themeKey: 'dataforge.theme', activeKey: 'dataforge.active.v1', runKey: 'dataforge.run_id.v1' };
 function dfUuid(){const b=new Uint8Array(16);if(self.crypto?.getRandomValues)self.crypto.getRandomValues(b);else for(let i=0;i<16;i++)b[i]=Math.floor(Math.random()*256);b[6]=(b[6]&15)|64;b[8]=(b[8]&63)|128;const x=Array.from(b,n=>n.toString(16).padStart(2,'0')).join('');return x.slice(0,8)+'-'+x.slice(8,12)+'-'+x.slice(12,16)+'-'+x.slice(16,20)+'-'+x.slice(20);}
 const NODE_W = 200, NODE_H = 64, GRID = 10;
 const REJECT_COLUMNS = [{ name: 'reject_reason', type: 'VARCHAR' }, { name: 'reject_node', type: 'VARCHAR' }];
@@ -666,6 +722,12 @@ const ICONS = {
   minus: '<path d="M5 12h14"/>',
   x: '<path d="M6 6l12 12M18 6L6 18"/>',
   folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  parquet: '<path d="M4 5h16v14H4z"/><path d="M4 9.7h16M4 14.3h16M9.3 5v14M14.7 5v14"/>',
+  excel: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8.5 12.5l5 5M13.5 12.5l-5 5"/>',
+  profile: '<path d="M4 20V10M10 20V4M16 20v-7M2 20h20"/>',
+  test: '<path d="M9 3h6M10 3v6L5 18a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 18l-5-9V3"/><path d="M7.5 14h9"/>',
+  component: '<path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M12 22V12M21 7l-9 5-9-5"/>',
+  lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
   save: '<path d="M5 3h11l3 3v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M7 3v6h8V3M7 21v-7h10v7"/>',
   check: '<path d="M4 12.5l5 5L20 6.5"/>',
   play: '<path d="M7 4.5v15l12-7.5z" fill="currentColor"/>',
@@ -747,7 +809,7 @@ const Dialog = {
     if (this._close) this._close(null);
     const overlay = $('#dialogOverlay'), box = $('#dialogBox'), opener = document.activeElement;
     return new Promise((resolve) => {
-      const field = input ? h('input', { class: 'inp', type: 'text', value: input.value || '', placeholder: input.placeholder || '', maxlength: input.maxlength || 200000, 'aria-label': input.label || title }) : null;
+      const field = input ? h('input', { class: 'inp', type: input.type || 'text', autocomplete: input.type === 'password' ? 'new-password' : 'off', value: input.value || '', placeholder: input.placeholder || '', maxlength: input.maxlength || 200000, 'aria-label': input.label || title }) : null;
       const finish = (value) => {
         if (this._close !== finish) return;
         this._close = null; overlay.hidden = true; box.replaceChildren();
@@ -921,6 +983,9 @@ function normalizeDoc(raw) {
       ports: { in: Array.isArray(n.ports && n.ports.in) ? n.ports.in : [], out: Array.isArray(n.ports && n.ports.out) ? n.ports.out : [] }
     });
   }
+  if (Array.isArray(raw.tests)) doc.tests = raw.tests.filter((t) => t && typeof t === 'object').map((t, i) => ({
+    id: String(t.id || 't_' + (i + 1)), name: String(t.name || 'Test ' + (i + 1)), ordered: !!t.ordered, createdAt: t.createdAt || null,
+    inputs: t.inputs && typeof t.inputs === 'object' ? { ...t.inputs } : {}, expected: t.expected && typeof t.expected === 'object' ? { ...t.expected } : {} }));
   const ids = new Set(doc.nodes.map((n) => n.id));
   raw.links.forEach((l, i) => {
     if (!l || !ids.has(l.from) || !ids.has(l.to)) return;
@@ -1247,6 +1312,19 @@ const Files = {
     if (!this.has(nodeId)) throw new Error(`Source "${node ? node.name : nodeId}" needs its file uploaded.`);
     const f = this.map[nodeId];
     if (node.type === 'json_source') await Engine.ensureJson();
+    if (node.type === 'parquet_source') await Engine.ensureParquet();
+    if (node.type === 'excel_source') {
+      const key = (node.config.sheet || '') + '|' + (node.config.header !== false);
+      if (f.vname && f.convKey !== key) { this.retire(f); f.vname = null; }
+      if (!f.vname) {
+        const csv = await XLSX.toCsv(f.bytes, node.config.sheet, node.config.header !== false);
+        const vname = `df${++this.seq}_${f.fileName.replace(/[^A-Za-z0-9._-]+/g, '_')}.csv`;
+        await Engine.db.registerFileBuffer(vname, csv);
+        if (this.map[nodeId] !== f) { this.retire({ vname }); throw new Error('The source file changed during registration. Please retry.'); }
+        f.vname = vname; f.convKey = key;
+      }
+      return f.vname;
+    }
     if (!f.vname) {
       const vname = `df${++this.seq}_${f.fileName.replace(/[^A-Za-z0-9._-]+/g, '_')}`;
       await Engine.db.registerFileBuffer(vname, f.bytes.slice());
@@ -1317,7 +1395,7 @@ const Engine = {
     for (const src of this.sources()) {
       try {
         const { db, conn, version } = await this.load(src);
-        this.db = db; this.conn = conn; this._jsonLoaded = false;
+        this.db = db; this.conn = conn; this._jsonLoaded = false; this._parquetLoaded = false;
         this.set('ready', `DuckDB ${version || APP.duckdb}`);
         App.onEngineReady();
         return;
@@ -1326,7 +1404,7 @@ const Engine = {
         try { console.warn(`[DataForge] DuckDB could not be loaded from the ${src.label}:`, e); } catch (_) { /* console unavailable */ }
       }
     }
-    this.db = null; this.conn = null; this._jsonLoaded = false;
+    this.db = null; this.conn = null; this._jsonLoaded = false; this._parquetLoaded = false;
     const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
     this.set('error', offline ? 'Offline · click to retry' : (firstLines(lastError && lastError.message, 1) || 'DuckDB could not be loaded') + ' · click to retry');
     toast('DuckDB could not be loaded' + (offline ? ' because this device is offline' : '') + '. You can still design and save mappings. Click the engine status to retry.', 'error');
@@ -1349,6 +1427,14 @@ const Engine = {
       try { await this.exec('LOAD json'); }
       catch (e) { throw new Error('JSON support could not be loaded. DuckDB downloads its JSON extension from extensions.duckdb.org on first use; check your connection or firewall and try again. (' + firstLines(e && e.message, 1) + ')'); }
       this._jsonLoaded = true;
+    }
+  },
+  async ensureParquet() {
+    if (!this._parquetLoaded) {
+      // Like JSON, Parquet support is an extension that DuckDB-WASM downloads from extensions.duckdb.org on first use.
+      try { await this.exec('LOAD parquet'); }
+      catch (e) { throw new Error('Parquet support could not be loaded. DuckDB downloads its Parquet extension from extensions.duckdb.org on first use; check your connection or firewall and try again. (' + firstLines(e && e.message, 1) + ')'); }
+      this._parquetLoaded = true;
     }
   },
   async rows(sql) { const table = await this.exec(sql); return table.toArray().map((r) => r.toJSON()); },
@@ -1460,6 +1546,201 @@ const P = {
 const colRef = (name) => (/^[A-Za-z_]\w*$/.test(name) && !SQL_WORDS.has(name.toLowerCase()) ? name : qid(name));
 
 /* ============================================================
+   Excel workbooks (.xlsx): a small reader and writer.
+   Reading converts one sheet to CSV for DuckDB; writing produces a
+   styled single-sheet workbook with real numbers, dates and booleans.
+   ============================================================ */
+const XLSX = {
+  mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  _cache: new WeakMap(),
+  xml(text) {
+    const doc = new DOMParser().parseFromString(text, 'application/xml');
+    if (doc.getElementsByTagName('parsererror').length) throw new Error('The Excel file contains invalid XML.');
+    return doc;
+  },
+  all(node, tag) { return [...node.getElementsByTagNameNS('*', tag)]; },
+  colIndex(ref) { let n = 0; for (const ch of String(ref).toUpperCase()) { const c = ch.charCodeAt(0); if (c < 65 || c > 90) break; n = n * 26 + (c - 64); } return n - 1; },
+  colName(i) { let s = ''; i++; while (i > 0) { const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; },
+  async unzip(bytes) {
+    const d = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    let eocd = -1;
+    for (let i = bytes.length - 22; i >= Math.max(0, bytes.length - 65557); i--) if (d.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+    if (eocd < 0) throw new Error('This is not an .xlsx workbook. Older .xls files must be saved as .xlsx in Excel first.');
+    const count = d.getUint16(eocd + 10, true), entries = new Map(), dec = new TextDecoder();
+    let p = d.getUint32(eocd + 16, true);
+    for (let k = 0; k < count; k++) {
+      if (d.getUint32(p, true) !== 0x02014b50) throw new Error('The Excel file is damaged (bad ZIP directory).');
+      const method = d.getUint16(p + 10, true), size = d.getUint32(p + 20, true), nameLen = d.getUint16(p + 28, true);
+      const extraLen = d.getUint16(p + 30, true), commentLen = d.getUint16(p + 32, true), offset = d.getUint32(p + 42, true);
+      entries.set(dec.decode(bytes.subarray(p + 46, p + 46 + nameLen)), { method, size, offset });
+      p += 46 + nameLen + extraLen + commentLen;
+    }
+    return {
+      async text(name) {
+        const e = entries.get(name);
+        if (!e) return null;
+        const start = e.offset + 30 + d.getUint16(e.offset + 26, true) + d.getUint16(e.offset + 28, true);
+        const raw = bytes.subarray(start, start + e.size);
+        if (e.method === 0) return dec.decode(raw);
+        if (e.method !== 8) throw new Error('The Excel file uses an unsupported compression method.');
+        if (typeof DecompressionStream === 'undefined') throw new Error('This browser cannot read Excel files. Use a current version of Chrome, Edge, Firefox or Safari.');
+        return new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();
+      }
+    };
+  },
+  async book(bytes) {
+    let book = this._cache.get(bytes);
+    if (!book) { book = await this.open(bytes); this._cache.set(bytes, book); }
+    return book;
+  },
+  cachedSheets(bytes) { const b = this._cache.get(bytes); return b ? b.sheets.map((s) => s.name) : null; },
+  async sheetNames(bytes) { return (await this.book(bytes)).sheets.map((s) => s.name); },
+  async open(bytes) {
+    const zip = await this.unzip(bytes);
+    const wbText = await zip.text('xl/workbook.xml');
+    if (!wbText) throw new Error('This workbook has no xl/workbook.xml. Is it an Excel file?');
+    const wb = this.xml(wbText), rels = this.xml(await zip.text('xl/_rels/workbook.xml.rels') || '<Relationships/>');
+    const relMap = new Map(this.all(rels, 'Relationship').map((r) => [r.getAttribute('Id'), r.getAttribute('Target') || '']));
+    const sheets = this.all(wb, 'sheet').map((s) => {
+      const rid = s.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'id') || s.getAttribute('r:id');
+      const target = relMap.get(rid) || '';
+      return { name: s.getAttribute('name') || 'Sheet', path: target.startsWith('/') ? target.slice(1) : 'xl/' + target.replace(/^\.\//, '') };
+    });
+    if (!sheets.length) throw new Error('The workbook has no worksheets.');
+    const pr = this.all(wb, 'workbookPr')[0]?.getAttribute('date1904');
+    const sharedText = await zip.text('xl/sharedStrings.xml');
+    const shared = sharedText ? this.all(this.xml(sharedText), 'si').map((si) =>
+      this.all(si, 't').filter((t) => t.parentNode.localName !== 'rPh').map((t) => t.textContent).join('')) : [];
+    const styles = this.xml(await zip.text('xl/styles.xml') || '<styleSheet/>');
+    const custom = new Map(this.all(styles, 'numFmt').map((n) => [Number(n.getAttribute('numFmtId')), n.getAttribute('formatCode') || '']));
+    const isDate = (id) => (id >= 14 && id <= 22) || (id >= 27 && id <= 36) || (id >= 45 && id <= 47) || (id >= 50 && id <= 58) ||
+      (custom.has(id) && /[dmyhs]/i.test(custom.get(id).replace(/"[^"]*"|\[[^\]]*\]|\\./g, '')));
+    const dates = new Set(), xfs = this.all(styles, 'cellXfs')[0];
+    if (xfs) [...xfs.children].forEach((xf, i) => { if (isDate(Number(xf.getAttribute('numFmtId')))) dates.add(i); });
+    return { zip, sheets, shared, dates, date1904: pr === '1' || pr === 'true' };
+  },
+  fromSerial(num, date1904) {
+    const ms = Math.round((num + (date1904 ? 1462 : 0)) * 86400000) + Date.UTC(1899, 11, 30);
+    const iso = new Date(ms).toISOString();
+    return Math.abs(num % 1) > 1e-9 ? iso.slice(0, 10) + ' ' + iso.slice(11, 19) : iso.slice(0, 10);
+  },
+  value(book, c) {
+    const t = c.getAttribute('t'), s = Number(c.getAttribute('s') || 0);
+    if (t === 'inlineStr') return this.all(c, 't').map((x) => x.textContent).join('');
+    const v = this.all(c, 'v')[0]?.textContent;
+    if (v == null) return null;
+    if (t === 's') return book.shared[Number(v)] ?? '';
+    if (t === 'b') return v === '1' ? 'true' : 'false';
+    if (t === 'e') return null;
+    if (t === 'str' || t === 'd') return v;
+    const num = Number(v);
+    return book.dates.has(s) && Number.isFinite(num) ? this.fromSerial(num, book.date1904) : v;
+  },
+  async rows(bytes, sheetName) {
+    const book = await this.book(bytes);
+    const sheet = sheetName ? book.sheets.find((s) => s.name === sheetName) : book.sheets[0];
+    if (!sheet) throw new Error(`Sheet "${sheetName}" was not found. This workbook has: ${book.sheets.map((s) => s.name).join(', ')}.`);
+    const text = await book.zip.text(sheet.path);
+    if (text == null) throw new Error(`Sheet "${sheet.name}" is missing from the workbook.`);
+    const rows = [];
+    for (const row of this.all(this.xml(text), 'row')) {
+      const r = Number(row.getAttribute('r')) || rows.length + 1, out = [];
+      let next = 0;
+      for (const c of [...row.children].filter((x) => x.localName === 'c')) {
+        const ref = c.getAttribute('r'), col = ref ? this.colIndex(ref) : next;
+        next = col + 1; out[col] = this.value(book, c);
+      }
+      rows[r - 1] = out;
+    }
+    return rows;
+  },
+  // One sheet as CSV bytes with a header row. Without a header, columns are named A, B, C ... like DuckDB's read_xlsx.
+  async toCsv(bytes, sheetName, header = true) {
+    const all = await this.rows(bytes, sheetName);
+    const rows = []; for (let i = 0; i < all.length; i++) { const r = all[i] || []; if (r.some((v) => v != null && v !== '')) rows.push(r); }
+    let width = 0; for (const r of rows) width = Math.max(width, r.length);
+    if (!rows.length || !width) return new TextEncoder().encode('A\n');
+    const used = new Set();
+    const names = Array.from({ length: width }, (_, i) => {
+      let base = header ? String(rows[0][i] ?? '').trim() : '';
+      if (!base) base = this.colName(i);
+      let name = base, n = 2;
+      while (used.has(name.toLowerCase())) name = base + '_' + n++;
+      used.add(name.toLowerCase()); return name;
+    });
+    const cell = (v) => { if (v == null) return ''; const s = String(v); return /[",\r\n]|^\s|\s$/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+    const lines = [names.map(cell).join(',')];
+    for (const r of header ? rows.slice(1) : rows) lines.push(Array.from({ length: width }, (_, i) => cell(r[i])).join(','));
+    return new TextEncoder().encode(lines.join('\n') + '\n');
+  },
+  kindOf(type) {
+    const t = String(type || '').toUpperCase();
+    if (/^(TINYINT|SMALLINT|INTEGER|INT|BIGINT|HUGEINT|UTINYINT|USMALLINT|UINTEGER|UBIGINT|UHUGEINT|FLOAT|REAL|DOUBLE|DECIMAL|NUMERIC)\b/.test(t)) return 'number';
+    if (t === 'DATE') return 'date';
+    if (/^TIMESTAMP/.test(t)) return 'timestamp';
+    if (t === 'BOOLEAN') return 'bool';
+    return 'text';
+  },
+  esc(v) { return String(v).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\uFFFE\uFFFF]/g, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); },
+  serial(text) {
+    const m = /^(\d{4})-(\d\d)-(\d\d)(?:[ T](\d\d):(\d\d):(\d\d))?/.exec(String(text));
+    if (!m) return null;
+    return (Date.UTC(+m[1], +m[2] - 1, +m[3], +(m[4] || 0), +(m[5] || 0), +(m[6] || 0)) - Date.UTC(1899, 11, 30)) / 86400000;
+  },
+  // Runs a query and writes its result as a workbook. Returns the .xlsx bytes.
+  async fromQuery(engine, sql, { sheetName = 'Sheet1', header = true } = {}) {
+    const cols = await engine.describe(sql);
+    const n = Number((await engine.rows(`SELECT CAST(count(*) AS VARCHAR) AS n FROM (${sql}) q`))[0].n);
+    if (n > 1048575) throw new Error(`An Excel sheet holds at most 1,048,575 data rows; this target has ${fmtNum(n)}. Use a CSV or Parquet target instead.`);
+    const kinds = cols.map((c) => this.kindOf(c.type));
+    const select = cols.map((c, i) => {
+      const q = qid(c.name), k = kinds[i];
+      const e = k === 'number' ? `CAST(${q} AS DOUBLE)` : k === 'date' ? `strftime(CAST(${q} AS DATE), '%Y-%m-%d')`
+        : k === 'timestamp' ? `strftime(CAST(${q} AS TIMESTAMP), '%Y-%m-%d %H:%M:%S')` : k === 'bool' ? `CAST(${q} AS BOOLEAN)` : `CAST(${q} AS VARCHAR)`;
+      return `${e} AS c${i}`;
+    });
+    const rows = cols.length ? await engine.rows(`SELECT ${select.join(', ')} FROM (${sql}) q`) : [];
+    return this.write(cols.map((c) => c.name), kinds, rows.map((r) => cols.map((_, i) => r['c' + i])), { sheetName, header });
+  },
+  async write(names, kinds, rows, { sheetName = 'Sheet1', header = true } = {}) {
+    const sheet = String(sheetName || 'Sheet1').replace(/[\[\]:*?\/\\]/g, '_').slice(0, 31) || 'Sheet1';
+    const ns = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main', relNs = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+    const xmlHead = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+    const body = [];
+    let r = 0;
+    const text = (ref, v, style = '') => `<c r="${ref}" t="inlineStr"${style}><is><t xml:space="preserve">${this.esc(v)}</t></is></c>`;
+    if (header) { r++; body.push(`<row r="${r}">${names.map((n, i) => text(this.colName(i) + r, n, ' s="3"')).join('')}</row>`); }
+    for (const row of rows) {
+      r++;
+      const cells = [];
+      row.forEach((v, i) => {
+        if (v == null) return;
+        const ref = this.colName(i) + r, k = kinds[i];
+        if (k === 'number' && typeof v === 'number' && Number.isFinite(v)) cells.push(`<c r="${ref}"><v>${v}</v></c>`);
+        else if ((k === 'date' || k === 'timestamp') && this.serial(v) != null) cells.push(`<c r="${ref}" s="${k === 'date' ? 1 : 2}"><v>${this.serial(v)}</v></c>`);
+        else if (k === 'bool' && typeof v === 'boolean') cells.push(`<c r="${ref}" t="b"><v>${v ? 1 : 0}</v></c>`);
+        else cells.push(text(ref, v));
+      });
+      body.push(`<row r="${r}">${cells.join('')}</row>`);
+    }
+    const widths = names.map((n, i) => Math.min(60, Math.max(10, String(n).length + 2, kinds[i] === 'timestamp' ? 20 : 0)));
+    const sheetXml = xmlHead + `<worksheet xmlns="${ns}" xmlns:r="${relNs}">` +
+      (header && rows.length ? '<sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>' : '') +
+      (names.length ? `<cols>${widths.map((w, i) => `<col min="${i + 1}" max="${i + 1}" width="${w}" customWidth="1"/>`).join('')}</cols>` : '') +
+      `<sheetData>${body.join('')}</sheetData></worksheet>`;
+    const files = {
+      '[Content_Types].xml': xmlHead + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>',
+      '_rels/.rels': xmlHead + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>',
+      'xl/workbook.xml': xmlHead + `<workbook xmlns="${ns}" xmlns:r="${relNs}"><sheets><sheet name="${this.esc(sheet)}" sheetId="1" r:id="rId1"/></sheets></workbook>`,
+      'xl/_rels/workbook.xml.rels': xmlHead + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>',
+      'xl/styles.xml': xmlHead + `<styleSheet xmlns="${ns}"><numFmts count="2"><numFmt numFmtId="164" formatCode="yyyy-mm-dd"/><numFmt numFmtId="165" formatCode="yyyy-mm-dd hh:mm:ss"/></numFmts><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="4"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="165" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`,
+      'xl/worksheets/sheet1.xml': sheetXml
+    };
+    return new Uint8Array(await ZipStore.create(files).arrayBuffer());
+  }
+};
+
+/* ============================================================
    Transformation registry
    One entry per node type. Each entry supplies: label, icon,
    category, defaultConfig(), renderProperties(), validate(),
@@ -1527,6 +1808,69 @@ function sourceEntry(kind) {
 }
 Registry.register('csv_source', sourceEntry('csv'));
 Registry.register('json_source', sourceEntry('json'));
+
+/* ---- Parquet and Excel sources ---- */
+function binarySourceEntry(kind) {
+  const isXlsx = kind === 'excel', word = isXlsx ? 'Excel' : 'Parquet';
+  return {
+    label: word + ' Source', icon: kind, category: 'source', prefix: isXlsx ? 'SRC_xlsx' : 'SRC_parquet', maxInputs: 0,
+    defaultConfig() { return isXlsx ? { fileName: '', sheet: '', header: true, sampleSize: 20480 } : { fileName: '' }; },
+    renderProperties(node, ui) {
+      const c = node.config, loaded = Files.has(node.id);
+      const picker = h('input', { type: 'file', hidden: true, accept: isXlsx ? '.xlsx,.xlsm,' + XLSX.mime : '.parquet,.pq' });
+      picker.addEventListener('change', () => { if (picker.files[0]) Actions.attachFile(node.id, picker.files[0]); });
+      const box = h('button', { type: 'button', class: 'filebox ' + (loaded ? 'ok' : c.fileName ? 'need' : ''), onclick: () => picker.click() },
+        h('span', { class: 'filebox-ic', html: svgIcon('upload', 20) }),
+        h('span', null, h('b', { text: c.fileName || 'Choose a file' }),
+          h('small', { text: loaded ? `Loaded · ${fmtBytes(Files.size(node.id))}` : c.fileName ? 'File required. Upload it again to run.' : `Click or drop ${isXlsx ? 'an Excel .xlsx' : 'a Parquet'} file here` })));
+      box.addEventListener('dragover', (e) => { e.preventDefault(); box.classList.add('over'); });
+      box.addEventListener('dragleave', () => box.classList.remove('over'));
+      box.addEventListener('drop', (e) => { e.preventDefault(); box.classList.remove('over'); const f = e.dataTransfer.files[0]; if (f) Actions.attachFile(node.id, f); });
+      const parts = [picker, box];
+      if (isXlsx) {
+        const bytes = loaded ? Files.map[node.id].bytes : null, sheets = bytes ? XLSX.cachedSheets(bytes) : null;
+        if (bytes && !sheets) XLSX.sheetNames(bytes).then(() => { if (Graph.node(node.id) === node && state.sel.has(node.id)) ui.rerender(); }).catch((e) => toast(firstLines(e.message, 1), 'error'));
+        const names = sheets || (c.sheet ? [c.sheet] : []);
+        const options = [['', 'First sheet' + (sheets?.length ? ` (${sheets[0]})` : '')], ...names.map((s) => [s, s])];
+        parts.push(h('div', { class: 'row2' },
+          P.field('Sheet', P.select(c, 'sheet', options, () => Ports.schedule())),
+          P.field('Sample size', P.input(c, 'sampleSize', { type: 'number', min: -1 }), 'Rows scanned to detect types. -1 scans the whole sheet.')),
+          P.check(c, 'header', 'First row is a header', () => Ports.schedule()),
+          P.hint('Dates, numbers and text keep their Excel types. Formulas are read as their last calculated values.'));
+      } else parts.push(P.hint('Column names and types are read from the Parquet file itself.'));
+      return [P.section('File', ...parts)];
+    },
+    validate(node, ctx) {
+      if (!node.config.fileName) return [{ severity: 'error', message: 'No file selected.' }];
+      if (!ctx.hasFile) return [{ severity: 'error', message: `File required: upload "${node.config.fileName}" again.` }];
+      if (isXlsx) {
+        const size = Number(node.config.sampleSize);
+        if (!Number.isInteger(size) || (size !== -1 && size < 1)) return [{ severity: 'error', message: 'Sample size must be -1 or a positive whole number.' }];
+      }
+      return [];
+    },
+    compile(node, ctx) {
+      const c = node.config, file = String(ctx.file);
+      if (!isXlsx) return `SELECT *\nFROM read_parquet(${qstr(file)})`;
+      // In the browser the sheet is converted to CSV before it reaches DuckDB; exported code reads the workbook with DuckDB's excel extension.
+      if (file !== c.fileName && /\.csv$/i.test(file)) {
+        const opts = [qstr(file), 'header=true', "delim=','", "quote='\"'"], size = Number(c.sampleSize);
+        if (Number.isFinite(size) && size !== 0 && c.sampleSize !== '') opts.push('sample_size=' + Math.trunc(size));
+        return `SELECT *\nFROM read_csv_auto(${opts.join(', ')})`;
+      }
+      const opts = [qstr(file), 'header=' + (c.header !== false ? 'true' : 'false')];
+      if (c.sheet) opts.push('sheet=' + qstr(c.sheet));
+      return `SELECT *\nFROM read_xlsx(${opts.join(', ')})`;
+    },
+    async inferPorts(node, ctx) {
+      const described = ctx.hasFile ? await ctx.describe() : null;
+      return described || node.ports.out || [];
+    }
+  };
+}
+Registry.register('parquet_source', binarySourceEntry('parquet'));
+Registry.register('excel_source', binarySourceEntry('excel'));
+const SOURCE_TYPES = ['csv_source', 'json_source', 'parquet_source', 'excel_source'];
 
 /* ---- Filter ---- */
 Registry.register('filter', {
@@ -2427,6 +2771,72 @@ Registry.register('data_quality', {
   }
 });
 
+
+/* ---- SQL: a hand-written query over one or two inputs ---- */
+const SqlNode = {
+  // Replaces the words input / input2 (outside strings, quoted names and comments, and not after a dot) with real relations.
+  resolve(sql, names) {
+    return String(sql || '').replace(/'(?:[^']|'')*'|"(?:[^"]|"")*"|--[^\n]*|\/\*[\s\S]*?\*\/|\b(input2|input)\b/gi, (whole, word, offset, src) => {
+      if (!word || src[offset - 1] === '.') return whole;
+      return names[word.toLowerCase()] || whole;
+    });
+  },
+  mentions(sql, word) { const mark = '\u0001df\u0001'; return this.resolve(sql, { [word]: mark }).includes(mark); },
+  // Counts statement separators that are followed by more SQL.
+  extraStatements(sql) {
+    let n = 0;
+    String(sql).replace(/'(?:[^']|'')*'|"(?:[^"]|"")*"|--[^\n]*|\/\*[\s\S]*?\*\/|(;)/g, (whole, semi, offset, src) => {
+      if (semi && src.slice(offset + 1).replace(/--[^\n]*|\/\*[\s\S]*?\*\//g, '').trim()) n++;
+      return whole;
+    });
+    return n;
+  },
+  body(node) { return String(node.config.sql || '').trim().replace(/;\s*$/, ''); }
+};
+Registry.register('sql_transform', {
+  label: 'SQL', icon: 'code', category: 'transformation', prefix: 'SQL',
+  inputs: [{ key: 'in', label: 'input' }, { key: 'in2', label: 'input2', optional: true }],
+  defaultConfig() { return { sql: 'SELECT *\nFROM input' }; },
+  renderProperties(node) {
+    const c = node.config, ins = node.ports.in || [];
+    const first = ins.filter((p) => !p.group || p.group === 'in'), second = ins.filter((p) => p.group === 'in2');
+    const msg = h('div', { class: 'msg', hidden: true });
+    const check = async () => {
+      msg.hidden = false; msg.className = 'msg';
+      if (!SqlNode.body(node)) { msg.textContent = 'Write a query that reads from input.'; return; }
+      if (!Engine.ready) { msg.textContent = 'The query will be checked once the engine is ready.'; return; }
+      msg.textContent = 'Checking…';
+      try {
+        await Engine.lock(async () => { await Files.ensureChain(node.id); await Engine.exec('EXPLAIN ' + Compiler.sql(node.id, { exec: true })); });
+        msg.className = 'msg ok'; msg.textContent = 'Query is valid.';
+      } catch (e) { msg.className = 'msg err'; msg.textContent = firstLines(e.message, 4); }
+    };
+    const editor = P.input(c, 'sql', { multiline: true, mono: true, rows: 10, placeholder: 'SELECT customer_id, SUM(amount) AS total\nFROM input\nGROUP BY customer_id', onchange: () => { Ports.schedule(); check(); } });
+    if (SqlNode.body(node)) check();
+    const chips = (ports) => P.chips(ports.map((p) => ({ label: p.name, insert: colRef(p.name), title: p.type })), (t) => { insertAtCursor(editor, t); History.commit(); });
+    return [P.section('Query',
+      P.field('SQL', editor, 'One SELECT or WITH query. Read the first input as input and the optional second input as input2. Parameters ($$NAME) work here too.'),
+      h('div', { class: 'sub-l' }, 'input columns', h('button', { type: 'button', class: 'linkish', text: 'Check query', onclick: check })),
+      first.length ? chips(first) : P.hint('Connect an upstream node to list its columns.'),
+      second.length ? h('div', { class: 'sub-l', text: 'input2 columns' }) : null, second.length ? chips(second) : null,
+      Params.chips((name) => { insertAtCursor(editor, name); History.commit(); }), msg),
+      P.section('Portability', P.hint('Exports pass this query to Snowflake, dbt and Spark SQL with the usual function translations. Standard SQL travels best.'))];
+  },
+  validate(node) {
+    const sql = SqlNode.body(node);
+    if (!sql) return [{ severity: 'error', message: 'The SQL query is empty.' }];
+    const issues = [];
+    const start = sql.replace(/^(?:\s|--[^\n]*|\/\*[\s\S]*?\*\/)*/, '');
+    if (!/^\(?\s*(select|with|from|values)\b/i.test(start)) issues.push({ severity: 'error', message: 'Write a single SELECT or WITH query.' });
+    if (SqlNode.extraStatements(sql)) issues.push({ severity: 'error', message: 'Only one statement is allowed. Remove the extra semicolon.' });
+    if (!SqlNode.mentions(sql, 'input')) issues.push({ severity: 'warning', message: 'The query does not read from input.' });
+    if (SqlNode.mentions(sql, 'input2') && !Graph.inputLinks(node, 'in2').length) issues.push({ severity: 'error', message: 'The query reads input2, but nothing is connected to it.' });
+    return issues;
+  },
+  compile(node, ctx) { return SqlNode.resolve(SqlNode.body(node) || 'SELECT * FROM input', { input: ctx.inputs.in?.ref, input2: ctx.inputs.in2?.ref }); },
+  async inferPorts(node, ctx) { return (await ctx.describe()) || node.ports.out || []; }
+});
+
 /* ---- Targets ---- */
 function downloadSection(node) {
   const o = state.outputs[node.id];
@@ -2462,6 +2872,45 @@ function fileTargetEntry(kind) {
 }
 Registry.register('csv_target', fileTargetEntry('csv'));
 Registry.register('json_target', fileTargetEntry('json'));
+
+/* ---- Parquet and Excel targets ---- */
+function binaryTargetEntry(kind) {
+  const isXlsx = kind === 'excel';
+  const codecs = { snappy: 'SNAPPY', zstd: 'ZSTD', gzip: 'GZIP', uncompressed: 'UNCOMPRESSED' };
+  return {
+    label: (isXlsx ? 'Excel' : 'Parquet') + ' Target', icon: kind, category: 'target', prefix: isXlsx ? 'TGT_xlsx' : 'TGT_parquet', maxOutputs: 0,
+    defaultConfig() { return isXlsx ? { fileName: 'output.xlsx', sheetName: 'Sheet1', header: true } : { fileName: 'output.parquet', compression: 'snappy' }; },
+    renderProperties(node) {
+      const c = node.config;
+      return [P.section('Output file',
+        P.field('File name', P.input(c, 'fileName', { mono: true, placeholder: isXlsx ? 'output.xlsx' : 'output.parquet' })),
+        isXlsx ? P.field('Sheet name', P.input(c, 'sheetName', { placeholder: 'Sheet1' }), 'Up to 31 characters.')
+          : P.field('Compression', P.select(c, 'compression', [['snappy', 'Snappy (default)'], ['zstd', 'ZSTD (smaller files)'], ['gzip', 'GZIP'], ['uncompressed', 'None']])),
+        isXlsx ? P.check(c, 'header', 'Write a header row') : null,
+        isXlsx ? P.hint('Numbers, dates and booleans are written as real Excel values, with the header row frozen. A sheet holds at most 1,048,575 data rows.')
+          : P.hint('Parquet keeps column types and compresses well. It is the usual format for data lakes and warehouses.')),
+        downloadSection(node)];
+    },
+    validate(node) {
+      const c = node.config, issues = [];
+      if (!(c.fileName || '').trim()) issues.push({ severity: 'error', message: 'Target file name is empty.' });
+      if (isXlsx && /[\[\]:*?\/\\]/.test(c.sheetName || '')) issues.push({ severity: 'error', message: 'Sheet names cannot contain [ ] : * ? / or \\.' });
+      if (isXlsx && String(c.sheetName || '').length > 31) issues.push({ severity: 'error', message: 'Sheet names are limited to 31 characters.' });
+      return issues;
+    },
+    compile(node, ctx) { return `SELECT *\nFROM ${ctx.input}`; },
+    async inferPorts() { return []; },
+    async run(node, rc) {
+      const c = node.config, sql = rc.selectSql || `SELECT * FROM ${rc.input}`;
+      if (isXlsx) { rc.output(await XLSX.fromQuery(rc.engine, sql, { sheetName: c.sheetName, header: c.header !== false }), XLSX.mime); return { rows: rc.rowsIn }; }
+      await rc.engine.ensureParquet();
+      rc.output(await rc.engine.copyToBuffer(sql, `FORMAT PARQUET, COMPRESSION ${codecs[c.compression] || 'SNAPPY'}`, 'parquet'), 'application/vnd.apache.parquet');
+      return { rows: rc.rowsIn };
+    }
+  };
+}
+Registry.register('parquet_target', binaryTargetEntry('parquet'));
+Registry.register('excel_target', binaryTargetEntry('excel'));
 Registry.register('preview_target', {
   label: 'Preview Target', icon: 'preview', category: 'target', prefix: 'PREVIEW', maxOutputs: 0,
   defaultConfig() { return { limit: 1000 }; },
@@ -2550,6 +2999,7 @@ const Compiler = {
     };
   },
   select(node, opts = {}) {
+    if (opts.testSources && Object.prototype.hasOwnProperty.call(opts.testSources, node.id)) return opts.testSources[node.id];
     const sql = Registry.get(node.type).compile(node, this.context(node, opts));
     return opts.exec || opts.resolved ? Params.resolve(sql) : sql;
   },
@@ -2891,6 +3341,8 @@ const Runner = {
               if (typeof def.run === 'function') {
                 const ctx = Compiler.context(node, { exec: true, ref: table });
                 const selectSql = Compiler.select(node, { exec: true, ref: table }) + Compiler.finalOrderBy(node.id);
+                const contract = await Contracts.check(node, selectSql);
+                if (contract.length && node.config.contract.mode === 'fail') throw new Error('Data contract failed: ' + contract.join('; ') + '. Nothing was written.');
                 const result = await def.run(node, {
                   input: ctx.input, inputs: ctx.inputs, rowsIn, engine: Engine, selectSql,
                   output: (bytes, mime) => { link = Outputs.set(node, bytes, mime, rowsIn); },
@@ -2898,7 +3350,7 @@ const Runner = {
                 });
                 rowsOut = result?.rows ?? rowsIn ?? 0;
                 if (node.type !== 'preview_target') totalRows += rowsOut || 0;
-                note = link ? '' : 'Shown in Data Preview';
+                note = [link ? '' : 'Shown in Data Preview', contract.length ? 'Data contract: ' + contract.join('; ') : ''].filter(Boolean).join(' · ');
               } else {
                 const groups = Graph.outputGroups(node);
                 for (const group of groups) {
@@ -3169,14 +3621,16 @@ const CodeGen = {
     return name;
   },
   snowflakeSource(node, ctx) {
-    const c = node.config, isCsv = node.type === 'csv_source', name = qid(this.symbol(node));
+    const c = node.config, isExcel = node.type === 'excel_source', isParquet = node.type === 'parquet_source', isCsv = node.type === 'csv_source' || isExcel, name = qid(this.symbol(node));
     const fmt = qid(this.sqlName(this.symbol(node) + '_fmt'));
-    const stage = this.quoteStage(), file = String(c.fileName || `upload_${node.id}.${isCsv?'csv':'json'}`);
+    const stage = this.quoteStage(), file = isExcel ? String(c.fileName || `upload_${node.id}`).replace(/\.xls[xm]?$/i, '') + '.csv' : String(c.fileName || `upload_${node.id}.${isCsv?'csv':isParquet?'parquet':'json'}`);
+    if (isExcel) this.warn(node, 'Excel source', `Snowflake cannot load .xlsx files. Save the ${c.sheet ? '"' + c.sheet + '" sheet' : 'first sheet'} as CSV named ${file} and upload it to the stage.`);
     const path = file.replace(/[^A-Za-z0-9_.-]/g,'_');
     if (path !== file) this.warn(node, 'File path', 'Stage filename uses safe ASCII characters; upload with the generated filename.');
     const header = c.header ? 1 : 0, sep = c.delimiter === 'auto' ? ',' : c.delimiter || ',';
     const format = isCsv
       ? `CREATE OR REPLACE FILE FORMAT ${fmt} TYPE = CSV FIELD_DELIMITER = ${qstr(sep)} SKIP_HEADER = ${header} FIELD_OPTIONALLY_ENCLOSED_BY = '"' EMPTY_FIELD_AS_NULL = TRUE;`
+      : isParquet ? `CREATE OR REPLACE FILE FORMAT ${fmt} TYPE = PARQUET;`
       : `CREATE OR REPLACE FILE FORMAT ${fmt} TYPE = JSON STRIP_OUTER_ARRAY = ${c.format === 'newline_delimited' ? 'FALSE' : 'TRUE'};`;
     const ports = this.schema(node);
     const cols = ports.length ? ports.map((p,i) => isCsv
@@ -3240,8 +3694,9 @@ const CodeGen = {
     if (node.type === 'preview_target') return [`SELECT * FROM (${source}) p LIMIT ${Math.max(1,Number(node.config.limit)||1000)};`];
     const fileSelect = node.type === 'json_target' ? `SELECT OBJECT_CONSTRUCT_KEEP_NULL(*) FROM (${source}) AS json_rows` : source;
     if (mode === 'copy') {
-      const path = String(node.config.fileName || node.name + '.csv').replace(/[^A-Za-z0-9_.-]/g,'_');
-      const format = node.type === 'json_target' ? 'TYPE = JSON COMPRESSION = NONE' : `TYPE = CSV COMPRESSION = NONE FIELD_DELIMITER = ${qstr(node.config.delimiter || ',')}`;
+      if (node.type === 'excel_target') this.warn(node, 'Excel target', 'Snowflake cannot write .xlsx files, so this COPY writes CSV.');
+      const path = String(node.config.fileName || node.name + '.csv').replace(/\.xls[xm]$/i, '.csv').replace(/[^A-Za-z0-9_.-]/g,'_');
+      const format = node.type === 'json_target' ? 'TYPE = JSON COMPRESSION = NONE' : node.type === 'parquet_target' ? 'TYPE = PARQUET' : `TYPE = CSV COMPRESSION = NONE FIELD_DELIMITER = ${qstr(node.config.delimiter || ',')}`;
       return [`COPY INTO ${this.quoteStage()}/${path} FROM (${fileSelect}) FILE_FORMAT = (${format}) ${node.type === 'json_target' ? '' : `HEADER = ${node.config.header !== false ? 'TRUE' : 'FALSE'} `}OVERWRITE = TRUE;`];
     }
     return [mode === 'insert' ? `INSERT INTO ${table}\n${source};` : `CREATE OR REPLACE TABLE ${table} AS\n${source};`];
@@ -3374,6 +3829,7 @@ CodeGen._schemaCache = new Map();
 CodeGen.sourceSchema = function(node) {
   const fromDoc=Graph.outPorts(node), file=Files.map[node.id];
   if(fromDoc.length)return fromDoc.map((p)=>({name:p.name,type:p.type}));
+  if(node.type==='parquet_source'||node.type==='excel_source'){this.warn(node,'Schema','No detected source schema. Load the file so its columns are detected before export.');return [{name:'value',type:'VARCHAR'}];}
   if(!file?.bytes?.length){this.warn(node,'Schema','No detected source schema. Upload the file or run port detection before export.');return [{name:'value',type:'VARCHAR'}];}
   const text=new TextDecoder('utf-8').decode(file.bytes.subarray(0,Math.min(file.bytes.length,2_000_000))).replace(/^\ufeff/,'');
   const c=node.config;
@@ -3705,8 +4161,16 @@ CodeGen.pyEmitNode = function(node) {
   if (def.category === 'source') {
     const schema = this.schema(node).map((p) => `StructField(${P(p.name)}, ${this.sqlType(p.type,'pyspark')}, True)`).join(', ');
     out.push(`${group('out')}_schema = StructType([${schema}])`);
-    const path = `ARGS.input_dir + '/' + ${P(c.fileName || node.name + (node.type === 'csv_source' ? '.csv' : '.json'))}`;
-    if (node.type === 'csv_source') out.push(`${group('out')} = (spark.read.schema(${group('out')}_schema).option('header', ${c.header?'True':'False'}).option('sep', ${P(c.delimiter === 'auto' ? ',' : c.delimiter || ',')}).csv(${path}))`);
+    const path = `ARGS.input_dir + '/' + ${P(c.fileName || node.name + ({ csv_source: '.csv', json_source: '.json', parquet_source: '.parquet', excel_source: '.xlsx' })[node.type])}`;
+    if (node.type === 'parquet_source') out.push(`${group('out')} = spark.read.parquet(${path})`);
+    else if (node.type === 'excel_source') {
+      const pdf = group('out') + '_pdf';
+      out.push(`${pdf} = __import__('pandas').read_excel(${path}, sheet_name=${c.sheet ? P(c.sheet) : '0'}, header=${c.header !== false ? '0' : 'None'}, dtype=str)  # needs openpyxl`);
+      if (c.header === false) out.push(`${pdf}.columns = [f.name for f in ${group('out')}_schema.fields][:len(${pdf}.columns)]`);
+      out.push(`${group('out')} = spark.createDataFrame([[None if v is None or v != v else str(v) for v in r] for r in ${pdf}.itertuples(index=False)], StructType([StructField(str(n), StringType(), True) for n in ${pdf}.columns]))`);
+      out.push(`${group('out')} = ${group('out')}.select(*[F.col(f.name).cast(f.dataType).alias(f.name) for f in ${group('out')}_schema.fields if f.name in ${group('out')}.columns])`);
+    }
+    else if (node.type === 'csv_source') out.push(`${group('out')} = (spark.read.schema(${group('out')}_schema).option('header', ${c.header?'True':'False'}).option('sep', ${P(c.delimiter === 'auto' ? ',' : c.delimiter || ',')}).csv(${path}))`);
     else out.push(`${group('out')} = spark.read.schema(${group('out')}_schema).option('multiLine', ${(c.format === 'array' || (c.format === 'auto' && !/\.(jsonl|ndjson)$/i.test(c.fileName || ''))) ? 'True' : 'False'}).json(${path})`);
   } else if (node.type === 'filter') out.push(`${group('out')} = ${src}.filter(F.expr(${expression(c.condition||'TRUE','Condition')}))`);
   else if (node.type === 'expression') {
@@ -3788,6 +4252,11 @@ CodeGen.pyEmitNode = function(node) {
     const valid=group('valid'),reject=group('reject');
     out.push(`${valid}, ${reject}, ${valid}_reports = dq_process(${ins.in.ref}, ${ins.reference?.ref||'None'}, __import__('json').loads(${P(JSON.stringify(c.rules||[]))}), ${P(node.name)}, ${c.threshold===''||c.threshold==null?'None':Number(c.threshold)})`);
     out.push(`DQ_ROWS.extend(${valid}_reports)`);
+  } else if (node.type === 'sql_transform') {
+    const views = { input: group('out') + '_input', input2: group('out') + '_input2' };
+    out.push(`${ins.in.ref}.createOrReplaceTempView(${P(views.input)})`);
+    if (ins.in2?.ref) out.push(`${ins.in2.ref}.createOrReplaceTempView(${P(views.input2)})`);
+    out.push(`${group('out')} = spark.sql(${expression(SqlNode.resolve(SqlNode.body(node), views), 'SQL')})`);
   } else if (def.category==='target') {
     let ref = ctx.input;
     if(node.type==='reject_target') {
@@ -3797,6 +4266,7 @@ CodeGen.pyEmitNode = function(node) {
       out.push(`${ref} = reduce(lambda a,b:a.unionByName(b,allowMissingColumns=True),[${refs.join(', ')}])`);
     }
     if(node.type==='preview_target') out.push(`${ref}.show(${Math.max(1,Number(c.limit)||1000)}, truncate=False)`);
+    else if(node.type==='excel_target') out.push(`__import__('os').makedirs(ARGS.output_dir, exist_ok=True)`, `${ref}.toPandas().to_excel(ARGS.output_dir + '/' + ${P((c.fileName||node.name+'.xlsx').replace(/[^A-Za-z0-9_.-]/g,'_'))}, sheet_name=${P(c.sheetName||'Sheet1')}, index=False, header=${c.header===false?'False':'True'})  # needs openpyxl`);
     else {
       const fmt = this.options.sparkFormat || (node.type==='json_target'?'json':'csv');
       // Spark writes a folder in the chosen format; name it after that format, not the mapping's .csv/.json file.
@@ -3993,7 +4463,7 @@ CodeGen.dbtTarget = function(node,meta) {
     if(col) incremental=`\n{% if is_incremental() %}\nWHERE ${qid(col.name)} > ${variable ? this.dbtParam(variable[0]) : `(SELECT COALESCE(MAX(${qid(col.name)}), DATE '1900-01-01') FROM {{ this }})`}\n{% endif %}`;
     else this.warn(node,'Incremental','No date/timestamp column available for an incremental watermark.');
   }
-  if(node.type==='csv_target'||node.type==='json_target'||node.type==='reject_target') this.warn(node,'Target','dbt writes warehouse models, not downloadable CSV/JSON files.');
+  if(['csv_target','json_target','parquet_target','excel_target','reject_target'].includes(node.type)) this.warn(node,'Target','dbt writes warehouse models, not downloadable files.');
   return `{{ config(materialized='${mat}') }}\n${sql.trim()}${incremental}\n`;
 };
 CodeGen.duckdb = function(nodes) {
@@ -4025,7 +4495,8 @@ CodeGen.duckdb = function(nodes) {
     }
   }
   const header = used.size && this.options.comments ? '-- Parameters are inlined with their current values. Edit them here before running:\n' + [...used].map(([name, literal]) => `--   ${name} = ${literal}`).join('\n') + '\n\n' : '';
-  return {text:(scripts.length ? header : '') + scripts.join('\n\n') + (scripts.length ? '\n' : ''),files:null};
+  const ext = scripts.length && nodes.some((n) => n.type === 'excel_source') ? "-- Excel sources are read with DuckDB's excel extension.\nINSTALL excel;\nLOAD excel;\n\n" : '';
+  return {text:ext + (scripts.length ? header : '') + scripts.join('\n\n') + (scripts.length ? '\n' : ''),files:null};
 };
 const ZipStore = {
   crc32(bytes) {
@@ -4130,6 +4601,7 @@ const Lineage = {
     if(Registry.get(node.type).category==='source') return output.map((p)=>make(p.name,p.type,[],'Source: '+(c.fileName||node.name)));
     if(Registry.get(node.type).category==='target') return output.map((p)=>({name:p.name,type:p.type,depends:Graph.inputDefs(node).map((s)=>port(p.name,s.key)),logic:'Write '+Registry.get(node.type).label}));
     if(node.type==='filter') return output.map((p)=>passthrough(p,'in','WHERE '+(c.condition||'TRUE')));
+    if(node.type==='sql_transform') return output.map((p)=>byName(inPorts,p.name)?{name:p.name,type:p.type,depends:[port(byName(inPorts,p.name).name,'in')],logic:'Custom SQL'}:make(p.name,p.type,dependExpr(c.sql,inPorts),'Custom SQL'));
     if(node.type==='sorter') return output.map((p)=>passthrough(p,'in','Sort '+(c.keys||[]).map((k)=>k.column+' '+k.direction).join(', ')+(c.distinct?' · DISTINCT':'')));
     if(node.type==='expression') return output.map((p)=>{
       const f=(c.fields||[]).find((f)=>sameName(f.name,p.name));
@@ -4285,8 +4757,10 @@ const Lineage = {
       case 'scd1':return `Matches business keys ${(c.businessKeys||[]).join(', ')}, overwrites ${(c.overwrite||[]).join(', ')}, preserves ${c.surrogateKey}.`;
       case 'scd2':return `Tracks ${(c.tracked||[]).join(', ')} by ${(c.businessKeys||[]).join(', ')}; ${c.effectiveFrom}→${c.effectiveTo}, current=${c.currentFlag}, high date=${c.highDate}, effective source=${c.effectiveSource}.`;
       case 'data_quality':return `${(c.rules||[]).length} rules; reject threshold ${c.threshold===''?'disabled':c.threshold+'%'}.`;
-      case 'csv_source': case 'json_source':return `Reads ${c.fileName||'(file required)'}.`;
-      case 'reject_target':case 'csv_target':case 'json_target':return `Writes ${c.fileName||'(generated default)'}.`;
+      case 'csv_source': case 'json_source': case 'parquet_source':return `Reads ${c.fileName||'(file required)'}.`;
+      case 'excel_source':return `Reads ${c.sheet?'sheet "'+c.sheet+'" of ':''}${c.fileName||'(file required)'}.`;
+      case 'sql_transform':return 'Custom SQL: ' + String(c.sql||'').trim().split(/\n/)[0].slice(0, 120);
+      case 'reject_target':case 'csv_target':case 'json_target':case 'parquet_target':case 'excel_target':return `Writes ${c.fileName||'(generated default)'}.`;
       case 'preview_target':return `Previews up to ${c.limit||1000} rows.`;
       default:return 'Pass-through.';
     }
@@ -4781,7 +5255,7 @@ function inPoint(n, key = null, linkId = null) {
    UI rendering
    ============================================================ */
 const UI = {
-  renderAll() { els.mapName.value = state.doc.mapping.name; this.renderNodes(); this.renderLinks(); this.renderProps(true); this.renderSQL(); this.renderValidation(); this.renderPreview(); this.renderLog(); this.renderDQ(); this.renderHistory(); this.renderCounts(); if (state.tab === 'lineage' && LineageUI.initialized) LineageUI.render(); },
+  renderAll() { els.mapName.value = state.doc.mapping.name; this.renderNodes(); this.renderLinks(); this.renderProps(true); this.renderSQL(); this.renderValidation(); this.renderPreview(); this.renderLog(); this.renderDQ(); this.renderHistory(); this.renderCounts(); if (state.tab === 'lineage' && LineageUI.initialized) LineageUI.render(); if (typeof MappingTests !== 'undefined') { MappingTests.render(); Profile.render(); } },
   renderEngine() {
     if (!els.enginePill) return;
     els.enginePill.dataset.state = Engine.status;
@@ -4790,7 +5264,7 @@ const UI = {
   },
   renderPalette() {
     if (typeof Studio !== 'undefined' && Studio.mode !== 'mapping') { Studio.palette();return; }
-    const repository = $('#repoNav');
+    const repository = $('#repoNav'), project = $('#projectNav');
     els.palette.replaceChildren(...CATEGORIES.map(([cat, title]) => h('div', { class: 'pal-group' }, h('h3', { text: title }),
       Registry.list().filter((d) => d.category === cat).map((d) => {
         const item = h('div', { class: `pal-item cat-${cat}`, draggable: 'true', tabindex: '0', title: `Drag onto the canvas, or double-click to add a ${d.label}` },
@@ -4803,6 +5277,7 @@ const UI = {
         return item;
       }))), h('p', { class: 'pal-note', text: Panels.small() ? 'Tap an item to add it to the canvas.' : 'Drag an item onto the canvas, or double-click it.' }));
     if (repository) els.palette.prepend(repository);
+    if (project) els.palette.prepend(project);
   },
   nodeMeta(node, def) {
     if (def.category === 'source') {
@@ -4953,6 +5428,7 @@ const UI = {
     if (!pv) { pane.replaceChildren(h('div', { class: 'empty' }, h('b', { text: 'No data to show yet' }), 'Right-click a node and choose "Preview data here", or run a mapping that ends in a Preview Target.')); return; }
     const numeric = (t) => /INT|DOUBLE|FLOAT|DECIMAL|REAL|NUMERIC/i.test(t);
     let rows = pv.rows;
+    const masked = typeof Governance !== 'undefined' ? Governance.maskedColumns(pv.columns, pv.rows) : new Set();
     if (pv.sort) {
       const { col, dir } = pv.sort, isNum = numeric(pv.columns[col].type);
       rows = rows.slice().sort((a, b) => {
@@ -4965,9 +5441,9 @@ const UI = {
     const head = h('tr', null, h('th', { class: 'rn', text: '#' }), pv.columns.map((c, i) => h('th', { title: 'Sort by ' + c.name, onclick: () => {
       pv.sort = !pv.sort || pv.sort.col !== i ? { col: i, dir: 1 } : pv.sort.dir === 1 ? { col: i, dir: -1 } : null; this.renderPreview();
     } }, c.name, pv.sort && pv.sort.col === i ? h('span', { class: 'arr', text: pv.sort.dir === 1 ? '▲' : '▼' }) : null, h('small', { text: c.type }))));
-    const body = rows.map((r, n) => h('tr', null, h('td', { class: 'rn', text: n + 1 }), r.map((v, i) => v == null ? h('td', { class: 'null', text: 'NULL' }) : h('td', { class: numeric(pv.columns[i].type) ? 'num' : '', text: v, title: v.length > 40 ? v : null }))));
+    const body = rows.map((r, n) => h('tr', null, h('td', { class: 'rn', text: n + 1 }), r.map((v, i) => v == null ? h('td', { class: 'null', text: 'NULL' }) : masked.has(i) ? h('td', { class: 'masked', text: Governance.mask(v), title: 'Masked: classified as sensitive' }) : h('td', { class: numeric(pv.columns[i].type) ? 'num' : '', text: v, title: v.length > 40 ? v : null }))));
     pane.replaceChildren(...present(
-      h('div', { class: 'pane-bar' }, h('span', null, h('b', { text: pv.title }), ` · ${count} · ${pv.columns.length} column${pv.columns.length === 1 ? '' : 's'}${pv.note ? ' · ' + pv.note : ''}`)),
+      h('div', { class: 'pane-bar' }, h('span', null, h('b', { text: pv.title }), ` · ${count} · ${pv.columns.length} column${pv.columns.length === 1 ? '' : 's'}${pv.note ? ' · ' + pv.note : ''}${masked.size ? ` · ${masked.size} sensitive column${masked.size === 1 ? '' : 's'} masked` : ''}`)),
       rows.length || pv.columns.length ? h('table', { class: 'grid' }, h('thead', null, head), h('tbody', null, body)) : null,
       rows.length ? null : h('div', { class: 'empty' }, h('b', { text: 'No rows' }), 'The query ran but returned no rows at this point in the mapping.')));
   },
@@ -5025,6 +5501,8 @@ const UI = {
     if (tab === 'sql') this.renderSQL();
     if (tab === 'lineage') LineageUI.render();
     if (tab === 'dq') this.renderDQ();
+    if (tab === 'profile') Profile.render();
+    if (tab === 'tests') MappingTests.render();
   },
   setBusy(on) { els.btnRun.disabled = on; els.btnValidate.disabled = on; els.btnRun.querySelector('span').textContent = on ? 'Running' : 'Run'; },
   live() { this.renderNodes(); if (state.tab === 'sql') this.renderSQL(); },
@@ -5120,6 +5598,7 @@ const Actions = {
       const bytes = await Upload.read(file);
       if (doc !== state.doc || Graph.node(nodeId) !== node) return;
       Files.set(nodeId, file.name, bytes);
+      if (Repo.project && Studio.mode === 'mapping') Repo.keepSessionFile(nodeId, file.name, bytes);
       if (Repo.project && Studio.mode === 'mapping' && node.config.rememberFile) Repo.rememberFile(nodeId, file.name, bytes);
       else if (Repo.project && Studio.mode === 'mapping') Repo.forgetFile(nodeId);
       node.config.fileName = file.name; node.ports.out = [];
@@ -5135,6 +5614,7 @@ const Actions = {
   loadDoc(doc, { keepFiles = false } = {}) {
     if (!keepFiles) Files.clear();
     Outputs.clear();
+    if (typeof Profile !== 'undefined' && state.doc !== doc) { Profile.result = null; MappingTests.results = {}; }
     state.doc = doc; state.sel = new Set(); state.selLink = null; state.status = {}; state.issues = []; state.validatedAt = null; state.preview = null; state.log = []; state.portErrors = {}; state.dqReport = [];
     Params.initialSnapshot(); state.dqReport = []; state.runContext = null;
     state.logicSig = logicSignature();
@@ -5153,8 +5633,8 @@ const Actions = {
   },
   async open(file) {
     try {
-      const raw = JSON.parse(await file.text());
-      if (raw && raw.projectVersion && Repo.project) { await Repo.importProject(file); return; }
+      const raw = await ProjectFile.read(file);
+      if (raw && (raw.projectVersion || ProjectFile.isBundle(raw) || ProjectFile.isEncrypted(raw)) && Repo.project) { await Repo.importProject(file); return; }
       const { doc, skipped } = normalizeDoc(raw);
       if (Repo.project) { const id = Repo.acceptMapping(doc); toast(`Imported mapping "${doc.mapping.name}" into the repository.`, 'success'); return; }
       this.loadDoc(doc);
@@ -5329,9 +5809,11 @@ const App = {
       if (!state.sel.has(id)) Actions.select([id]);
       UI.showContext(e.clientX, e.clientY, [
         { label: 'Preview data here', run: () => Preview.node(id) },
+        { label: 'Profile data', run: () => Profile.run(id) },
         ...Graph.outputGroups(Graph.node(id)).slice(1).map((g) => ({ label: `Preview: ${g.label}`, run: () => Preview.node(id, g.key) })),
         { label: 'Rename', run: () => Actions.rename(id) }, '-',
         { label: 'Duplicate', key: 'Ctrl+D', run: () => Actions.duplicate() },
+        { label: state.sel.size > 1 ? `Save ${state.sel.size} nodes as component` : 'Save as component', run: () => Components.save() },
         { label: 'Delete', key: 'Del', run: () => Actions.remove() }]);
     });
     canvas.addEventListener('dblclick', (e) => { const nodeEl = e.target.closest('.node'); if (nodeEl) Actions.rename(nodeEl.dataset.id); });
@@ -5404,7 +5886,7 @@ const App = {
       palette: $('#palette'), props: $('#props'), mapName: $('#mapName'), zoomVal: $('#zoomVal'), statCounts: $('#statCounts'), issueCnt: $('#issueCnt'),
       enginePill: $('#enginePill'), engineState: $('#engineState'), engineMsg: $('#engineMsg'), btnTheme: $('#btnTheme'), btnRun: $('#btnRun'), btnValidate: $('#btnValidate'),
       btnUndo: $('#btnUndo'), btnRedo: $('#btnRedo'), ctx: $('#ctxMenu'), openInput: $('#openInput'),
-      panes: { preview: $('#pane-preview'), sql: $('#pane-sql'), validation: $('#pane-validation'), log: $('#pane-log'), dq: $('#pane-dq'), lineage: $('#pane-lineage') }
+      panes: { preview: $('#pane-preview'), sql: $('#pane-sql'), validation: $('#pane-validation'), log: $('#pane-log'), dq: $('#pane-dq'), lineage: $('#pane-lineage'), profile: $('#pane-profile'), tests: $('#pane-tests') }
     });
     document.querySelectorAll('[data-icon]').forEach((el) => { el.innerHTML = svgIcon(el.dataset.icon, 16); });
     // Opens in the dark theme; light only when the visitor has switched to it before on this device.
@@ -5424,10 +5906,698 @@ const App = {
   }
 };
 
+/* ============================================================
+   Data profiling: column statistics for the data at any node
+   ============================================================ */
+const Profile = {
+  result: null, busy: false,
+  async run(nodeId, group = null) {
+    const node = Graph.node(nodeId);
+    if (!node) { toast('Select a node on the canvas to profile its data.', 'warn'); return; }
+    if (this.busy) return;
+    UI.showTab('profile');
+    this.busy = true; this.result = { nodeId, group, node: node.name, loading: true }; this.render();
+    try {
+      await Engine.waitReady();
+      const doc = state.doc;
+      const result = await Engine.lock(async () => {
+        await Files.ensureChain(nodeId);
+        const sql = Compiler.sql(nodeId, { exec: true, ...(group ? { group } : {}) });
+        const table = '__df_profile';
+        await Engine.exec(`CREATE OR REPLACE TEMP TABLE ${table} AS SELECT * FROM (${sql}) q`);
+        try {
+          const rows = Number((await Engine.rows(`SELECT CAST(count(*) AS VARCHAR) AS n FROM ${table}`))[0].n);
+          const stats = await Engine.rows(`SELECT column_name, column_type, CAST(min AS VARCHAR) AS min, CAST(max AS VARCHAR) AS max, CAST(approx_unique AS VARCHAR) AS uniq, CAST(avg AS VARCHAR) AS avg, CAST(q50 AS VARCHAR) AS median, CAST(null_percentage AS VARCHAR) AS nulls FROM (SUMMARIZE ${table})`);
+          const columns = [];
+          for (const s of stats) {
+            const q = qid(s.column_name), nullPct = Number(s.nulls) || 0;
+            const top = rows ? await Engine.rows(`SELECT CAST(${q} AS VARCHAR) AS v, CAST(count(*) AS VARCHAR) AS n FROM ${table} WHERE ${q} IS NOT NULL GROUP BY 1 ORDER BY count(*) DESC, 1 LIMIT 3`) : [];
+            const exact = rows && rows <= 2000000 ? Number((await Engine.rows(`SELECT CAST(count(DISTINCT ${q}) AS VARCHAR) AS n FROM ${table}`))[0].n) : Number(s.uniq) || 0;
+            columns.push({ name: s.column_name, type: s.column_type, nullPct, distinct: exact, min: s.min, max: s.max, avg: s.avg, median: s.median,
+              top: top.map((t) => ({ value: t.v, count: Number(t.n) })), pii: Governance.label(s.column_name, top.map((t) => t.v)) });
+          }
+          return { rows, columns };
+        } finally { try { await Engine.exec(`DROP TABLE IF EXISTS ${table}`); } catch (_) { /* cleanup */ } }
+      });
+      if (doc !== state.doc) return;
+      this.result = { nodeId, group, node: node.name, at: new Date().toISOString(), ...result };
+    } catch (e) {
+      this.result = { nodeId, group, node: node.name, error: firstLines(e.message, 3) };
+    } finally { this.busy = false; this.render(); }
+  },
+  notes(c, rows) {
+    const out = [], filled = rows * (1 - c.nullPct / 100);
+    if (!rows) return out;
+    if (c.nullPct >= 100) out.push('Always empty');
+    else if (c.nullPct > 50) out.push('Mostly empty');
+    if (c.distinct === 1 && c.nullPct < 100) out.push('Single value');
+    if (rows > 1 && c.distinct >= Math.round(filled) && c.nullPct === 0) out.push('Unique: likely key');
+    if (c.pii) out.push(c.pii === 'Marked sensitive' ? 'Marked sensitive' : 'Personal data: ' + c.pii);
+    return out;
+  },
+  csv() {
+    const r = this.result, esc = (v) => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+    const rows = [['Column', 'Type', 'Filled %', 'Distinct', 'Min', 'Max', 'Mean', 'Median', 'Top values', 'Notes'],
+      ...r.columns.map((c) => [c.name, c.type, (100 - c.nullPct).toFixed(1), c.distinct, c.min, c.max, c.avg, c.median, c.top.map((t) => `${t.value} (${t.count})`).join('; '), this.notes(c, r.rows).join('; ')])];
+    return rows.map((row) => row.map(esc).join(',')).join('\r\n') + '\r\n';
+  },
+  render() {
+    const pane = els.panes.profile;
+    if (!pane) return;
+    const r = this.result;
+    const selected = [...state.sel].find((id) => Graph.node(id));
+    const again = h('button', { class: 'btn', type: 'button', text: selected ? 'Profile selected node' : 'Select a node to profile', disabled: !selected || this.busy, onclick: () => this.run(selected) });
+    if (!r) { pane.replaceChildren(h('div', { class: 'empty' }, h('b', { text: 'No profile yet' }), 'See every column\'s fill rate, distinct values, range and most common values at any point in the mapping. Right-click a node and choose Profile data, or select one and use the button.', h('div', { class: 'btn-row' }, again))); return; }
+    if (r.loading) { pane.replaceChildren(h('div', { class: 'empty' }, h('b', { text: `Profiling ${r.node}…` }), 'Reading the data and computing column statistics.')); return; }
+    if (r.error) { pane.replaceChildren(h('div', { class: 'empty' }, h('b', { text: `Could not profile ${r.node}` }), r.error, h('div', { class: 'btn-row' }, again))); return; }
+    const hide = Governance.settings().maskPreview;
+    const fmt = (v, c) => { if (v == null || v === '') return '—'; if (c && hide && c.pii) return Governance.mask(v); const n = Number(v); return Number.isFinite(n) && /^-?[\d.]+(e[+-]?\d+)?$/i.test(v) && !Number.isInteger(n) ? n.toLocaleString(undefined, { maximumFractionDigits: 3 }) : String(v).length > 40 ? String(v).slice(0, 39) + '…' : String(v); };
+    const bar = h('div', { class: 'pane-bar' },
+      h('span', null, h('b', { text: `Profile of ${r.node}${r.group ? ' · ' + r.group : ''}` }), ` · ${fmtNum(r.rows)} rows · ${r.columns.length} columns`),
+      h('span', { class: 'btn-row', style: 'margin:0' }, again,
+        h('button', { class: 'btn', type: 'button', html: svgIcon('download', 13) + 'Export CSV', onclick: () => downloadBlob(new Blob([this.csv()], { type: 'text/csv' }), slug(r.node).replace(/^n_/, '') + '_profile.csv') })));
+    const table = h('table', { class: 'dq-report profile-table' },
+      h('thead', null, h('tr', null, ['Column', 'Type', 'Filled', 'Distinct', 'Min', 'Max', 'Mean', 'Most common', 'Notes'].map((t) => h('th', { text: t })))),
+      h('tbody', null, r.columns.map((c) => h('tr', null,
+        h('td', { class: 'mono', text: c.name }), h('td', { class: 'mono small-muted', text: c.type }),
+        h('td', null, h('div', { class: 'fill-cell' }, h('div', { class: 'dq-bar' }, h('span', { style: `width:${(100 - c.nullPct).toFixed(1)}%` })), h('span', { text: (100 - c.nullPct).toFixed(1) + '%' }))),
+        h('td', { text: fmtNum(c.distinct) }), h('td', { class: 'mono', text: fmt(c.min, c) }), h('td', { class: 'mono', text: fmt(c.max, c) }), h('td', { class: 'mono', text: fmt(c.avg) }),
+        h('td', { class: 'samples', text: c.top.map((t) => `${fmt(t.value, c)} (${fmtNum(t.count)})`).join(' · ') || '—' }),
+        h('td', null, ...this.notes(c, r.rows).map((n) => h('span', { class: 'profile-note' + (/Personal/.test(n) ? ' pii' : ''), text: n })))))));
+    pane.replaceChildren(bar, h('div', { class: 'profile-scroll' }, table));
+  }
+};
+
+/* ============================================================
+   Mapping unit tests: fixed input rows in, expected rows out
+   ============================================================ */
+const MappingTests = {
+  results: {}, busy: false,
+  tests() { return state.doc.tests || []; },
+  sources() { return state.doc.nodes.filter((n) => Registry.get(n.type).category === 'source'); },
+  targets() { return state.doc.nodes.filter((n) => Registry.get(n.type).category === 'target'); },
+  async register(text, list) {
+    const name = `dft_${++Files.seq}.csv`;
+    await Engine.db.registerFileBuffer(name, new TextEncoder().encode(String(text).endsWith('\n') ? text : text + '\n'));
+    list.push(name); return name;
+  },
+  sourceSql(node, relation) {
+    const ports = Graph.outPorts(node);
+    if (!ports.length) return `SELECT *\nFROM ${relation}`;
+    return `SELECT ${ports.map((p) => `TRY_CAST(${qid(p.name)} AS ${p.type}) AS ${qid(p.name)}`).join(', ')}\nFROM ${relation}`;
+  },
+  relation(vname) { return `read_csv(${qstr(vname)}, header=true, delim=',', quote='"', escape='"', all_varchar=true)`; },
+  async overrides(test, registered) {
+    const map = {};
+    for (const s of this.sources()) if (test.inputs?.[s.id] != null && String(test.inputs[s.id]).trim())
+      map[s.id] = this.sourceSql(s, this.relation(await this.register(test.inputs[s.id], registered)));
+    return map;
+  },
+  missingInputs(targetId, map) {
+    return Graph.chain(targetId).map((id) => Graph.node(id)).filter((n) => n && Registry.get(n.type).category === 'source' && !map[n.id]).map((n) => n.name);
+  },
+  async runOne(test) {
+    const targets = this.targets().filter((t) => test.expected?.[t.id] != null && String(test.expected[t.id]).trim());
+    if (!targets.length) return { status: 'error', at: new Date().toISOString(), details: [{ target: '', status: 'error', message: 'Add expected rows for at least one target.' }] };
+    const registered = [];
+    try {
+      return await Engine.lock(async () => {
+        const map = await this.overrides(test, registered), details = [];
+        for (const t of targets) {
+          const missing = this.missingInputs(t.id, map);
+          if (missing.length) { details.push({ target: t.name, status: 'error', message: `Add input rows for ${missing.join(', ')}.` }); continue; }
+          try {
+            const actual = Compiler.sql(t.id, { exec: true, testSources: map });
+            const cols = await Engine.describe(actual);
+            const expected = this.relation(await this.register(test.expected[t.id], registered));
+            const want = (await Engine.describe(`SELECT * FROM ${expected}`)).map((c) => c.name);
+            const absent = want.filter((n) => !cols.some((c) => sameName(c.name, n)));
+            if (absent.length) { details.push({ target: t.name, status: 'fail', message: `The output has no column ${absent.join(', ')}.` }); continue; }
+            const list = want.map((n) => cols.find((c) => sameName(c.name, n)));
+            const rn = test.ordered ? 'row_number() OVER () AS "#", ' : '';
+            const A = `SELECT ${rn}${list.map((c) => `CAST(${qid(c.name)} AS VARCHAR) AS ${qid(c.name)}`).join(', ')} FROM (${actual}) a`;
+            const E = `SELECT ${rn}${list.map((c, i) => `CAST(TRY_CAST(${qid(want[i])} AS ${c.type}) AS VARCHAR) AS ${qid(c.name)}`).join(', ')} FROM ${expected} e`;
+            const count = async (sql) => Number((await Engine.rows(`SELECT CAST(count(*) AS VARCHAR) AS n FROM (${sql}) q`))[0].n);
+            const missingRows = await count(`(${E}) EXCEPT ALL (${A})`), extraRows = await count(`(${A}) EXCEPT ALL (${E})`);
+            const sample = (sql) => Engine.rows(`SELECT * FROM (${sql}) q LIMIT 5`);
+            details.push({ target: t.name, status: missingRows || extraRows ? 'fail' : 'pass', columns: list.map((c) => c.name), ordered: !!test.ordered,
+              expectedRows: await count(E), actualRows: await count(A), missingRows, extraRows,
+              missingSample: missingRows ? await sample(`(${E}) EXCEPT ALL (${A})`) : [], extraSample: extraRows ? await sample(`(${A}) EXCEPT ALL (${E})`) : [] });
+          } catch (e) { details.push({ target: t.name, status: 'error', message: firstLines(e.message, 3) }); }
+        }
+        const status = details.some((d) => d.status === 'error') ? 'error' : details.some((d) => d.status === 'fail') ? 'fail' : 'pass';
+        return { status, details, at: new Date().toISOString() };
+      });
+    } finally { for (const v of registered) try { await Engine.db.dropFile(v); } catch (_) { /* released */ } }
+  },
+  async runAll() {
+    if (this.busy) return null;
+    const tests = this.tests();
+    if (!tests.length) { toast('This mapping has no tests yet. Create one from the current data in the Tests tab.', 'warn'); UI.showTab('tests'); return null; }
+    this.busy = true; this.render();
+    try {
+      await Engine.waitReady();
+      for (const t of tests) { this.results[t.id] = await this.runOne(t); this.render(); }
+      const failed = tests.filter((t) => this.results[t.id]?.status !== 'pass').length;
+      toast(failed ? `${failed} of ${tests.length} test${tests.length === 1 ? '' : 's'} failed.` : `All ${tests.length} test${tests.length === 1 ? '' : 's'} passed.`, failed ? 'error' : 'success');
+      return { passed: tests.length - failed, failed };
+    } catch (e) { toast('Tests could not run: ' + firstLines(e.message, 2), 'error'); return null; }
+    finally { this.busy = false; this.render(); UI.showTab('tests'); }
+  },
+  // Snapshot test: the first rows of every source, and what the mapping produces from them today.
+  async capture(limit = 20) {
+    if (Versions.readonly) { toast('Return to the current mapping first.', 'warn'); return; }
+    const sources = this.sources(), targets = this.targets();
+    if (!sources.length || !targets.length) { toast('The mapping needs at least one source and one target.', 'warn'); return; }
+    this.busy = true; this.render();
+    const registered = [], doc = state.doc;
+    try {
+      await Engine.waitReady();
+      const test = { id: 't_' + dfUuid(), name: 'Test ' + (this.tests().length + 1), inputs: {}, expected: {}, ordered: false, createdAt: new Date().toISOString() };
+      await Engine.lock(async () => {
+        const decode = (bytes) => new TextDecoder().decode(bytes);
+        for (const s of sources) {
+          await Files.ensure(s.id);
+          test.inputs[s.id] = decode(await Engine.copyToBuffer(`SELECT * FROM (${Compiler.sql(s.id, { exec: true })}) q LIMIT ${limit}`, 'FORMAT CSV, HEADER true', 'csv'));
+        }
+        const map = await this.overrides(test, registered);
+        for (const t of targets) if (!this.missingInputs(t.id, map).length)
+          test.expected[t.id] = decode(await Engine.copyToBuffer(Compiler.sql(t.id, { exec: true, testSources: map }), 'FORMAT CSV, HEADER true', 'csv'));
+      });
+      if (doc !== state.doc) return;
+      (state.doc.tests ||= []).push(test); History.commit();
+      this.results[test.id] = await this.runOne(test);
+      toast(`Created "${test.name}" from the first ${limit} rows of each source. Edit the rows to cover your edge cases.`, 'success', 7000);
+    } catch (e) { toast('Could not create the test: ' + firstLines(e.message, 2), 'error'); }
+    finally { for (const v of registered) try { await Engine.db.dropFile(v); } catch (_) { /* released */ } this.busy = false; this.render(); }
+  },
+  addEmpty() {
+    const test = { id: 't_' + dfUuid(), name: 'Test ' + (this.tests().length + 1), inputs: {}, expected: {}, ordered: false, createdAt: new Date().toISOString() };
+    for (const s of this.sources()) { const ports = Graph.outPorts(s); test.inputs[s.id] = ports.length ? ports.map((p) => p.name).join(',') + '\n' : ''; }
+    (state.doc.tests ||= []).push(test); History.commit(); this.render();
+  },
+  remove(id) { state.doc.tests = this.tests().filter((t) => t.id !== id); delete this.results[id]; History.commit(); this.render(); },
+  summary() {
+    const tests = this.tests(), done = tests.filter((t) => this.results[t.id]);
+    return { total: tests.length, failed: done.filter((t) => this.results[t.id].status !== 'pass').length, run: done.length };
+  },
+  sampleTable(rows) {
+    if (!rows?.length) return null;
+    const cols = Object.keys(rows[0]);
+    return h('table', { class: 'dq-report test-sample' }, h('thead', null, h('tr', null, cols.map((c) => h('th', { text: c })))),
+      h('tbody', null, rows.map((r) => h('tr', null, cols.map((c) => h('td', { class: 'mono', text: r[c] == null ? 'NULL' : String(r[c]) }))))));
+  },
+  card(test) {
+    const res = this.results[test.id], status = res ? res.status : 'none';
+    const change = () => { delete this.results[test.id]; History.commit(); this.render(); };
+    const area = (obj, key, label) => {
+      const ta = h('textarea', { class: 'inp mono', rows: 4, spellcheck: 'false', 'aria-label': label });
+      ta.value = obj[key] ?? '';
+      ta.addEventListener('change', () => { obj[key] = ta.value; change(); });
+      return h('label', { class: 'fld' }, h('span', { class: 'fld-l', text: label }), ta);
+    };
+    const name = h('input', { class: 'inp test-name', value: test.name, 'aria-label': 'Test name', onchange: (e) => { test.name = e.target.value.trim() || test.name; History.commit(); } });
+    const ordered = h('input', { type: 'checkbox' }); ordered.checked = !!test.ordered;
+    ordered.onchange = () => { test.ordered = ordered.checked; change(); };
+    const details = h('details', { class: 'test-body' }, h('summary', { text: 'Input and expected rows (CSV)' }),
+      h('div', { class: 'test-grid' },
+        h('div', null, h('div', { class: 'sub-l', text: 'Input rows' }), ...this.sources().map((s) => area(test.inputs ||= {}, s.id, s.name))),
+        h('div', null, h('div', { class: 'sub-l', text: 'Expected output' }), ...this.targets().map((t) => area(test.expected ||= {}, t.id, t.name)))));
+    const results = res ? h('div', { class: 'test-results' }, ...res.details.map((d) => h('div', { class: 'test-detail ' + d.status },
+      h('b', { text: (d.target ? d.target + ': ' : '') + (d.status === 'pass' ? `passed (${fmtNum(d.actualRows)} rows match)` : d.status === 'fail' && d.message ? d.message : d.status === 'fail' ? `${fmtNum(d.missingRows)} expected row${d.missingRows === 1 ? '' : 's'} missing, ${fmtNum(d.extraRows)} unexpected row${d.extraRows === 1 ? '' : 's'}` : d.message) }),
+      d.missingSample?.length ? h('div', null, h('div', { class: 'sub-l', text: 'Expected but not produced' }), this.sampleTable(d.missingSample)) : null,
+      d.extraSample?.length ? h('div', null, h('div', { class: 'sub-l', text: 'Produced but not expected' }), this.sampleTable(d.extraSample)) : null))) : null;
+    return h('div', { class: 'test-card', 'data-status': status },
+      h('div', { class: 'test-head' }, h('i', { class: 'test-dot', title: status }), name,
+        h('label', { class: 'chk' }, ordered, h('span', { text: 'Row order matters' })),
+        h('button', { class: 'btn', type: 'button', text: 'Run', disabled: this.busy, onclick: async () => { this.busy = true; this.render(); try { await Engine.waitReady(); this.results[test.id] = await this.runOne(test); } catch (e) { toast(firstLines(e.message, 2), 'error'); } finally { this.busy = false; this.render(); } } }),
+        h('button', { class: 'icon-btn', type: 'button', title: 'Delete test', 'aria-label': 'Delete test', html: svgIcon('x', 14), onclick: () => this.remove(test.id) })),
+      results, details);
+  },
+  render() {
+    const pane = els.panes.tests, cnt = $('#testCnt');
+    const s = this.summary();
+    if (cnt) { cnt.hidden = !s.total; cnt.textContent = s.run ? (s.failed ? `${s.failed}✕` : `${s.total}✓`) : String(s.total); cnt.classList.toggle('bad', !!s.failed); }
+    if (!pane) return;
+    const bar = h('div', { class: 'pane-bar' },
+      h('span', null, h('b', { text: s.total ? `${s.total} test${s.total === 1 ? '' : 's'}` : 'Mapping tests' }), s.run ? ` · ${s.run - s.failed} passed · ${s.failed} failed` : ''),
+      h('span', { class: 'btn-row', style: 'margin:0' },
+        h('button', { class: 'btn', type: 'button', text: 'New test from current data', disabled: this.busy || Versions.readonly, onclick: () => this.capture() }),
+        h('button', { class: 'btn', type: 'button', text: 'Empty test', disabled: this.busy || Versions.readonly, onclick: () => this.addEmpty() }),
+        h('button', { class: 'tb primary', type: 'button', text: this.busy ? 'Running…' : 'Run all tests', disabled: this.busy || !s.total, onclick: () => this.runAll() })));
+    if (!s.total) { pane.replaceChildren(bar, h('div', { class: 'empty' }, h('b', { text: 'Prove the mapping does what it should' }), 'A test feeds fixed input rows through the mapping and compares the result with the rows you expect. "New test from current data" takes the first rows of each source and records today\'s output, so any later change that alters the result is caught. Tests are saved with the mapping and the project file.')); return; }
+    pane.replaceChildren(bar, h('div', { class: 'test-list' }, ...this.tests().map((t) => this.card(t))));
+  }
+};
+
+/* ============================================================
+   Reusable components: a saved group of nodes, inserted into any mapping
+   ============================================================ */
+const Components = {
+  async save() {
+    if (Studio.mode !== 'mapping' || Versions.readonly || !Repo.project) return;
+    const ids = [...state.sel].filter((id) => Graph.node(id));
+    if (!ids.length) { toast('Select one or more nodes on the canvas first.', 'warn'); return; }
+    const nodes = ids.map((id) => clone(Graph.node(id)));
+    const links = state.doc.links.filter((l) => ids.includes(l.from) && ids.includes(l.to)).map(clone);
+    const name = await Dialog.prompt('Save as a reusable component', nodes.length === 1 ? nodes[0].name : `${nodes[0].name} and ${nodes.length - 1} more`,
+      { message: 'The selected nodes and the links between them are saved in this project. Insert them into any mapping from Components in the Repository.', ok: 'Save component' });
+    if (!name?.trim()) return;
+    const minX = Math.min(...nodes.map((n) => n.position.x)), minY = Math.min(...nodes.map((n) => n.position.y));
+    for (const n of nodes) n.position = { x: n.position.x - minX, y: n.position.y - minY };
+    const comp = { id: 'cmp_' + dfUuid(), name: name.trim().slice(0, 80), description: '', nodes, links, createdAt: new Date().toISOString(), from: state.doc.mapping.name };
+    Repo.project.components.push(comp); Repo.save(); Repo.render();
+    toast(`Saved component "${comp.name}" with ${nodes.length} node${nodes.length === 1 ? '' : 's'}.`, 'success');
+    return comp;
+  },
+  insert(id) {
+    const comp = Repo.project?.components.find((c) => c.id === id);
+    if (!comp || Workflow.busy()) return;
+    if (Studio.mode !== 'mapping' || !Repo.activeId) { toast('Open a mapping, then insert the component into it.', 'warn'); return; }
+    if (Versions.readonly) { toast('Return to the current mapping first.', 'warn'); return; }
+    const d = state.doc, map = {}, r = els.canvas.getBoundingClientRect(), at = View.toWorld(r.left + r.width / 3, r.top + r.height / 3);
+    for (const src of comp.nodes) {
+      const def = Registry.get(src.type);
+      if (!def) continue;
+      const n = clone(src); n.id = nextId('n', d.nodes);
+      let label = n.name, i = 2; while (d.nodes.some((x) => x.name === label)) label = `${n.name}_${i++}`;
+      n.name = label; n.position = { x: Math.round(at.x + src.position.x), y: Math.round(at.y + src.position.y) };
+      n.config = Object.assign(def.defaultConfig(), n.config); n.ports = { in: [], out: def.category === 'source' ? (src.ports?.out || []) : [] };
+      d.nodes.push(n); map[src.id] = n.id;
+    }
+    for (const l of comp.links) if (map[l.from] && map[l.to]) d.links.push({ ...clone(l), id: nextId('l', d.links), from: map[l.from], to: map[l.to] });
+    state.sel = new Set(Object.values(map)); state.selLink = null;
+    History.commit(); UI.renderProps(true); Ports.schedule();
+    const loose = comp.nodes.some((n) => Registry.get(n.type)?.category !== 'source') && !comp.nodes.some((n) => Registry.get(n.type)?.category === 'source');
+    toast(`Inserted "${comp.name}".` + (loose ? ' Connect its first node to your data.' : ''), 'success');
+    return Object.values(map);
+  }
+};
+
+/* Personal-data detection for profiling and governance. */
+const Privacy = {
+  // Name patterns match whole words, so derived columns such as email_domain are not mistaken for the original.
+  rules: [
+    ['Email', /(^|_)e-?mail(_?addr(ess)?)?$/i, /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i],
+    ['Phone', /(^|_)(phone|mobile|cell|tel|telephone)(_?(no|num|number))?$/i, /^\+?[\d\s().-]{7,18}$/],
+    ['Card number', /(^|_)(card_?(no|num|number)|cc_?(no|num|number)|pan)$/i, /^(?:\d[ -]?){13,19}$/],
+    ['National ID', /(^|_)(ssn|social_?security(_?(no|num|number))?|national_?id|passport(_?(no|num|number))?|tax_?id|nin)$/i, /^\d{3}-?\d{2}-?\d{4}$/],
+    ['Date of birth', /(^|_)(dob|date_?of_?birth|birth_?date|birthday)$/i, null],
+    ['IP address', /(^|_)ip(_?addr(ess)?)?$/i, /^(?:\d{1,3}\.){3}\d{1,3}$/],
+    ['Name', /^(first|last|full|given|family|sur|middle)_?name$|^name$|^(customer|contact|person|employee|patient)_?name$/i, null],
+    ['Address', /(^|_)(address(_?line_?\d)?|street|post_?code|zip(_?code)?|postal_?code)$/i, null]
+  ],
+  detect(column, values = []) {
+    const vals = values.filter((v) => v != null && v !== '');
+    for (const [label, nameRe, valueRe] of this.rules) {
+      if (valueRe && vals.length && vals.every((v) => valueRe.test(String(v).trim()))) return label;
+      if (nameRe.test(column) && (!valueRe || !vals.length || vals.some((v) => valueRe.test(String(v).trim())) || ['Date of birth', 'Name', 'Address'].includes(label))) return label;
+    }
+    return '';
+  }
+};
+
+/* ============================================================
+   Project lineage: how data flows between mappings, at dataset and column
+   level. A mapping's target feeds another mapping when the target writes
+   the file that the other mapping's source reads.
+   ============================================================ */
+const ProjectLineage = {
+  datasetName(node, doc) {
+    const def = Registry.get(node.type);
+    if (!def || node.type === 'preview_target') return null;
+    if (def.category === 'source') return node.config.fileName || null;
+    if (def.category === 'target') return node.config.fileName || (node.type === 'reject_target' ? doc.mapping.name.replace(/\s+/g, '_') + '_rejects.csv' : null);
+    return null;
+  },
+  key(name) { return String(name).trim().toLowerCase(); },
+  // Runs the single-mapping lineage engine against each mapping in turn, then joins the results through shared files.
+  build() {
+    if (!Repo.project) return null;
+    if (Studio.mode === 'mapping') Repo.track();
+    const datasets = new Map(), edges = [], mappings = [];
+    const ds = (name) => { const k = this.key(name); if (!datasets.has(k)) datasets.set(k, { key: k, name, readers: [], writers: [], columns: new Map() }); return datasets.get(k); };
+    const stash = { doc: state.doc, files: Files.map, sel: state.sel, scope: CodeGen.options?.scope, warnings: CodeGen.warnings };
+    try {
+      if (!CodeGen.options) CodeGen.load();
+      if (CodeGen.options.scope === 'selected') CodeGen.options.scope = 'all';
+      for (const doc of Repo.project.mappings) {
+        state.doc = clone(doc); Files.map = {}; state.sel = new Set(); CodeGen._schemaCache = new Map(); CodeGen.warnings = []; Lineage.signature = '';
+        const entry = { id: doc.mapping.id, name: doc.mapping.name, reads: [], writes: [], error: '' };
+        mappings.push(entry);
+        for (const n of state.doc.nodes) {
+          const name = this.datasetName(n, state.doc), cat = Registry.get(n.type)?.category;
+          if (!name) continue;
+          const d = ds(name), ref = { mappingId: doc.mapping.id, mapping: doc.mapping.name, node: n.name, nodeId: n.id };
+          if (cat === 'source') { d.readers.push(ref); entry.reads.push(d.key); for (const p of n.ports.out || []) if (!d.columns.has(p.name.toLowerCase())) d.columns.set(p.name.toLowerCase(), { name: p.name, type: p.type }); }
+          else { d.writers.push(ref); entry.writes.push(d.key); }
+        }
+        try { Lineage.build(); } catch (e) { entry.error = firstLines(e.message, 1); continue; }
+        for (const id of Lineage.targets) {
+          const t = Lineage.graph.get(id), tnode = state.doc.nodes.find((n) => n.id === t.nodeId), tname = tnode && this.datasetName(tnode, state.doc);
+          if (!tname) continue;
+          const target = ds(tname);
+          if (!target.columns.has(String(t.column).toLowerCase())) target.columns.set(String(t.column).toLowerCase(), { name: t.column, type: t.columnType });
+          const ancestors = [...Lineage.traverse(id)].map((k) => Lineage.graph.get(k));
+          const logic = [...new Set(ancestors.filter((n) => n?.category === 'transformation' && n.logic && n.logic !== 'Pass-through').map((n) => n.logic))].join(' → ');
+          const origins = ancestors.filter((n) => n?.category === 'source');
+          for (const o of origins) {
+            const snode = state.doc.nodes.find((n) => n.id === o.nodeId), sname = snode && this.datasetName(snode, state.doc);
+            if (sname) edges.push({ from: this.key(sname), fromCol: String(o.column), to: target.key, toCol: String(t.column), mappingId: doc.mapping.id, mapping: doc.mapping.name, logic });
+          }
+          if (!origins.length) edges.push({ from: null, fromCol: null, to: target.key, toCol: String(t.column), mappingId: doc.mapping.id, mapping: doc.mapping.name, logic: logic || 'Generated' });
+        }
+      }
+    } finally {
+      state.doc = stash.doc; Files.map = stash.files; state.sel = stash.sel; CodeGen._schemaCache = new Map(); CodeGen.warnings = stash.warnings || []; Lineage.signature = '';
+      if (CodeGen.options && stash.scope) CodeGen.options.scope = stash.scope;
+    }
+    for (const d of datasets.values()) d.role = d.readers.length && d.writers.length ? 'intermediate' : d.writers.length ? 'output' : 'input';
+    return { datasets, edges, mappings };
+  },
+  same(a, b) { return String(a).toLowerCase() === String(b).toLowerCase(); },
+  // Every column reachable from (dataset, column), following edges downstream or upstream across mappings.
+  trace(model, dsKey, column, direction = 'down') {
+    const seen = new Map(), queue = [[dsKey, column, []]];
+    while (queue.length) {
+      const [k, c, path] = queue.shift();
+      for (const e of model.edges) {
+        const [fromK, fromC, toK, toC] = direction === 'down' ? [e.from, e.fromCol, e.to, e.toCol] : [e.to, e.toCol, e.from, e.fromCol];
+        if (!fromK || fromK !== k || (c != null && !this.same(fromC, c)) || !toK) continue;
+        const id = toK + '|' + String(toC).toLowerCase();
+        const step = { dataset: model.datasets.get(toK)?.name || toK, column: toC, mapping: e.mapping, mappingId: e.mappingId, logic: e.logic, depth: path.length + 1, via: [...path, e.mapping] };
+        if (!seen.has(id)) { seen.set(id, step); queue.push([toK, toC, step.via]); }
+      }
+    }
+    return [...seen.values()].sort((a, b) => a.depth - b.depth || a.dataset.localeCompare(b.dataset) || String(a.column).localeCompare(String(b.column)));
+  },
+  workflowsFor(mappingIds) {
+    const ids = new Set(mappingIds);
+    return (Repo.project?.workflows || []).filter((w) => w.nodes.some((n) => n.type === 'session' && ids.has(n.config.mappingId))).map((w) => w.name);
+  },
+  impact(model, dsKey, column, direction = 'down') {
+    const steps = this.trace(model, dsKey, column, direction);
+    const mappingIds = [...new Set(steps.map((s) => s.mappingId))];
+    if (direction === 'down') for (const r of model.datasets.get(dsKey)?.readers || []) if (!mappingIds.includes(r.mappingId)) mappingIds.push(r.mappingId);
+    return { steps, mappings: mappingIds.map((id) => Repo.project.mappings.find((m) => m.mapping.id === id)?.mapping.name).filter(Boolean), datasets: [...new Set(steps.map((s) => s.dataset))], workflows: this.workflowsFor(mappingIds) };
+  },
+  csv(model) {
+    const esc = (v) => '"' + String(v ?? '').replace(/"/g, '""') + '"', name = (k) => model.datasets.get(k)?.name || '';
+    return [['Source dataset', 'Source column', 'Mapping', 'Target dataset', 'Target column', 'Logic'], ...model.edges.map((e) => [name(e.from), e.fromCol, e.mapping, name(e.to), e.toCol, e.logic])]
+      .map((r) => r.map(esc).join(',')).join('\r\n') + '\r\n';
+  },
+  // Columns: datasets and mappings placed left to right by how far downstream they are.
+  layout(model) {
+    const depth = new Map(), mapNode = (id) => 'm:' + id;
+    const nodes = [...[...model.datasets.values()].map((d) => ({ id: 'd:' + d.key, label: d.name, kind: 'dataset', role: d.role })), ...model.mappings.map((m) => ({ id: mapNode(m.id), label: m.name, kind: 'mapping' }))];
+    const links = model.mappings.flatMap((m) => [...m.reads.map((k) => ['d:' + k, mapNode(m.id)]), ...m.writes.map((k) => [mapNode(m.id), 'd:' + k])]);
+    const uniq = [...new Map(links.map((l) => [l.join('>'), l])).values()];
+    for (const n of nodes) depth.set(n.id, 0);
+    for (let pass = 0; pass < nodes.length; pass++) { let changed = false; for (const [a, b] of uniq) if (depth.get(b) < depth.get(a) + 1 && depth.get(a) + 1 < nodes.length * 2) { depth.set(b, depth.get(a) + 1); changed = true; } if (!changed) break; }
+    const cols = new Map(); for (const n of nodes) { const d = depth.get(n.id); if (!cols.has(d)) cols.set(d, []); cols.get(d).push(n); }
+    const W = 170, H = 34, GX = 60, GY = 14, pos = new Map();
+    let maxY = 0;
+    for (const [d, list] of [...cols.entries()].sort((a, b) => a[0] - b[0])) list.forEach((n, i) => { const p = { x: 10 + d * (W + GX), y: 10 + i * (H + GY), w: W, h: H }; pos.set(n.id, p); maxY = Math.max(maxY, p.y + H); });
+    return { nodes, links: uniq, pos, width: 20 + Math.max(1, cols.size) * (W + GX) - GX, height: maxY + 10 };
+  },
+  diagram(model, highlight = new Set()) {
+    const L = this.layout(model), NS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', `0 0 ${L.width} ${L.height}`); svg.setAttribute('width', L.width); svg.setAttribute('height', L.height); svg.setAttribute('class', 'plin-svg'); svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'Project data flow');
+    const el = (tag, attrs, text) => { const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); if (text != null) e.textContent = text; svg.append(e); return e; };
+    for (const [a, b] of L.links) { const p = L.pos.get(a), q = L.pos.get(b); if (!p || !q) continue; const x1 = p.x + p.w, y1 = p.y + p.h / 2, x2 = q.x, y2 = q.y + q.h / 2;
+      el('path', { d: `M${x1},${y1} C${x1 + 30},${y1} ${x2 - 30},${y2} ${x2},${y2}`, class: 'plin-link' + (highlight.has(a) && highlight.has(b) ? ' on' : '') }); }
+    for (const n of L.nodes) { const p = L.pos.get(n.id); const on = highlight.has(n.id);
+      el('rect', { x: p.x, y: p.y, width: p.w, height: p.h, rx: n.kind === 'dataset' ? 14 : 4, class: `plin-node ${n.kind} ${n.role || ''}${on ? ' on' : ''}` });
+      const t = el('text', { x: p.x + p.w / 2, y: p.y + p.h / 2 + 4, 'text-anchor': 'middle', class: 'plin-label' }, n.label.length > 24 ? n.label.slice(0, 23) + '…' : n.label);
+      const title = document.createElementNS(NS, 'title'); title.textContent = (n.kind === 'dataset' ? 'File: ' : 'Mapping: ') + n.label; t.append(title); }
+    return svg;
+  },
+  open() {
+    const model = this.build(); if (!model) return;
+    const body = $('#generalModalBody'), datasets = [...model.datasets.values()].sort((a, b) => ({ input: 0, intermediate: 1, output: 2 })[a.role] - ({ input: 0, intermediate: 1, output: 2 })[b.role] || a.name.localeCompare(b.name));
+    const dsSel = h('select', { class: 'inp', 'aria-label': 'Dataset' }, datasets.map((d) => h('option', { value: d.key, text: `${d.name} · ${d.role}` })));
+    const colSel = h('select', { class: 'inp', 'aria-label': 'Column' });
+    const dirSel = h('select', { class: 'inp', 'aria-label': 'Direction' }, h('option', { value: 'down', text: 'What does it feed? (impact)' }), h('option', { value: 'up', text: 'Where does it come from? (origin)' }));
+    const result = h('div', { class: 'plin-result' }), pic = h('div', { class: 'plin-diagram' });
+    const fillCols = () => { const d = model.datasets.get(dsSel.value); colSel.replaceChildren(h('option', { value: '', text: 'All columns' }), ...[...(d?.columns.values() || [])].map((c) => h('option', { value: c.name, text: c.name + (c.type ? ' · ' + c.type : '') }))); };
+    const show = () => {
+      const key = dsSel.value, col = colSel.value || null, dir = dirSel.value;
+      if (!key) { result.replaceChildren(P.hint('This project has no file-based sources or targets yet.')); pic.replaceChildren(this.diagram(model)); return; }
+      const r = this.impact(model, key, col, dir), d = model.datasets.get(key);
+      const hl = new Set(['d:' + key, ...r.steps.map((s) => 'd:' + this.key(s.dataset)), ...r.steps.map((s) => 'm:' + s.mappingId)]);
+      if (dir === 'down') for (const x of d.readers) hl.add('m:' + x.mappingId);
+      pic.replaceChildren(this.diagram(model, hl));
+      const subject = `${d.name}${col ? '.' + col : ''}`;
+      const sentence = dir === 'down'
+        ? (r.steps.length || r.mappings.length ? `Changing ${subject} affects ${r.steps.length} column${r.steps.length === 1 ? '' : 's'} in ${r.datasets.length} dataset${r.datasets.length === 1 ? '' : 's'}, ${r.mappings.length} mapping${r.mappings.length === 1 ? '' : 's'}${r.workflows.length ? ' and the workflow' + (r.workflows.length === 1 ? ' ' : 's ') + r.workflows.join(', ') : ''}.` : `Nothing in this project reads ${subject}.`)
+        : (r.steps.length ? `${subject} is built from ${r.steps.length} upstream column${r.steps.length === 1 ? '' : 's'} in ${r.datasets.length} dataset${r.datasets.length === 1 ? '' : 's'}.` : `${subject} is an original input: no mapping in this project writes it.`);
+      result.replaceChildren(h('p', { class: 'plin-sentence', text: sentence }),
+        r.steps.length ? h('table', { class: 'dq-report' }, h('thead', null, h('tr', null, ['Step', 'Dataset', 'Column', 'Through mapping', 'Logic'].map((t) => h('th', { text: t })))),
+          h('tbody', null, r.steps.map((s) => h('tr', null, h('td', { text: s.depth }), h('td', { class: 'mono', text: s.dataset }), h('td', { class: 'mono', text: s.column }), h('td', { text: s.mapping }), h('td', { class: 'samples', text: s.logic || 'Pass-through' })))))
+          : null);
+    };
+    dsSel.onchange = () => { fillCols(); show(); }; colSel.onchange = show; dirSel.onchange = show;
+    fillCols();
+    const warnings = model.mappings.filter((m) => m.error);
+    body.replaceChildren(h('div', { class: 'plin' },
+      h('h2', { text: 'Project lineage and impact' }),
+      h('p', { class: 'small-muted', text: `${model.mappings.length} mappings · ${model.datasets.size} files · ${model.edges.length} column links. Mappings connect where one writes the file another reads.` }),
+      h('div', { class: 'plin-controls' }, P.field('Dataset', dsSel), P.field('Column', colSel), P.field('Question', dirSel)),
+      result, h('div', { class: 'plin-scroll' }, pic),
+      warnings.length ? P.hint('Lineage incomplete for: ' + warnings.map((m) => `${m.name} (${m.error})`).join('; ')) : null,
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn', type: 'button', html: svgIcon('download', 13) + 'Export project lineage (CSV)', onclick: () => downloadBlob(new Blob([this.csv(model)], { type: 'text/csv' }), (slug(Repo.project.project.name).replace(/^n_/, '') || 'project') + '_lineage.csv') }))));
+    show();
+    $('#generalModal').hidden = false;
+    return model;
+  }
+};
+
+/* ============================================================
+   Governance: sensitive-column classification and masking in previews
+   ============================================================ */
+const Governance = {
+  settings() {
+    const p = Repo.project;
+    if (!p) return { maskPreview: false, autoDetect: true, sensitive: [], notSensitive: [] };
+    return p.governance ||= { maskPreview: false, autoDetect: true, sensitive: [], notSensitive: [] };
+  },
+  label(name, samples = []) {
+    const g = this.settings(), n = String(name).toLowerCase();
+    if (g.notSensitive.includes(n)) return '';
+    if (g.sensitive.includes(n)) return 'Marked sensitive';
+    return g.autoDetect ? Privacy.detect(name, samples) : '';
+  },
+  maskedColumns(columns, rows) {
+    if (!this.settings().maskPreview) return new Set();
+    const out = new Set();
+    columns.forEach((c, i) => { if (this.label(c.name, rows.slice(0, 20).map((r) => r[i]))) out.add(i); });
+    return out;
+  },
+  mask(v) {
+    if (v == null) return v;
+    const s = String(v), at = s.indexOf('@');
+    if (at > 0 && /^[^@\s]+@[^@\s]+$/.test(s)) return s[0] + '•••' + s.slice(at);
+    if (s.length <= 4) return '••••';
+    return '•'.repeat(Math.min(8, s.length - 2)) + s.slice(-2);
+  },
+  // Every column across the project, with its sensitivity and the columns that inherit it through lineage.
+  inventory() {
+    const model = ProjectLineage.build(); if (!model) return [];
+    const rows = [];
+    for (const d of model.datasets.values()) for (const c of d.columns.values()) {
+      const label = this.label(c.name);
+      rows.push({ dataset: d.name, key: d.key, column: c.name, type: c.type, role: d.role, label, inherited: '' });
+    }
+    // Columns derived from sensitive inputs inherit the classification downstream.
+    for (const r of rows.filter((x) => x.label)) for (const s of ProjectLineage.trace(model, r.key, r.column, 'down')) {
+      const t = rows.find((x) => x.dataset === s.dataset && ProjectLineage.same(x.column, s.column));
+      if (t && !t.label && !t.inherited) t.inherited = `${r.dataset}.${r.column} via ${s.mapping}`;
+    }
+    return rows;
+  },
+  open() {
+    const g = this.settings(), body = $('#generalModalBody');
+    const draw = () => {
+      const rows = this.inventory();
+      const toggle = (key, label) => { const cb = h('input', { type: 'checkbox' }); cb.checked = !!g[key]; cb.onchange = () => { g[key] = cb.checked; Repo.save(); draw(); UI.renderPreview(); Profile.render(); }; return h('label', { class: 'chk' }, cb, h('span', { text: label })); };
+      const mark = (r) => {
+        const n = r.column.toLowerCase(), sel = h('select', { class: 'inp', 'aria-label': 'Classification for ' + r.column },
+          h('option', { value: 'auto', text: 'Automatic' }), h('option', { value: 'yes', text: 'Sensitive' }), h('option', { value: 'no', text: 'Not sensitive' }));
+        sel.value = g.sensitive.includes(n) ? 'yes' : g.notSensitive.includes(n) ? 'no' : 'auto';
+        sel.onchange = () => { g.sensitive = g.sensitive.filter((x) => x !== n); g.notSensitive = g.notSensitive.filter((x) => x !== n); if (sel.value === 'yes') g.sensitive.push(n); if (sel.value === 'no') g.notSensitive.push(n); Repo.save(); draw(); UI.renderPreview(); };
+        return sel;
+      };
+      const flagged = rows.filter((r) => r.label || r.inherited);
+      body.replaceChildren(h('div', { class: 'plin' },
+        h('h2', { text: 'Governance and privacy' }),
+        h('p', { class: 'small-muted', text: 'Classify columns that hold personal or confidential data. Classifications follow the column name across the whole project, and columns derived from them are listed as inheriting the risk.' }),
+        toggle('maskPreview', 'Mask sensitive columns in Data Preview and Profile'), toggle('autoDetect', 'Detect personal data automatically (emails, phone and card numbers, names, addresses …)'),
+        h('p', { class: 'plin-sentence', text: `${rows.filter((r) => r.label).length} sensitive column${rows.filter((r) => r.label).length === 1 ? '' : 's'}, ${rows.filter((r) => !r.label && r.inherited).length} derived from them, out of ${rows.length}.` }),
+        rows.length ? h('div', { class: 'plin-scroll' }, h('table', { class: 'dq-report' }, h('thead', null, h('tr', null, ['File', 'Column', 'Type', 'Status', 'Classification'].map((t) => h('th', { text: t })))),
+          h('tbody', null, [...flagged, ...rows.filter((r) => !r.label && !r.inherited)].map((r) => h('tr', null, h('td', { class: 'mono', text: r.dataset }), h('td', { class: 'mono', text: r.column }), h('td', { class: 'small-muted', text: r.type || '' }),
+            h('td', null, r.label ? h('span', { class: 'profile-note pii', text: r.label }) : r.inherited ? h('span', { class: 'profile-note', text: 'Derived from ' + r.inherited }) : h('span', { class: 'small-muted', text: '—' })),
+            h('td', null, mark(r)))))))
+          : P.hint('Load files into your sources to list their columns here.'),
+        h('div', { class: 'btn-row' }, h('button', { class: 'btn', type: 'button', html: svgIcon('download', 13) + 'Export data inventory (CSV)', onclick: () => {
+          const esc = (v) => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+          downloadBlob(new Blob([[['File', 'Column', 'Type', 'Role', 'Classification', 'Derived from'], ...rows.map((r) => [r.dataset, r.column, r.type, r.role, r.label, r.inherited])].map((x) => x.map(esc).join(',')).join('\r\n') + '\r\n'], { type: 'text/csv' }), (slug(Repo.project.project.name).replace(/^n_/, '') || 'project') + '_data_inventory.csv');
+        } }))));
+    };
+    draw(); $('#generalModal').hidden = false;
+  }
+};
+
+/* ============================================================
+   Data contracts: what a target promises its consumers, checked on every run
+   ============================================================ */
+const Contracts = {
+  family(type) { const k = XLSX.kindOf(type); return k === 'timestamp' ? 'timestamp' : k; },
+  types: [['', 'Any type'], ['VARCHAR', 'Text'], ['BIGINT', 'Whole number'], ['DOUBLE', 'Number'], ['DATE', 'Date'], ['TIMESTAMP', 'Timestamp'], ['BOOLEAN', 'Boolean']],
+  get(node) { return node.config.contract ||= { mode: 'off', allowExtra: true, columns: [] }; },
+  // Returns a list of violations; an empty list means the contract holds.
+  async check(node, sql, engine = Engine) {
+    const c = node.config.contract;
+    if (!c || c.mode === 'off' || !c.columns?.length) return [];
+    const cols = await engine.describe(sql), problems = [];
+    const find = (name) => cols.find((x) => sameName(x.name, name));
+    for (const col of c.columns) {
+      const actual = find(col.name);
+      if (!actual) { problems.push(`missing column ${col.name}`); continue; }
+      if (col.type && this.family(col.type) !== this.family(actual.type)) problems.push(`${col.name} is ${actual.type}, expected ${col.type}`);
+    }
+    if (c.allowExtra === false) for (const x of cols) if (!c.columns.some((col) => sameName(col.name, x.name))) problems.push(`unexpected column ${x.name}`);
+    const present = c.columns.filter((col) => find(col.name));
+    const checks = [...present.filter((col) => col.required).map((col) => [`count(*) FILTER (WHERE ${qid(find(col.name).name)} IS NULL)`, `${col.name} has {n} empty value(s)`]),
+      ...present.filter((col) => col.unique).map((col) => [`count(${qid(find(col.name).name)}) - count(DISTINCT ${qid(find(col.name).name)})`, `${col.name} has {n} duplicate value(s)`])];
+    if (checks.length) {
+      const row = (await engine.rows(`SELECT ${checks.map(([e], i) => `CAST(${e} AS VARCHAR) AS c${i}`).join(', ')} FROM (${sql}) q`))[0];
+      checks.forEach(([, msg], i) => { const n = Number(row['c' + i]); if (n) problems.push(msg.replace('{n}', fmtNum(n))); });
+    }
+    return problems;
+  },
+  section(node, ui) {
+    const c = this.get(node), ins = node.ports.in || [];
+    const rows = h('div', { class: 'contract-rows' }, c.columns.map((col, i) => h('div', { class: 'contract-row' },
+      h('input', { class: 'inp mono', value: col.name, 'aria-label': 'Column', onchange: (e) => { col.name = e.target.value.trim(); History.commit(); } }),
+      P.select(col, 'type', this.types),
+      h('label', { class: 'chk', title: 'No empty values' }, (() => { const cb = h('input', { type: 'checkbox' }); cb.checked = !!col.required; cb.onchange = () => { col.required = cb.checked; History.commit(); }; return cb; })(), h('span', { text: 'Required' })),
+      h('label', { class: 'chk', title: 'No duplicate values' }, (() => { const cb = h('input', { type: 'checkbox' }); cb.checked = !!col.unique; cb.onchange = () => { col.unique = cb.checked; History.commit(); }; return cb; })(), h('span', { text: 'Unique' })),
+      h('button', { class: 'icon-btn', type: 'button', title: 'Remove', 'aria-label': 'Remove column', html: svgIcon('x', 13), onclick: () => { c.columns.splice(i, 1); History.commit(); ui.rerender(); } }))));
+    const fromInput = () => {
+      if (!ins.length) { toast('Connect the target first so its columns are known.', 'warn'); return; }
+      const keep = new Map(c.columns.map((x) => [x.name.toLowerCase(), x]));
+      c.columns = ins.map((p) => keep.get(p.name.toLowerCase()) || { name: p.name, type: this.types.find(([t]) => t && this.family(t) === this.family(p.type))?.[0] || '', required: false, unique: false });
+      if (c.mode === 'off') c.mode = 'fail';
+      History.commit(); ui.rerender();
+    };
+    return P.section('Data contract',
+      P.field('Enforcement', P.select(c, 'mode', [['off', 'Off'], ['warn', 'Warn: write the file, report problems'], ['fail', 'Fail: do not write the file']])),
+      rows,
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn', type: 'button', text: 'Use current columns', onclick: fromInput }),
+        h('button', { class: 'btn', type: 'button', text: 'Add column', onclick: () => { c.columns.push({ name: '', type: '', required: false, unique: false }); History.commit(); ui.rerender(); } })),
+      P.check(c, 'allowExtra', 'Allow columns not listed in the contract'),
+      P.hint('A contract is what this output promises to whoever reads it. It is checked on every run, before the file is written.'));
+  }
+};
+
+/* ============================================================
+   Airflow: a workflow becomes a DAG that runs the PySpark export of each mapping
+   ============================================================ */
+const AirflowExport = {
+  py(s) { return JSON.stringify(String(s)); },
+  id(s, used) { let base = slug(s).replace(/^n_/, '').slice(0, 60) || 'task', id = base, i = 2; while (used.has(id)) id = `${base}_${i++}`; used.add(id); return id; },
+  // PySpark job for one mapping, generated the same way as Export Code does for the open mapping.
+  sparkJob(doc, warnings) {
+    const stash = { doc: state.doc, files: Files.map, sel: state.sel, scope: CodeGen.options?.scope, warnings: CodeGen.warnings };
+    try {
+      if (!CodeGen.options) CodeGen.load();
+      if (CodeGen.options.scope === 'selected') CodeGen.options.scope = 'all';
+      state.doc = clone(doc); state.sel = new Set();
+      Files.map = Repo.activeId === doc.mapping.id ? stash.files : {};
+      const g = CodeGen.generate('pyspark');
+      for (const w of CodeGen.warnings || []) warnings.push(`${doc.mapping.name}: ${w.message || w.text || w}`);
+      return g.text;
+    } finally {
+      state.doc = stash.doc; Files.map = stash.files; state.sel = stash.sel; CodeGen._schemaCache = new Map(); CodeGen.warnings = stash.warnings || [];
+      if (CodeGen.options && stash.scope) CodeGen.options.scope = stash.scope;
+    }
+  },
+  build(w) {
+    if (Studio.mode === 'mapping') Repo.track();
+    const warnings = [], used = new Set(), ids = new Map(), dag = slug(w.name).replace(/^n_/, '') || 'dataforge_workflow';
+    const files = {}, jobs = new Map();
+    for (const n of w.nodes) ids.set(n.id, this.id(n.name, used));
+    const lines = [
+      '"""', `Airflow DAG generated by DataForge ${APP.version} from the workflow "${w.name}".`, '',
+      'Each Session runs the PySpark export of its mapping (jobs/<mapping>.py).',
+      'Set the Airflow Variables dataforge_home (folder holding jobs/), dataforge_input_dir and dataforge_output_dir.', '"""',
+      'from datetime import datetime, timedelta', '',
+      'from airflow import DAG', 'from airflow.operators.bash import BashOperator', 'from airflow.operators.empty import EmptyOperator', '',
+      "HOME = \"{{ var.value.get('dataforge_home', '/opt/dataforge') }}\"",
+      "INPUT_DIR = \"{{ var.value.get('dataforge_input_dir', '/opt/dataforge/data') }}\"",
+      "OUTPUT_DIR = \"{{ var.value.get('dataforge_output_dir', '/opt/dataforge/output') }}\"", '',
+      'with DAG(', `    dag_id=${this.py(dag)},`, `    description=${this.py(w.description || 'DataForge workflow ' + w.name)},`,
+      '    start_date=datetime(2026, 1, 1),', `    schedule=${Number(w.scheduleMinutes) > 0 ? `timedelta(minutes=${Number(w.scheduleMinutes)})` : 'None'},`,
+      '    catchup=False,', "    default_args={'owner': 'dataforge', 'retries': 1, 'retry_delay': timedelta(minutes=5)},", "    tags=['dataforge'],", ') as dag:'];
+    const incoming = (id) => w.links.filter((l) => l.to === id);
+    const rule = (n) => {
+      const conds = new Set(incoming(n.id).map((l) => l.condition || 'always'));
+      if (!conds.size) return null;
+      if (conds.has('custom')) warnings.push(`${n.name}: custom link expressions cannot be translated; it runs when its upstream tasks are done.`);
+      if (conds.has('always') || conds.has('custom') || (conds.has('success') && conds.has('failure'))) return 'all_done';
+      if (conds.has('failure')) return 'one_failed';
+      return null;
+    };
+    for (const n of w.nodes) {
+      const id = ids.get(n.id), tr = rule(n), extra = tr ? `, trigger_rule=${this.py(tr)}` : '';
+      let task;
+      if (n.type === 'start') task = `EmptyOperator(task_id=${this.py(id)})`;
+      else if (n.type === 'session') {
+        const m = Repo.project.mappings.find((x) => x.mapping.id === n.config.mappingId);
+        if (!m) { warnings.push(`${n.name}: its mapping no longer exists; the task only logs a message.`); task = `BashOperator(task_id=${this.py(id)}, bash_command=${this.py('echo "Mapping not found"; exit 1')}${extra})`; }
+        else {
+          if (!jobs.has(m.mapping.id)) { const file = (slug(m.mapping.name).replace(/^n_/, '') || 'mapping') + '.py'; jobs.set(m.mapping.id, file); files['jobs/' + file] = this.sparkJob(m, warnings); }
+          const ps = Repo.project.parameterSets.find((s) => s.id === (n.config.parameterSetId || w.parameterSetId));
+          if (ps && Object.keys(ps.values || {}).length) warnings.push(`${n.name}: parameter set "${ps.name}" is not passed to the job; set its values in the job or as Spark configuration.`);
+          task = `BashOperator(task_id=${this.py(id)}, bash_command=f"python {HOME}/jobs/${jobs.get(m.mapping.id)} --input-dir {INPUT_DIR} --output-dir {OUTPUT_DIR}"${extra})`;
+        }
+      } else if (n.type === 'timer') task = `BashOperator(task_id=${this.py(id)}, bash_command=${this.py('sleep ' + Math.max(0, Number(n.config.seconds) || 0))}${extra})`;
+      else if (n.type === 'notification') task = `BashOperator(task_id=${this.py(id)}, bash_command=${this.py('echo ' + JSON.stringify(String(n.config.message || n.name).replace(/\{\{|\}\}/g, '')))}${extra})  # replace with your alerting (email, Slack …)`;
+      else if (n.type === 'control') task = n.config.action === 'fail' ? `BashOperator(task_id=${this.py(id)}, bash_command=${this.py('echo "Stopped by workflow control"; exit 1')}${extra})` : `EmptyOperator(task_id=${this.py(id)}${extra})`;
+      else { warnings.push(`${n.name}: ${TaskRegistry.get(n.type)?.label || n.type} tasks have no Airflow equivalent and become a placeholder.`); task = `EmptyOperator(task_id=${this.py(id)}${extra})  # ${TaskRegistry.get(n.type)?.label || n.type}: review by hand`; }
+      lines.push(`    ${id} = ${task}`);
+    }
+    // Mappings chained through a file need that file where the next job looks for it.
+    const sessions = w.nodes.filter((n) => n.type === 'session').map((n) => Repo.project.mappings.find((m) => m.mapping.id === n.config.mappingId)).filter(Boolean);
+    const writes = new Map();
+    for (const m of sessions) for (const n of m.nodes) if (Registry.get(n.type)?.category === 'target') { const f = ProjectLineage.datasetName(n, m); if (f) writes.set(ProjectLineage.key(f), m.mapping.name); }
+    for (const m of sessions) for (const n of m.nodes) if (Registry.get(n.type)?.category === 'source') { const f = ProjectLineage.datasetName(n, m), by = f && writes.get(ProjectLineage.key(f));
+      if (by && by !== m.mapping.name) warnings.push(`${m.mapping.name} reads ${f}, which ${by} writes. Spark writes a folder in the export's target format to the output directory, so point that source at ${by}'s output (or copy it into the input directory) before the second job runs.`); }
+    if (w.links.length) lines.push('');
+    for (const l of w.links) if (ids.has(l.from) && ids.has(l.to)) lines.push(`    ${ids.get(l.from)} >> ${ids.get(l.to)}`);
+    files[`dags/${dag}.py`] = lines.join('\n') + '\n';
+    files['README.md'] = [`# ${w.name} for Apache Airflow`, '', `Generated by DataForge ${APP.version}.`, '',
+      '1. Copy `dags/` into your Airflow DAGs folder and `jobs/` to the folder named by the `dataforge_home` Airflow Variable.',
+      '2. Set the Variables `dataforge_input_dir` (the source files) and `dataforge_output_dir`.',
+      '3. The jobs need PySpark on the workers (`pip install pyspark`); Excel sources and targets also need `pandas` and `openpyxl`.', '',
+      '## Review before running', '', ...(warnings.length ? warnings.map((x) => '- ' + x) : ['- Nothing to review.']), ''].join('\n');
+    return { dag, files, warnings };
+  },
+  download(w = Workflow.active) {
+    if (!w) { toast('Open a workflow first.', 'warn'); return null; }
+    const out = this.build(w);
+    downloadBlob(ZipStore.create(out.files), out.dag + '_airflow.zip');
+    toast(`Exported the Airflow DAG "${out.dag}" with ${Object.keys(out.files).filter((f) => f.startsWith('jobs/')).length} job${Object.keys(out.files).filter((f) => f.startsWith('jobs/')).length === 1 ? '' : 's'}.` + (out.warnings.length ? ` ${out.warnings.length} item${out.warnings.length === 1 ? '' : 's'} to review are listed in README.md.` : ''), out.warnings.length ? 'warn' : 'success', 8000);
+    return out;
+  }
+};
+
 /* Phase 5: local project repository */
 const Repo = {
   db: null, mode: 'memory', project: null, activeId: null, timer: null, channel: null, tabId: dfUuid(), stale: false, written: null, persistAsked: false, runs: [], filesTotal: 0, memoryFiles: new Map(),
-  fresh() { const now = new Date().toISOString(); return { projectVersion:'1.0', project:{ id: 'p_'+dfUuid(), name:'My DataForge Project', createdAt:now, updatedAt:now }, mappings:[], workflows:[], parameterSets:[], versions:{} }; },
+  // Every source file used in this tab, by mapping. Switching mappings no longer loses an upload, and Save project can include it.
+  sessionFiles: new Map(), dataChanged: false,
+  fresh() { const now = new Date().toISOString(); return { projectVersion:'1.0', project:{ id: 'p_'+dfUuid(), name:'My DataForge Project', createdAt:now, updatedAt:now }, mappings:[], workflows:[], parameterSets:[], components:[], versions:{} }; },
   async init() {
     this.project = this.fresh();
     let existingProject = false;
@@ -5471,6 +6641,8 @@ const Repo = {
     out.workflows=(p.workflows||[]).map(x=>Workflow.normalize(x));
     out.parameterSets=(p.parameterSets||[]).map(x=>({id:String(x.id),name:String(x.name||'Parameters'),values:clone(x.values||{})}));
     out.versions=p.versions && typeof p.versions==='object' ? clone(p.versions) : {};
+    if(p.governance&&typeof p.governance==='object')out.governance={maskPreview:!!p.governance.maskPreview,autoDetect:p.governance.autoDetect!==false,sensitive:(p.governance.sensitive||[]).map(String),notSensitive:(p.governance.notSensitive||[]).map(String)};
+    out.components=(Array.isArray(p.components)?p.components:[]).filter(x=>x&&x.id&&Array.isArray(x.nodes)).map(x=>({id:String(x.id),name:String(x.name||'Component'),description:String(x.description||''),nodes:clone(x.nodes),links:clone(x.links||[]),createdAt:x.createdAt||null,from:x.from||''}));
     return out;
   },
   get(store,id) { if(!this.db) return Promise.resolve(null); return new Promise((resolve,reject) => {const t=this.db.transaction(store,'readonly');const r=t.objectStore(store).get(id);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);}); },
@@ -5522,7 +6694,7 @@ const Repo = {
     Studio.switch('mapping');Actions.loadDoc(clone(doc));await this.hydrateFiles(doc);
     this.render();
   },
-  open(id,type) {if(type==='mappings')this.openMapping(id);else if(type==='workflows')Workflow.open(id);else this.editSet(id);},
+  open(id,type) {if(type==='mappings')this.openMapping(id);else if(type==='workflows')Workflow.open(id);else if(type==='components')Components.insert(id);else this.editSet(id);},
   async rename(id,type) {
     const item=this.item(id,type);if(!item)return;
     const next=await Dialog.prompt('Rename '+this.label(type),type==='mappings'?item.mapping.name:item.name,{ok:'Rename'});
@@ -5532,19 +6704,19 @@ const Repo = {
     this.save();this.render();
   },
   item(id,type) {return this.project[type]?.find(x=>(type==='mappings'?x.mapping.id:x.id)===id);},
-  label(type) {return {mappings:'mapping',workflows:'workflow',parameterSets:'parameter set'}[type]||'item';},
+  label(type) {return {mappings:'mapping',workflows:'workflow',parameterSets:'parameter set',components:'component'}[type]||'item';},
   duplicate(id,type) {
     const item=this.item(id,type);if(!item)return;
-    const copy=clone(item), newid=(type==='mappings'?'m_':type==='workflows'?'wf_':'ps_')+dfUuid();
+    const copy=clone(item), newid=(type==='mappings'?'m_':type==='workflows'?'wf_':type==='components'?'cmp_':'ps_')+dfUuid();
     if(type==='mappings'){copy.mapping.id=newid;copy.mapping.name+=' copy';}else{copy.id=newid;copy.name+=' copy';}
-    this.project[type].push(copy);this.save();this.open(newid,type);
+    this.project[type].push(copy);this.save();if(type==='components')this.render();else this.open(newid,type);
   },
   async remove(id,type) {
     const item=this.item(id,type);if(!item||Workflow.busy())return;
     const versions=type==='mappings'?(this.project.versions[id]||[]).length:0;
     if(!(await Dialog.confirm(`Delete ${this.label(type)}?`,`"${type==='mappings'?item.mapping.name:item.name}" will be removed from this project`+(versions?` together with its ${versions} saved version${versions>1?'s':''}`:'')+'. This cannot be undone.',{ok:'Delete',danger:true}))||this.item(id,type)!==item)return;
     this.project[type]=this.project[type].filter(x=>(type==='mappings'?x.mapping.id:x.id)!==id);
-    if(type==='mappings') { delete this.project.versions[id]; if(this.activeId===id){this.activeId=null;Actions.loadDoc(newDoc());} }
+    if(type==='mappings') { delete this.project.versions[id]; for(const key of [...this.sessionFiles.keys()])if(key.startsWith(id+'|'))this.sessionFiles.delete(key); if(this.activeId===id){this.activeId=null;Actions.loadDoc(newDoc());} }
     if(type==='workflows'&&Workflow.active?.id===id){Workflow.active=null;Studio.switch('mapping');}
     this.save();this.render();
   },
@@ -5574,8 +6746,15 @@ const Repo = {
     if(!this.db){for(const [id,f] of this.memoryFiles)if(f.mappingId===this.activeId&&f.nodeId===nodeId&&(!filename||f.fileName===filename))this.memoryFiles.delete(id);await this.storageStats();return;}
     const all=await this.all('files');await Promise.all(all.filter(f=>f.mappingId===this.activeId&&f.nodeId===nodeId&&(!filename||f.fileName===filename)).map(f=>this.del('files',f.id)));await this.storageStats();
   },
+  keepSessionFile(nodeId,fileName,bytes) {
+    if(!this.activeId)return;
+    for(const [key,f] of this.sessionFiles)if(f.mappingId===this.activeId&&f.nodeId===nodeId)this.sessionFiles.delete(key);
+    this.sessionFiles.set([this.activeId,nodeId,fileName].join('|'),{mappingId:this.activeId,nodeId,fileName,bytes});
+    this.dataChanged=true;
+  },
+  sessionFile(mappingId,nodeId,fileName) {return this.sessionFiles.get([mappingId,nodeId,fileName].join('|'))||null;},
   async hydrateFiles(doc) {
-    try {const files=this.db?await this.all('files'):[...this.memoryFiles.values()];for(const n of doc.nodes)if(n.config?.rememberFile&&n.config.fileName){const f=files.find(f=>f.mappingId===doc.mapping.id&&f.nodeId===n.id&&f.fileName===n.config.fileName);if(f)Files.set(n.id,f.fileName,new Uint8Array(f.bytes));}if(state.doc.mapping.id===doc.mapping.id)Share.attachSample(doc,{render:false});UI.renderNodes();UI.renderProps(false);Ports.schedule();}
+    try {const files=this.db?await this.all('files'):[...this.memoryFiles.values()];for(const n of doc.nodes)if(n.config.fileName){const remembered=n.config?.rememberFile&&files.find(f=>f.mappingId===doc.mapping.id&&f.nodeId===n.id&&f.fileName===n.config.fileName);const f=remembered||this.sessionFile(doc.mapping.id,n.id,n.config.fileName);if(f)Files.set(n.id,f.fileName,new Uint8Array(f.bytes));}if(state.doc.mapping.id===doc.mapping.id)Share.attachSample(doc,{render:false});UI.renderNodes();UI.renderProps(false);Ports.schedule();}
     catch(e){toast('Stored files could not be loaded.','warn');}
   },
   async storageStats() {
@@ -5591,10 +6770,11 @@ const Repo = {
     if(Studio.mode==='monitor')Monitor.render();
   },
   render() {
+    ProjectUI.render();
     const host=$('#repoTree'); if(!host||!this.project)return;
     const term=String($('#repoSearch')?.value||'').toLowerCase().trim();
     const sections=[];
-    for(const [type,label,icon] of [['mappings','Mappings','file'],['workflows','Workflows','router'],['parameterSets','Parameter Sets','settings']]) {
+    for(const [type,label,icon] of [['mappings','Mappings','file'],['workflows','Workflows','router'],['parameterSets','Parameter Sets','settings'],['components','Components','component']]) {
       const rows=[];
       for(const item of this.project[type]) {
         const id=type==='mappings'?item.mapping.id:item.id;
@@ -5603,14 +6783,14 @@ const Repo = {
         const current=(type==='mappings'&&this.activeId===id&&Studio.mode==='mapping')||(type==='workflows'&&Workflow.active?.id===id&&Studio.mode==='workflow');
         const more=h('button',{class:'repo-more',text:'⋯',title:'Actions',onclick:e=>{
           e.stopPropagation();UI.showContext(e.clientX,e.clientY,[
-            {label:'Open',run:()=>this.open(id,type)},{label:'Rename',run:()=>this.rename(id,type)},
+            {label:type==='components'?'Insert into mapping':'Open',run:()=>this.open(id,type)},{label:'Rename',run:()=>this.rename(id,type)},
             {label:'Duplicate',run:()=>this.duplicate(id,type)},
             ...(type==='mappings'?[{label:'Versions',run:()=>Versions.open(id)}]:[]),
             {label:'Delete',run:()=>this.remove(id,type)}
           ]);
         }});
         rows.push(h('div',{class:'repo-item'+(current?' current':''),title:name,ondblclick:()=>this.open(id,type)},
-          h('button',{class:'repo-open',text:name,title:'Double-click to open',ondblclick:()=>this.open(id,type),onclick:()=>{if(Panels.small()){this.open(id,type);if(type!=='parameterSets')Panels.close();}}}),more));
+          h('button',{class:'repo-open',text:name,title:type==='components'?'Double-click to insert into the open mapping':'Double-click to open',ondblclick:(e)=>{e.stopPropagation();this.open(id,type);},onclick:()=>{if(Panels.small()){this.open(id,type);if(type!=='parameterSets')Panels.close();}}}),more));
       }
       const list=h('div',{'data-repo-list':type},...rows);
       const header=h('button',{class:'repo-folder-title',onclick:()=>list.hidden=!list.hidden},h('span',{html:svgIcon(icon,13)}),`${label} (${this.project[type].length})`);
@@ -5618,21 +6798,151 @@ const Repo = {
     }
     host.replaceChildren(...sections);
   },
+  // Logic only (no source data, run history or session): a readable JSON file that is easy to diff or review.
   exportProject(suffix='') {if(Studio.mode==='mapping')this.track();downloadBlob(new Blob([JSON.stringify(this.project,null,2)],{type:'application/json'}),slug(this.project.project.name).replace(/^n_/,'')+suffix+'.dfproj.json');},
+  counts(p=this.project) {
+    const count=(n,word)=>`${n} ${word}${n===1?'':'s'}`;
+    const parts=[count(p.mappings.length,'mapping'),count(p.workflows.length,'workflow'),count(p.parameterSets.length,'parameter set')];
+    if(p.components?.length)parts.push(count(p.components.length,'component'));
+    return parts.slice(0,-1).join(', ')+' and '+parts[parts.length-1];
+  },
+  // Source files for every mapping in the project: remembered files, this tab's uploads and the open canvas.
+  async collectFiles() {
+    const out=new Map();
+    const add=(mappingId,nodeId,fileName,raw)=>{
+      if(!raw)return;
+      const doc=this.project.mappings.find(m=>m.mapping.id===mappingId),node=doc?.nodes.find(n=>n.id===nodeId);
+      if(!node||node.config?.fileName!==fileName)return;
+      const bytes=raw instanceof Uint8Array?raw:new Uint8Array(raw);
+      // Bundled sample data is re-attached automatically, so it does not need to travel in the file.
+      const builtin=Share.sampleEntries(doc).find(e=>e[0]===fileName);
+      if(builtin&&builtin[1].length===bytes.length&&builtin[1].every((b,i)=>b===bytes[i]))return;
+      out.set([mappingId,nodeId,fileName].join('|'),{mappingId,nodeId,fileName,bytes});
+    };
+    let stored=[];try{stored=this.db?await this.all('files'):[...this.memoryFiles.values()];}catch(_){stored=[];}
+    for(const f of stored)add(f.mappingId,f.nodeId,f.fileName,f.bytes);
+    for(const f of this.sessionFiles.values())add(f.mappingId,f.nodeId,f.fileName,f.bytes);
+    if(Studio.mode==='mapping'&&this.activeId&&!Versions.readonly)for(const [nodeId,f] of Object.entries(Files.map))add(this.activeId,nodeId,f.fileName,f.bytes);
+    return [...out.values()];
+  },
+  // Sources that will still need a file after the project is opened elsewhere.
+  missingSources(files) {
+    const have=new Set(files.map(f=>[f.mappingId,f.nodeId,f.fileName].join('|')));let missing=0;
+    for(const doc of this.project.mappings){const builtin=Share.sampleEntries(doc).map(e=>e[0]);
+      for(const n of doc.nodes)if(Registry.get(n.type)?.category==='source'&&!have.has([doc.mapping.id,n.id,n.config?.fileName].join('|'))&&!builtin.includes(n.config?.fileName))missing++;}
+    return missing;
+  },
+  sessionState() {
+    let runCounter=0;try{runCounter=Number(localStorage.getItem(APP.runKey)||0)||0;}catch(_){/* storage blocked */}
+    return {studioMode:Studio.mode,activeMappingId:this.activeId,activeWorkflowId:Workflow.active?.id||null,runCounter};
+  },
+  // Save the whole project as one .dfproj file: logic, versions, source data, run history and where you were.
+  async saveFile({includeData=true,suffix='',quiet=false}={}) {
+    if(!this.project)return null;
+    if(Studio.mode==='mapping')this.track();
+    try {
+      const files=includeData?await this.collectFiles():[];
+      const dataBytes=files.reduce((a,f)=>a+f.bytes.byteLength,0);
+      if(!quiet&&dataBytes>300*1048576&&!(await Dialog.confirm('Save a large project file?',`The source data in this project is ${fmtBytes(dataBytes)}. Saving it may take a while and use a lot of memory. Choose "Save without source data" in the project menu to save the logic only.`,{ok:'Save with data'})))return null;
+      const bundle={format:ProjectFile.format,formatVersion:ProjectFile.formatVersion,app:{name:'DataForge',version:APP.version},savedAt:new Date().toISOString(),
+        project:clone(this.project),
+        files:files.map(f=>({mappingId:f.mappingId,nodeId:f.nodeId,fileName:f.fileName,size:f.bytes.byteLength,encoding:'base64',data:ProjectFile.b64(f.bytes)})),
+        runs:clone(this.runs),session:this.sessionState()};
+      const packed=await ProjectFile.encode(bundle);
+      const blob=ProjectFile.password?await ProjectFile.lock(new Uint8Array(await packed.arrayBuffer()),ProjectFile.password):packed;
+      const name=(slug(this.project.project.name).replace(/^n_/,'')||'dataforge_project')+suffix+ProjectFile.ext;
+      downloadBlob(blob,name);
+      if(!suffix)ProjectUI.markSaved(name);
+      if(!quiet){const missing=includeData?this.missingSources(files):0;
+        toast(`Saved ${name} (${fmtBytes(blob.size)}): ${this.counts()}`+(includeData?`, ${files.length} data file${files.length===1?'':'s'}`:', without source data')+'.'+(missing?` ${missing} source${missing===1?' has':'s have'} no file loaded, so ${missing===1?'it':'they'} will need one after opening.`:''),missing?'warn':'success',missing?9000:5000);}
+      return name;
+    } catch(e) {toast('Project file could not be saved: '+firstLines(e?.message,2),'error');return null;}
+  },
+  // Restore source files from a project file and remember them on this device, so they also survive a reload.
+  async restoreFiles(files,maps=new Map()) {
+    let restored=0,sessionOnly=0;
+    for(const f of files){
+      const mappingId=maps.get(f.mappingId)||f.mappingId;
+      const node=this.project.mappings.find(m=>m.mapping.id===mappingId)?.nodes.find(n=>n.id===f.nodeId);
+      if(!node||node.config?.fileName!==f.fileName)continue;
+      let bytes;try{bytes=ProjectFile.unb64(f.data);}catch(_){continue;}
+      const id=[mappingId,f.nodeId,f.fileName].join('|'),entry={id,mappingId,nodeId:f.nodeId,fileName:f.fileName,bytes,size:bytes.byteLength};
+      this.sessionFiles.set(id,{mappingId,nodeId:f.nodeId,fileName:f.fileName,bytes});
+      if(this.db){try{await this.put('files',{...entry,bytes:bytes.slice()});node.config.rememberFile=true;}catch(_){sessionOnly++;}}
+      else{this.memoryFiles.set(id,entry);node.config.rememberFile=true;}
+      restored++;
+    }
+    if(sessionOnly)toast(`${sessionOnly} data file${sessionOnly===1?'':'s'} could not be stored on this device (out of storage space). ${sessionOnly===1?'It is':'They are'} loaded for this session only.`,'warn',9000);
+    await this.storageStats();
+    return restored;
+  },
+  async restoreRuns(runs,maps=new Map(),wmaps=new Map()) {
+    const known=new Set(this.runs.map(r=>r.id)),added=[];
+    for(const r of runs){if(!r||!r.id||known.has(r.id))continue;const copy=clone(r);
+      if(copy.type==='mapping'&&maps.has(copy.objectId))copy.objectId=maps.get(copy.objectId);
+      if(copy.type==='workflow'&&wmaps.has(copy.objectId))copy.objectId=wmaps.get(copy.objectId);
+      added.push(copy);}
+    this.runs=[...this.runs,...added].sort((a,b)=>String(b.started).localeCompare(String(a.started))).slice(0,200);
+    if(this.db)try{for(const r of added)if(this.runs.includes(r))await this.put('runs',r);}catch(_){toast('Run history could not be saved to IndexedDB.','warn');}
+    return added.length;
+  },
+  // Drop stored data that no longer belongs to the project. Run history is cleared only when asked.
+  async pruneLocalData({runs=false}={}) {
+    const keep=new Set(this.project.mappings.map(m=>m.mapping.id));
+    for(const [key,f] of this.sessionFiles)if(!keep.has(f.mappingId))this.sessionFiles.delete(key);
+    for(const [key,f] of this.memoryFiles)if(!keep.has(f.mappingId))this.memoryFiles.delete(key);
+    if(this.db)try{const files=await this.all('files');await Promise.all(files.filter(f=>!keep.has(f.mappingId)).map(f=>this.del('files',f.id)));
+      if(runs){const all=await this.all('runs');await Promise.all(all.map(r=>this.del('runs',r.id)));}}catch(_){/* best effort */}
+    if(runs)this.runs=[];
+    await this.storageStats();
+  },
+  closeEditors() {Versions.readonly=false;els.app.classList.remove('readonly');$('#readonlyBar').hidden=true;for(const id of ['repoEditor','versionPanel']){const el=$('#'+id);if(el)el.hidden=true;}},
+  async newProject() {
+    if(Workflow.busy())return;
+    if(Studio.mode==='mapping')this.track();
+    const has=this.project.mappings.length+this.project.workflows.length+this.project.parameterSets.length;
+    if(has){
+      const choice=await Dialog.open({title:'Start a new project?',message:`"${this.project.project.name}" (${this.counts()}) will be closed and removed from this browser, with its stored data files and run history. Save it as a project file first if you want to open it again later.`,
+        buttons:[{label:'Cancel',value:null},{label:'Discard and start new',value:'discard',danger:true},{label:'Save and start new',value:'save',primary:true}]});
+      if(!choice)return;
+      if(choice==='save'&&!(await this.saveFile()))return;
+    }
+    this.closeEditors();
+    this.project=this.fresh();this.activeId=null;Workflow.active=null;ProjectFile.password=null;
+    try{localStorage.removeItem(APP.activeKey);}catch(_){/* storage blocked */}
+    await this.pruneLocalData({runs:true});this.dataChanged=false;
+    if(Studio.mode!=='mapping')Studio.switch('mapping');
+    Actions.loadDoc(newDoc());this.save();this.render();if(Studio.mode==='monitor')Monitor.render();
+    Welcome.open();
+    const input=$('#projectName');if(input&&!Panels.small()){input.focus();input.select();}
+    toast('New project started. Give it a name in the Project section.','success');
+  },
   async importProject(file) {
     if(Workflow.busy())return;
-    try {const raw=JSON.parse(await file.text());if(raw.version==='1.0'&&Array.isArray(raw.nodes)){this.acceptMapping(raw);toast('Mapping added to project.','success');return;}
-      const p=this.normalize(raw);let report='';
+    try {let raw=await ProjectFile.read(file),password=null;
+      if(ProjectFile.isEncrypted(raw)){const opened=await ProjectFile.openEncrypted(raw,file.name);if(!opened)return;raw=opened.raw;password=opened.password;}
+      if(raw?.version==='1.0'&&Array.isArray(raw.nodes)){this.acceptMapping(raw);toast('Mapping added to project.','success');return;}
+      const bundle=ProjectFile.isBundle(raw)?raw:null;
+      if(bundle&&!(Number(bundle.formatVersion)<=ProjectFile.formatVersion))throw new Error(`This project file was saved by a newer version of DataForge (file format ${bundle.formatVersion}). Update DataForge to open it.`);
+      if(!bundle&&!raw?.projectVersion)throw new Error(`"${file.name}" is not a DataForge project, workflow or mapping file.`);
+      const p=this.normalize(bundle?bundle.project:raw);
+      const files=bundle&&Array.isArray(bundle.files)?bundle.files.filter(f=>f&&typeof f.data==='string'&&f.mappingId&&f.nodeId&&f.fileName):[];
+      const runs=bundle&&Array.isArray(bundle.runs)?bundle.runs:[];
       const has=this.project.mappings.length+this.project.workflows.length+this.project.parameterSets.length;
-      const count=(n,word)=>`${n} ${word}${n===1?'':'s'}`;
-      const summary=`${count(p.mappings.length,'mapping')}, ${count(p.workflows.length,'workflow')} and ${count(p.parameterSets.length,'parameter set')}.`;
+      const extra=bundle?`, ${files.length} data file${files.length===1?'':'s'} and ${runs.length} run${runs.length===1?'':'s'} of history`:'';
+      const summary=`${this.counts(p)}${extra}.`;
       const choice=!has?'replace':await Dialog.open({title:`Import project "${p.project.name}"?`,message:`It contains ${summary}\n\nMerge adds them next to your current work. Replace discards the current project; a backup file is downloaded first.`,
         buttons:[{label:'Cancel',value:null},{label:'Replace current project',value:'replace',danger:true},{label:'Merge',value:'merge',primary:true}]});
       if(!choice)return;
-      const replace=choice==='replace';
-      if(replace){if(has){this.track();this.exportProject('-backup-'+new Date().toISOString().slice(0,19).replace(/[:T]/g,''));}this.project=p;report='Replaced project with '+summary;}
+      const replace=choice==='replace',maps=new Map(),wmaps=new Map();let report='';
+      if(replace){
+        if(has){this.track();if(!(await this.saveFile({suffix:'-backup-'+new Date().toISOString().slice(0,19).replace(/[:T]/g,''),quiet:true})))return;}
+        this.closeEditors();this.project=p;this.activeId=null;Workflow.active=null;ProjectFile.password=password;
+        // A project file carries its own run history; a plain JSON export does not, so keep the local history then.
+        await this.pruneLocalData({runs:!!bundle});this.dataChanged=false;
+        report='Opened project "'+p.project.name+'": '+summary;
+      }
       else{
-        const maps=new Map(),sets=new Map();
         for(const m of p.mappings){
           const copy=clone(m);
           if(this.project.mappings.some(x=>x.mapping.id===copy.mapping.id)){
@@ -5640,6 +6950,7 @@ const Repo = {
           }
           this.project.mappings.push(copy);
         }
+        const sets=new Map();
         for(const x of p.parameterSets){
           const copy=clone(x);
           if(this.project.parameterSets.some(y=>y.id===copy.id)){
@@ -5649,7 +6960,7 @@ const Repo = {
         }
         for(const w of p.workflows){
           const copy=clone(w);
-          if(this.project.workflows.some(x=>x.id===copy.id))copy.id='wf_'+dfUuid();
+          if(this.project.workflows.some(x=>x.id===copy.id)){const oldId=copy.id;copy.id='wf_'+dfUuid();wmaps.set(oldId,copy.id);}
           if(sets.has(copy.parameterSetId))copy.parameterSetId=sets.get(copy.parameterSetId);
           for(const n of copy.nodes||[])if(n.type==='session'){
             if(maps.has(n.config.mappingId))n.config.mappingId=maps.get(n.config.mappingId);
@@ -5657,6 +6968,7 @@ const Repo = {
           }
           this.project.workflows.push(copy);
         }
+        for(const x of p.components||[]){const copy=clone(x);if(this.project.components.some(y=>y.id===copy.id))copy.id='cmp_'+dfUuid();this.project.components.push(copy);}
         for(const [oldId,versions] of Object.entries(p.versions||{})){
           const id=maps.get(oldId)||oldId;
           const current=this.project.versions[id]||[];
@@ -5669,8 +6981,168 @@ const Repo = {
           this.project.versions[id]=current;
         }
         report='Merged '+summary;}
-      this.activeId=null;this.save();this.render();if(this.project.mappings.length)this.openMapping(this.project.mappings[0].mapping.id);toast(report,'success');
+      if(files.length)await this.restoreFiles(files,maps);
+      if(runs.length)await this.restoreRuns(runs,maps,wmaps);
+      if(replace&&bundle?.session){const n=Number(bundle.session.runCounter)||0;try{if(n>(Number(localStorage.getItem(APP.runKey))||0))localStorage.setItem(APP.runKey,String(n));}catch(_){/* storage blocked */}}
+      this.activeId=null;this.save();this.render();
+      const welcome=$('#welcomeStage');if(welcome&&(p.mappings.length||p.workflows.length))welcome.hidden=true;
+      // Reopen what was open when the file was saved.
+      const session=replace&&bundle?.session||{};
+      const mappingId=this.project.mappings.some(m=>m.mapping.id===session.activeMappingId)?session.activeMappingId:this.project.mappings[0]?.mapping.id;
+      if(session.studioMode==='workflow'&&this.project.workflows.some(w=>w.id===session.activeWorkflowId)){if(mappingId)this.activeId=mappingId;Workflow.open(session.activeWorkflowId);}
+      else if(mappingId){await this.openMapping(mappingId);if(session.studioMode==='monitor')Studio.switch('monitor');}
+      else if(this.project.workflows.length)Workflow.open(this.project.workflows[0].id);
+      if(Studio.mode==='monitor')Monitor.render();
+      if(replace&&bundle)ProjectUI.markSavedWhenSettled(file.name);
+      toast(report,'success');
     }catch(e){toast('Project import failed: '+firstLines(e.message,2),'error');}
+  }
+};
+
+/* ============================================================
+   Project files (.dfproj): one file holds the whole project, so a fresh
+   browser session can carry on exactly where the last one stopped.
+   gzip-compressed JSON: { format, formatVersion, app, savedAt,
+     project  (mappings, workflows, parameter sets, versions),
+     files    (source data, base64), runs (history), session }
+   ============================================================ */
+const ProjectFile = {
+  ext: '.dfproj', format: 'dataforge-project', formatVersion: 1, stateKey: 'dataforge.projectfile.v1',
+  b64(bytes) { let s = ''; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(s); },
+  unb64(text) { const s = atob(text), out = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) out[i] = s.charCodeAt(i); return out; },
+  async encode(bundle) {
+    const json = JSON.stringify(bundle);
+    // Older browsers without CompressionStream still get a valid (uncompressed) project file.
+    if (typeof CompressionStream === 'undefined') return new Blob([json], { type: 'application/json' });
+    return new Response(new Blob([json]).stream().pipeThrough(new CompressionStream('gzip'))).blob();
+  },
+  // Reads .dfproj (gzip), .dfproj.json, workflow and mapping files alike.
+  async read(file) { return this.parse(new Uint8Array(await file.arrayBuffer()), file.name); },
+  isBundle(raw) { return !!raw && raw.format === this.format; },
+  // Password protection: AES-256-GCM with a PBKDF2-SHA-256 key. The password is kept in this tab's memory only.
+  encFormat: 'dataforge-project-encrypted', iterations: 600000, password: null,
+  isEncrypted(raw) { return !!raw && raw.format === this.encFormat; },
+  subtle() { if (!globalThis.crypto?.subtle) throw new Error('Password protection needs a secure page (https:// or localhost).'); return crypto.subtle; },
+  async key(password, salt, iterations) {
+    const subtle = this.subtle(), base = await subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
+    return subtle.deriveKey({ name: 'PBKDF2', salt, iterations, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  },
+  async lock(bytes, password) {
+    const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+    const data = new Uint8Array(await this.subtle().encrypt({ name: 'AES-GCM', iv }, await this.key(password, salt, this.iterations), bytes));
+    return new Blob([JSON.stringify({ format: this.encFormat, formatVersion: 1, kdf: { name: 'PBKDF2', hash: 'SHA-256', iterations: this.iterations, salt: this.b64(salt) }, cipher: { name: 'AES-GCM', iv: this.b64(iv) }, data: this.b64(data) })], { type: 'application/json' });
+  },
+  async unlock(env, password) {
+    if (env.kdf?.name !== 'PBKDF2' || env.cipher?.name !== 'AES-GCM') throw new Error('This protected project uses an unknown encryption method.');
+    const key = await this.key(password, this.unb64(env.kdf.salt), Number(env.kdf.iterations) || this.iterations);
+    try { return new Uint8Array(await this.subtle().decrypt({ name: 'AES-GCM', iv: this.unb64(env.cipher.iv) }, key, this.unb64(env.data))); }
+    catch (_) { const e = new Error('Wrong password, or the file is damaged.'); e.wrongPassword = true; throw e; }
+  },
+  // Asks for the password until it is right or the user cancels. Resolves { password, raw } or null.
+  async openEncrypted(env, fileName) {
+    for (let tries = 0; ; tries++) {
+      const pw = await Dialog.open({ title: 'Password-protected project', message: tries ? 'That password is not correct. Try again.' : `"${fileName}" is protected. Enter its password to open it.`,
+        input: { type: 'password', value: '', label: 'Password' }, buttons: [{ label: 'Cancel', value: null }, { label: 'Open', value: '', primary: true }] });
+      if (pw === null) return null;
+      try { return { password: pw, raw: await this.parse(await this.unlock(env, pw), fileName) }; } catch (e) { if (!e.wrongPassword) throw e; }
+    }
+  },
+  async parse(bytes, name) {
+    let text;
+    if (bytes[0] === 0x1f && bytes[1] === 0x8b) {
+      if (typeof DecompressionStream === 'undefined') throw new Error('This browser cannot read compressed project files. Use a current version of Chrome, Edge, Firefox or Safari.');
+      try { text = await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text(); }
+      catch (_) { throw new Error(`"${name}" is damaged or incomplete and could not be decompressed.`); }
+    } else text = new TextDecoder().decode(bytes);
+    try { return JSON.parse(text); } catch (_) { throw new Error(`"${name}" is not a DataForge project, workflow or mapping file.`); }
+  },
+  hash(text) { let h = 0x811c9dc5; for (let i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 0x01000193); } return (h >>> 0).toString(36) + ':' + text.length; }
+};
+
+/* Project section at the top of the left panel: name, contents and whether the project file is up to date. */
+const ProjectUI = {
+  saved: null, timer: null, settle: null,
+  load() { try { this.saved = JSON.parse(localStorage.getItem(ProjectFile.stateKey) || 'null'); } catch (_) { this.saved = null; } },
+  fingerprint() { return ProjectFile.hash(Repo.signature()); },
+  markSaved(fileName) {
+    if (!Repo.project) return;
+    if (Studio.mode === 'mapping') Repo.track();
+    this.saved = { projectId: Repo.project.project.id, hash: this.fingerprint(), fileName, savedAt: new Date().toISOString() };
+    Repo.dataChanged = false;
+    try { localStorage.setItem(ProjectFile.stateKey, JSON.stringify(this.saved)); } catch (_) { /* storage blocked */ }
+    this.render();
+  },
+  // Opening a project fills in inferred schemas; record the file as up to date once that has finished.
+  markSavedWhenSettled(fileName) { clearTimeout(this.settle); this.settle = setTimeout(() => this.markSaved(fileName), 1500); },
+  ago(iso) {
+    const s = (Date.now() - Date.parse(iso)) / 1000;
+    if (!(s >= 0)) return '';
+    if (s < 45) return 'just now';
+    if (s < 3600) return Math.round(s / 60) + ' min ago';
+    if (s < 86400) return Math.round(s / 3600) + ' h ago';
+    return new Date(iso).toLocaleDateString();
+  },
+  status() {
+    const p = Repo.project, empty = !(p.mappings.length + p.workflows.length + p.parameterSets.length);
+    const saved = this.saved?.projectId === p.project.id ? this.saved : null;
+    if (!saved) return empty ? ['empty', 'Empty project. Add a mapping, or open a project file.'] : ['never', 'Not saved to a project file yet.'];
+    if (Repo.dataChanged || saved.hash !== this.fingerprint()) return ['dirty', `Changed since ${saved.fileName} was saved ${this.ago(saved.savedAt)}.`];
+    return ['clean', `Up to date with ${saved.fileName}, saved ${this.ago(saved.savedAt)}.`];
+  },
+  render() {
+    if (!$('#projectNav') || !Repo.project) return;
+    const p = Repo.project, name = $('#projectName');
+    if (name && document.activeElement !== name) name.value = p.project.name;
+    document.title = p.project.name + ' · DataForge';
+    const count = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+    $('#projectMeta').textContent = [count(p.mappings.length, 'mapping'), count(p.workflows.length, 'workflow'), count(p.parameterSets.length, 'parameter set'), ...(p.components?.length ? [count(p.components.length, 'component')] : [])].join(' · ');
+    const [state, text] = this.status(), el = $('#projectState');
+    el.dataset.state = state; el.lastChild.textContent = text + (ProjectFile.password ? ' Password-protected.' : '');
+    el.title = 'Your work is also kept automatically in this browser. A project file (.dfproj) holds everything, including source data, so you can open it in a fresh session or on another device.';
+  },
+  menu(e) {
+    UI.showContext(e.clientX, e.clientY, [
+      { label: 'New project', run: () => Repo.newProject() },
+      { label: 'Save project (.dfproj)', run: () => Repo.saveFile() },
+      { label: 'Save without source data', run: () => Repo.saveFile({ includeData: false }) },
+      { label: ProjectFile.password ? 'Change password…' : 'Protect with a password…', run: () => this.setPassword() },
+      ...(ProjectFile.password ? [{ label: 'Remove password', run: () => { ProjectFile.password = null; this.render(); toast('Password removed. The next save is not protected.'); } }] : []),
+      { label: 'Export logic only (.dfproj.json)', run: () => Repo.exportProject() },
+      '-',
+      { label: 'Project lineage and impact', run: () => ProjectLineage.open() },
+      { label: 'Governance and privacy', run: () => Governance.open() },
+      { label: 'Open project file', run: () => $('#projectInput').click() }
+    ]);
+  },
+  async setPassword() {
+    try { ProjectFile.subtle(); } catch (e) { toast(e.message, 'error'); return; }
+    const ask = (title, message) => Dialog.open({ title, message, input: { type: 'password', value: '', label: 'Password' }, buttons: [{ label: 'Cancel', value: null }, { label: 'Continue', value: '', primary: true }] });
+    const first = await ask('Protect the project file with a password', 'Saved project files will be encrypted (AES-256). Anyone opening one needs this password. If it is forgotten, the file cannot be recovered. Use at least 8 characters.');
+    if (first === null) return;
+    if (first.length < 8) { toast('Use at least 8 characters.', 'warn'); return; }
+    const again = await ask('Confirm the password', 'Type the same password again.');
+    if (again === null) return;
+    if (again !== first) { toast('The passwords do not match. Nothing was changed.', 'warn'); return; }
+    ProjectFile.password = first; this.render();
+    await Repo.saveFile();
+  },
+  build() {
+    this.load();
+    const nameInput = h('input', { id: 'projectName', class: 'inp project-name', maxlength: 80, spellcheck: 'false', 'aria-label': 'Project name', title: 'Project name. It is also the name of the saved project file.',
+      onkeydown: (e) => { if (e.key === 'Enter') e.target.blur(); if (e.key === 'Escape') { e.target.value = Repo.project.project.name; e.target.blur(); } },
+      onchange: (e) => { const next = e.target.value.trim(); if (!next) { e.target.value = Repo.project.project.name; return; } Repo.project.project.name = next.slice(0, 80); Repo.save(); this.render(); } });
+    const nav = h('section', { id: 'projectNav', class: 'project-nav', 'aria-label': 'Project' },
+      h('div', { class: 'project-head' },
+        h('span', { class: 'project-label' }, h('span', { html: svgIcon('folder', 13) }), 'Project'),
+        h('button', { class: 'repo-more', id: 'btnProjectMenu', text: '⋯', title: 'More project actions', 'aria-label': 'More project actions', onclick: (e) => this.menu(e) })),
+      nameInput,
+      h('div', { id: 'projectMeta', class: 'project-meta' }),
+      h('div', { id: 'projectState', class: 'project-state', role: 'status', 'data-state': 'empty' }, h('i'), h('span')),
+      h('div', { class: 'btn-row' },
+        h('button', { id: 'btnProjectSave', class: 'btn primary', title: 'Save the whole project as one .dfproj file: mappings, workflows, parameter sets, versions, source data and run history', 'aria-label': 'Save project', onclick: () => Repo.saveFile() }, h('span', { html: svgIcon('save', 13) }), 'Save'),
+        h('button', { id: 'btnProjectOpen', class: 'btn', title: 'Open a .dfproj project file (also .dfproj.json, workflow and mapping files)', 'aria-label': 'Open project', onclick: () => $('#projectInput').click() }, h('span', { html: svgIcon('folder', 13) }), 'Open')));
+    clearInterval(this.timer); this.timer = setInterval(() => this.render(), 30000);
+    return nav;
   }
 };
 const Versions = {
@@ -5863,7 +7335,7 @@ const Workflow = {
     }
     if(link){const c=WFUI.opt([['always','Always'],['success','On Success'],['failure','On Failure'],['custom','Custom expression']],link.condition||'always');c.onchange=()=>{link.condition=c.value;this.commit();};host.replaceChildren(h('div',{class:'props-head'},h('strong',{text:'Link condition'})),P.section('Trigger',P.field('Condition',c),WFUI.field('Custom expression',link,'expression','textarea'),h('div',{class:'btn-row'},h('button',{class:'btn',text:'Delete link',onclick:()=>this.remove()}))));return;}
     const w=this.active;
-    host.replaceChildren(h('div',{class:'props-head'},h('strong',{text:'Workflow settings'})),P.section('Workflow',WFUI.field('Description',w,'description','textarea'),WFUI.parameterSet('Default parameter set',w,'parameterSetId'),WFUI.textArray('Workflow variables',w,'variables'),WFUI.field('Run every N minutes while this tab is open (0 disables)',w,'scheduleMinutes','number'),P.hint('Schedules work only while this browser tab stays open.'),h('div',{id:'scheduleCountdown',class:'small-muted',text:'Schedule off'})),
+    host.replaceChildren(h('div',{class:'props-head'},h('strong',{text:'Workflow settings'})),P.section('Workflow',WFUI.field('Description',w,'description','textarea'),WFUI.parameterSet('Default parameter set',w,'parameterSetId'),WFUI.textArray('Workflow variables',w,'variables'),WFUI.field('Run every N minutes while this tab is open (0 disables)',w,'scheduleMinutes','number'),P.hint('Schedules work only while this browser tab stays open.'),h('div',{id:'scheduleCountdown',class:'small-muted',text:'Schedule off'})),P.section('Run it outside the browser',h('button',{class:'btn',type:'button',text:'Export as Airflow DAG',onclick:()=>AirflowExport.download(w)}),P.hint('Downloads a DAG plus the PySpark job of every mapping it runs, ready for Apache Airflow.')),
       P.section('Validation',h('button',{class:'btn',text:'Validate workflow',onclick:()=>this.validate(true)})));
   },
   applyView(){if(!this.layer)return;const v=this.view;this.world.style.transform=`translate(${v.x}px,${v.y}px) scale(${v.k})`;this.linkLayer.setAttribute('transform',`translate(${v.x} ${v.y}) scale(${v.k})`);this.layer.style.setProperty('--gx',v.x+'px');this.layer.style.setProperty('--gy',v.y+'px');this.layer.style.setProperty('--gk',v.k);const z=$('#wfZoom');if(z)z.textContent=Math.round(v.k*100)+'%';},
@@ -5947,7 +7419,9 @@ const Workflow = {
       let bytes=null,filename=n.config.fileName;
       const stored=rawFiles.find(f=>f.mappingId===mappingId&&f.nodeId===n.id&&f.fileName===filename);
       const builtin=Share.sampleEntries(d).find(e=>e[0]===filename);
+      const session=Repo.sessionFile(mappingId,n.id,filename);
       if(stored)bytes=new Uint8Array(stored.bytes);
+      else if(session)bytes=session.bytes;
       else if(mappingId===Repo.activeId&&oldFiles[n.id]?.fileName===filename)bytes=oldFiles[n.id].bytes;
       else if(builtin)bytes=builtin[1];
       if(bytes){
@@ -6334,13 +7808,14 @@ const Studio = {
     UI.renderPalette();Repo.render();this.updateToolbar();
   },
   updateToolbar(){const mode=this.mode;$('#btnNew').title=mode==='workflow'?'New workflow':'New mapping';$('#btnSave').title=mode==='workflow'?'Export workflow with its mappings as .dfproj.json (Ctrl+S)':'Save mapping as JSON (Ctrl+S)';$('#btnValidate').title=mode==='workflow'?'Validate workflow':'Validate mapping';},
-  palette(){const palette=els.palette,repo=$('#repoNav');
+  palette(){const palette=els.palette,repo=$('#repoNav'),project=$('#projectNav');
     if(this.mode==='workflow'){
       palette.replaceChildren(...TaskRegistry.list().map(d=>h('div',{class:'pal-group'},h('h3',{text:d.label}),
         h('div',{class:'pal-item cat-'+(d.category==='source'?'source':d.category==='target'?'target':'transformation'),draggable:d.type!=='start',title:`Drag ${d.label} to workflow canvas · double-click to add`,ondragstart:e=>{e.dataTransfer.setData('application/x-dataforge-workflow',d.type);},ondblclick:()=>{if(Panels.small())return;const r=Workflow.layer.getBoundingClientRect(),p=Workflow.toWorld(r.left+r.width/2,r.top+r.height/2);Workflow.add(d.type,p.x-100,p.y-30);},onclick:()=>{if(!Panels.small()||d.type==='start')return;const r=Workflow.layer.getBoundingClientRect(),p=Workflow.toWorld(r.left+r.width/2,r.top+r.height/2);Workflow.add(d.type,p.x-100,p.y-30);Panels.close();}},h('span',{class:'pal-ic',html:svgIcon(d.icon)}),h('span',{text:d.label})))));
     } else if(this.mode==='monitor')palette.replaceChildren(h('div',{class:'pal-note',text:'Search and open repository objects below.'}));
     else return;
     if(repo)palette.prepend(repo);
+    if(project)palette.prepend(project);
   },
   handleClick(e){if(this.mode==='mapping')return false;const id=e.target.closest('button')?.id;
     if(this.mode==='monitor'){if(['btnRun','btnSave','btnValidate','btnNew','btnUndo','btnRedo','btnZoomIn','btnZoomOut','btnFit'].includes(id)){e.preventDefault();e.stopImmediatePropagation();return true;}return false;}
@@ -6366,7 +7841,7 @@ const Welcome = {
       h('div',{class:'welcome-grid'},...[['Load a sample mapping','flask',()=>{root.hidden=true;Repo.createMapping();Actions.loadSample('original');}],
         ['Load the sample workflow','router',()=>{root.hidden=true;Workflow.sample();}],
         ['Import mapping XML','file',()=>{root.hidden=true;XmlImport.demo();}],
-        ['Import project','folder',()=>{$('#projectInput').click();}],
+        ['Open project file','folder',()=>{$('#projectInput').click();}],
         ['New mapping','plus',()=>{root.hidden=true;Repo.createMapping();}]].map(([title,icon,fn])=>h('button',{class:'welcome-card',onclick:fn},h('span',{html:svgIcon(icon,30)}),h('strong',{text:title}))))));
   },
   maybeAbout(){try{if(!localStorage.getItem('dataforge.about.seen'))About.open(true);}catch(_){About.open(true);}}
@@ -6375,7 +7850,7 @@ const About = {
   open(automatic=false){const body=$('#generalModalBody');const never=h('input',{type:'checkbox'});
     body.replaceChildren(h('div',{class:'about-logo'},h('span',{class:'brand-mark',html:svgIcon('lineage',24)}),h('h2',{text:'DataForge · Browser ETL Studio'})),
       h('p',{text:'A visual ETL studio for mappings, workflows, parameter sets, data quality, SQL generation, lineage and local run monitoring.'}),
-      h('div',{class:'about-features'},...['Visual mappings · DuckDB-WASM','Sequence, SCD1/SCD2 & Data Quality','Snowflake, PySpark and dbt exports','Workflow scheduling · run statistics','IndexedDB projects · offline repository','Single HTML file · vanilla JavaScript'].map(s=>h('div',{text:s}))),
+      h('div',{class:'about-features'},...['Visual mappings · DuckDB-WASM','Sequence, SCD1/SCD2 & Data Quality','Snowflake, PySpark and dbt exports','Workflow scheduling · run statistics','.dfproj project files · offline repository','Single HTML file · vanilla JavaScript'].map(s=>h('div',{text:s}))),
       h('p',{class:'mono',text:'Ctrl+Enter  Run    Ctrl+S  Save    Ctrl+K  Commands    Ctrl+Shift+S  Save version    Ctrl+Z/Y  Undo/redo'}),
       h('p',{class:'small-muted'},`Version ${APP.version} · DuckDB-WASM ${APP.duckdb} · `,h('a',{href:APP.repoUrl,target:'_blank',rel:'noopener noreferrer',text:'GitHub'})),
       h('label',{class:'chk'},never,h('span',{text:"Don't show again"})),
@@ -6388,7 +7863,7 @@ const Commands = {
     ['Run',()=>Studio.mode==='workflow'?Workflow.run():Runner.run()],['Validate',()=>Studio.mode==='workflow'?Workflow.validate(true):Actions.validate()],
     ['Export Code',()=>Studio.switch('mapping')||CodeGenUI.open()],['New mapping',()=>Repo.createMapping()],['New workflow',()=>Repo.createWorkflow()],
     ['Open Workflow Designer',()=>Studio.switch('workflow')],['Open Monitor',()=>Studio.switch('monitor')],
-    ['Toggle theme',()=>Actions.toggleTheme()],['Save version',()=>Versions.save()],['Export Project',()=>Repo.exportProject()],
+    ['Toggle theme',()=>Actions.toggleTheme()],['Save version',()=>Versions.save()],['Save project file',()=>Repo.saveFile()],['Profile selected node',()=>Profile.run([...state.sel][0])],['Run mapping tests',()=>MappingTests.runAll()],['New test from current data',()=>{UI.showTab('tests');MappingTests.capture();}],['Save selection as component',()=>Components.save()],['Protect project file with a password',()=>ProjectUI.setPassword()],['Project lineage and impact',()=>ProjectLineage.open()],['Governance and privacy',()=>Governance.open()],['Export workflow as Airflow DAG',()=>AirflowExport.download()],['Open project file',()=>{$('#projectInput').click();}],['New project',()=>Repo.newProject()],['Export project logic as JSON',()=>Repo.exportProject()],
     ['Import mapping XML',()=>{$('#xmlInput').click();}],['About DataForge',()=>About.open()]
   ];
     for(const m of Repo.project?.mappings||[])commands.push(['Mapping · '+m.mapping.name,()=>Repo.openMapping(m.mapping.id)]);
@@ -6417,16 +7892,20 @@ const Phase5 = {
         h('input',{id:'repoSearch',class:'inp',placeholder:'Search repository',oninput:()=>Repo.render()}),h('div',{id:'repoTree'}),
         h('div',{class:'btn-row'},h('button',{class:'btn',text:'+ Mapping',onclick:()=>Repo.createMapping()}),h('button',{class:'btn',text:'+ Workflow',onclick:()=>Repo.createWorkflow()}),h('button',{class:'btn',text:'+ Set',onclick:()=>Repo.createParamSet()})),
         h('div',{class:'repo-storage'},h('span',{text:'Stored files: '}),h('b',{id:'repoFileSize',text:'0 B'}),h('button',{class:'linkish',text:'Clear',onclick:()=>Repo.clearFiles()})),
-        h('div',{class:'btn-row'},h('button',{class:'btn',text:'Export Project',onclick:()=>Repo.exportProject()}),h('button',{class:'btn',text:'Import',onclick:()=>$('#projectInput').click()})),
         h('div',{class:'btn-row'},h('button',{class:'btn',text:'Mapping XML',onclick:()=>$('#xmlInput').click()}),h('button',{class:'btn',text:'Try sample XML',onclick:()=>XmlImport.demo()})),
         h('div',{class:'btn-row'},h('button',{class:'btn',text:'SVG',onclick:()=>Diagrams.export('svg')}),h('button',{class:'btn',text:'PNG',onclick:()=>Diagrams.export('png')}),h('button',{class:'btn',text:'Share link',onclick:()=>Share.copy()}))),
       h('div',{id:'repoEditor',class:'repo-inline-editor',hidden:true}),h('div',{id:'versionPanel',class:'repo-inline-editor',hidden:true}));
     els.palette.prepend(repo);
+    els.palette.prepend(ProjectUI.build());
+    // Dropping a project file anywhere opens it; any other file dropped outside a source must not navigate away from the app.
+    window.addEventListener('dragover',e=>{if([...(e.dataTransfer?.types||[])].includes('Files'))e.preventDefault();});
+    window.addEventListener('drop',e=>{const f=e.dataTransfer?.files?.[0];if(f&&/\.dfproj(\.json)?$/i.test(f.name)){e.preventDefault();e.stopImmediatePropagation();Repo.importProject(f);}},true);
+    window.addEventListener('drop',e=>{if([...(e.dataTransfer?.types||[])].includes('Files'))e.preventDefault();});
     const mode=$('#studioMode');mode.onchange=()=>Studio.switch(mode.value);
     document.addEventListener('click',e=>Studio.handleClick(e),true);
     $('#btnStopWorkflow').onclick=()=>Workflow.stop();
     $('#btnSaveVersion').onclick=()=>Versions.save();
-    $('#btnExportProject').onclick=()=>Repo.exportProject();
+    $('#btnExportProject').onclick=()=>Repo.saveFile();
     $('#btnImportProject').onclick=()=>$('#projectInput').click();
     $('#btnAbout').onclick=()=>About.open();
     $('#btnCommand').onclick=()=>Commands.open();
@@ -6466,16 +7945,22 @@ const Phase5 = {
   }
 };
 // Optional persistence controls are added without changing the source registry signatures.
-for(const sourceType of ['csv_source','json_source']) {
+for(const sourceType of SOURCE_TYPES) {
   const def=Registry.get(sourceType),render=def.renderProperties;
   def.renderProperties=function(node,ui){const result=render.call(this,node,ui);
     const cb=h('input',{type:'checkbox'});cb.checked=!!node.config.rememberFile;
     cb.onchange=async()=>{node.config.rememberFile=cb.checked;History.commit();if(cb.checked&&Files.has(node.id))await Repo.rememberFile(node.id,node.config.fileName,Files.map[node.id].bytes);if(!cb.checked)await Repo.forgetFile(node.id);};
-    result.push(P.section('Local file storage',h('label',{class:'chk'},cb,h('span',{text:'Remember source file on this device'})),P.hint('Saved to IndexedDB only when enabled. Source bytes are never included in a mapping or project JSON.')));
+    result.push(P.section('Local file storage',h('label',{class:'chk'},cb,h('span',{text:'Remember source file on this device'})),P.hint('Saved to IndexedDB only when enabled. Save project (.dfproj) always includes the loaded file, so the mapping runs after it is opened elsewhere. Mapping JSON never includes source data.')));
     return result;};
 }
 
-window.DataForge = { APP, state, Registry, Graph, Compiler, Validator, Runner, Preview, Engine, Files, Sample, Actions, History, Ports, UI, P, Params, CodeGen, Lineage, ZipStore, CodeGenUI, LineageUI, Repo, Workflow, TaskRegistry, WFExpr, Monitor, XmlImport, Share, Diagrams, Versions, Commands, Studio };
+// Data contracts on every file target, between the output settings and the download link.
+for (const targetType of ['csv_target', 'json_target', 'parquet_target', 'excel_target']) {
+  const def = Registry.get(targetType), render = def.renderProperties;
+  def.renderProperties = function (node, ui) { const result = render.call(this, node, ui); result.splice(1, 0, Contracts.section(node, ui)); return result; };
+}
+
+window.DataForge = { APP, state, Registry, Graph, Compiler, Validator, Runner, Preview, Engine, Files, Sample, Actions, History, Ports, UI, P, Params, CodeGen, Lineage, ZipStore, CodeGenUI, LineageUI, Repo, ProjectFile, ProjectUI, XLSX, Profile, MappingTests, Components, Privacy, SqlNode, ProjectLineage, Governance, Contracts, AirflowExport, Workflow, TaskRegistry, WFExpr, Monitor, XmlImport, Share, Diagrams, Versions, Commands, Studio };
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => App.start()); else App.start();
 })();
 </script>

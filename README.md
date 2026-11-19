@@ -6,7 +6,7 @@ A visual ETL designer that runs entirely in the browser. You build mappings visu
 
 ## Features
 
-- **Mapping Designer.** Drag-and-drop canvas with Source, Filter, Expression, Sorter, Joiner, Lookup, Aggregator, Router, Union, Rank, Sequence Generator, SCD Type 1, SCD Type 2, Data Quality and Target transformations.
+- **Mapping Designer.** Drag-and-drop canvas with CSV, JSON, Parquet and Excel sources and targets, SQL, Filter, Expression, Sorter, Joiner, Lookup, Aggregator, Router, Union, Rank, Sequence Generator, SCD Type 1, SCD Type 2, Data Quality and Target transformations.
 - **In-browser execution.** Every mapping compiles to a DuckDB SQL CTE chain and runs on CSV/JSON files through DuckDB-WASM, with data preview at any node.
 - **Warehouse patterns.** SCD1/SCD2 with hash-based change detection, surrogate keys, reject handling, and data quality rules (reject, flag or warn).
 - **Parameters and variables.** `$$PARAM` syntax, with persistent mapping variables for incremental loads.
@@ -15,7 +15,11 @@ A visual ETL designer that runs entirely in the browser. You build mappings visu
 - **Workflow Designer.** Sessions, decisions, assignments, timers, notifications and conditional links, with concurrent branches.
 - **Monitor.** Run history, Gantt timeline, session statistics, trend charts and run comparison.
 - **Mapping XML import.** Best-effort conversion of repository mapping XML exports, with an import report.
-- **Project repository.** Stored in IndexedDB, with mapping versions and compare, project import/export (merge or replace), workflow export, shareable links, and SVG/PNG diagram export.
+- **Testing and quality.** Mapping tests with fixed input and expected rows, data profiling at any node, and data contracts that check outputs before they are written.
+- **Governance.** Personal-data detection and classification, masking in previews, a data inventory, and project-wide lineage and impact analysis across chained mappings.
+- **Reuse and orchestration.** Reusable components, and Airflow DAG export of workflows.
+- **Projects.** A Project section at the top of the left panel shows the open project, lets you rename it, and tells you whether your project file is up to date. **Save** writes the whole project to one `.dfproj` file; **Open** brings it back in any browser, including a fresh session (see [Project files](#project-files)).
+- **Project repository.** Stored in IndexedDB, with mapping versions and compare, project merge or replace, workflow export, shareable links, and SVG/PNG diagram export.
 
 ## Try it
 
@@ -27,6 +31,29 @@ A single self-contained `index.html` in vanilla JavaScript. It uses DuckDB-WASM,
 
 It works on phones and tablets too: below 900px the side panels become drawers, palette items are added with a tap, and the canvas supports pinch zoom.
 
+## Project files
+
+Your work is saved automatically in the browser you are using. To move it to another browser, another computer or a fresh session, choose **Save** in the Project section. It downloads one `.dfproj` file that holds everything needed to carry on where you stopped:
+
+| Included | Details |
+| --- | --- |
+| Mappings | Every node, link, expression, condition, port and setting, plus parameters and the current values of persistent variables. |
+| Workflows | Tasks, links, conditions, schedules and workflow variables. |
+| Parameter sets | All sets and values. |
+| Versions | Every saved mapping version, so compare and restore still work. |
+| Source data | The CSV and JSON file loaded into each source, in every mapping, whether or not "Remember source file on this device" is ticked. Built-in sample data is not stored; it is re-attached automatically. |
+| Run history | The runs shown in the Monitor. |
+| Session | The mapping or workflow that was open, the designer mode and the run counter. |
+| Tests, components, governance | Mapping tests, reusable components and column classifications. |
+
+Open the file with **Open** in the Project section, the toolbar Open button, or by dropping it onto the page. In an empty session it opens straight away; otherwise you choose Merge (add it next to your work) or Replace (a backup `.dfproj` of the current project is downloaded first). Restored data files are remembered on the new device, so they also survive a reload there.
+
+A project file can be **password-protected** (project menu ⋯ → Protect with a password). It is then encrypted with AES-256-GCM; without the password it cannot be opened or read, and a forgotten password cannot be recovered.
+
+The project menu (⋯) also has **New project**, **Save without source data** (logic only, for large data) and **Export logic only**, which writes the readable, diff-friendly `.dfproj.json` used by earlier versions. Both formats can be opened.
+
+A `.dfproj` file is gzip-compressed JSON (`{ format: "dataforge-project", formatVersion, project, files, runs, session }`, with source files base64-encoded), so it can be inspected with standard tools, for example `gunzip -c my_project.dfproj | jq .project`. It contains your source data: share it only with people who may see that data.
+
 ## Running it yourself
 
 Serve the folder with any static web server (`npm run serve`, `python3 -m http.server`, GitHub Pages, ...). Opening `index.html` directly from disk also works in most browsers.
@@ -36,7 +63,7 @@ Serve the folder with any static web server (`npm run serve`, `python3 -m http.s
 | Host | Why | Avoidable? |
 | --- | --- | --- |
 | `cdn.jsdelivr.net` | DuckDB-WASM engine (pinned release) | Yes, by self-hosting (below) |
-| `extensions.duckdb.org` | DuckDB's JSON extension, downloaded the first time a JSON source or target runs | No |
+| `extensions.duckdb.org` | DuckDB's JSON and Parquet extensions, downloaded the first time a JSON or Parquet source or target runs | No |
 | `fonts.googleapis.com`, `fonts.gstatic.com` | UI fonts; system fonts are used if blocked | Optional |
 
 Your data never leaves the browser. A Content-Security-Policy in `index.html` limits the page to these hosts.
@@ -58,7 +85,7 @@ npx playwright install chromium
 npm test
 ```
 
-`npm test` drives the real app in headless Chromium: it runs the three samples and the sample workflow on DuckDB-WASM, runs JSON sources and targets (array and newline-delimited), exports every dialect, and checks persistence across reloads, project import/export, share links, the dialogs and the phone layout.
+`npm test` drives the real app in headless Chromium: it runs the three samples and the sample workflow on DuckDB-WASM, runs JSON sources and targets (array and newline-delimited), exports every dialect, and checks persistence across reloads, saving a `.dfproj` project file and opening it in a fresh browser context, project import/export, share links, the dialogs and the phone layout.
 
 ### Generated code is executed, not just generated
 
@@ -85,7 +112,7 @@ Both test suites run in GitHub Actions on every push. See [CHANGELOG.md](CHANGEL
 | Shortcut | Action |
 | --- | --- |
 | Ctrl+Enter | Run the mapping or workflow |
-| Ctrl+S | Save the mapping as JSON, or export the workflow |
+| Ctrl+S | Save the mapping as JSON, or export the workflow (use **Save** in the Project section for the whole project) |
 | Ctrl+Shift+S | Save a version of the mapping |
 | Ctrl+Shift+V | Validate |
 | Ctrl+K | Command palette |

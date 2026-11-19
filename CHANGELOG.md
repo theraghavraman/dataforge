@@ -1,5 +1,43 @@
 # Changelog
 
+## 1.4.0
+
+### Added
+- **Project lineage and impact** (Project menu ⋯ → Project lineage and impact). Mappings are joined through the files they share: a target that writes `clean.csv` feeds every mapping whose source reads `clean.csv`. Pick a file and column to see everything it feeds downstream, or everything it comes from, across all mappings, with the workflows affected and a flow diagram. Exports as CSV.
+- **Governance and privacy.** Columns holding personal data (email, phone, card number, national ID, date of birth, IP address, name, address) are detected automatically and can be marked sensitive or not by hand. Columns derived from them are listed as inheriting the risk. Optionally masks sensitive values in Data Preview and Profile. Exports a data inventory CSV.
+- **Data contracts on file targets.** List the columns an output promises, with type, Required and Unique. Checked on every run before writing: *Fail* writes nothing and fails the step, *Warn* writes and reports.
+- **Airflow export** (Workflow settings → Export as Airflow DAG). A zip with the DAG, the PySpark job of every mapping it runs, and a README. Sessions, timers, notifications and control tasks are translated; link conditions become trigger rules; the schedule carries over. Anything that cannot be translated is listed for review.
+
+## 1.3.0
+
+### Added
+- **Parquet and Excel sources and targets.** Excel keeps numbers, dates and booleans as real values, lets you pick the sheet, and freezes the header row on output. Parquet, like JSON, is a DuckDB extension downloaded from extensions.duckdb.org on first use.
+- **Data profiling** (right-click a node → Profile data, or the Profile tab): fill rate, distinct values, range, mean and most common values for every column, with hints for likely keys, constant or empty columns and personal data.
+- **Mapping tests** (Tests tab). A test feeds fixed input rows through the mapping and compares the result with expected rows. "New test from current data" records today's behaviour so later changes that alter the output are caught. Tests are saved with the mapping and the project file.
+- **SQL transformation**: a hand-written SELECT over one or two inputs (`input`, `input2`), with column types detected and exports to every dialect.
+- **Reusable components**: save selected nodes as a component and insert them into any mapping from the Repository.
+- **Password-protected project files** (Project menu ⋯ → Protect with a password): AES-256-GCM with a PBKDF2-SHA-256 key (600,000 iterations). The password is kept in memory for the tab only.
+
+### Fixed
+- Exported PySpark jobs with an Excel target failed when the output folder did not exist yet.
+
+## 1.2.0
+
+### Added
+- **Project section** at the top of the left panel: the project name (click to rename), what it contains, and whether your project file is up to date (not saved yet, changed since saving, or up to date). Save and Open sit right there; the ⋯ menu has New project, Save without source data and Export logic only.
+- **`.dfproj` project files.** Save writes the whole project to one compressed file: mappings, workflows, parameter sets, versions, the source data loaded into every mapping, run history and the mapping or workflow that was open. Opening it in a fresh browser session restores all of it, so mappings and workflows run straight away without uploading any file again. Restored data is remembered on the new device.
+- **New project**, which offers to save the current project to a file first.
+- **Drop a project file** onto the page to open it.
+- Smoke test: save a project file, open it in a brand-new browser context, run the restored mappings and workflow, reload, and run again.
+
+### Changed
+- Replacing a project now downloads the backup as a `.dfproj` file that includes source data and run history.
+- The Repository panel's Export Project / Import buttons moved to the Project section. The `.dfproj.json` format is still written by Export logic only and the Workflow Designer, and is still read everywhere.
+- The browser tab title shows the project name.
+
+### Fixed
+- **An uploaded source file was lost when you opened another mapping** unless "Remember source file on this device" was ticked. Uploads are now kept for the whole session, and workflows can use them too.
+
 ## 1.1.3
 
 ### Changed

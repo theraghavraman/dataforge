@@ -30,12 +30,13 @@ const results = [], problems = [];
 const browser = await chromium.launch();
 const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, acceptDownloads: true });
 await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-if (mirror) await context.route('https://cdn.jsdelivr.net/**', (route) => {
+function mirrorRoute(route) {
   const rest = /duckdb-wasm@[^/]+\/(.*)$/.exec(route.request().url())?.[1];
   const file = rest === '+esm' ? join(mirror, 'esm.js') : rest ? join(mirror, rest) : null;
   if (!file || !existsSync(file)) return route.abort();
   return route.fulfill({ body: readFileSync(file), contentType: TYPES[extname(file)] || 'text/javascript', headers: { 'access-control-allow-origin': '*' } });
-});
+}
+if (mirror) await context.route('https://cdn.jsdelivr.net/**', mirrorRoute);
 
 function watch(page) {
   page.on('pageerror', (e) => problems.push('page error: ' + e.message));
@@ -192,6 +193,270 @@ await check('uploaded CSV: run, remember on this device, reload, run again', asy
   let s = await summary(page); expect(s?.ok && s.rows === 2, 'first run ' + JSON.stringify(s));
   await page.waitForTimeout(400); await page.close(); page = await open();
   await run(page); s = await summary(page); expect(s?.ok && s.rows === 2, 'run after reload ' + JSON.stringify(s));
+});
+let projectFile, projectSnapshot;
+await check('project section: rename, upload without "remember", switch mappings, save .dfproj', async () => {
+  expect(await page.isVisible('#projectNav'), 'project section missing');
+  await page.fill('#projectName', 'Retail Warehouse'); await page.press('#projectName', 'Enter'); await page.waitForTimeout(400);
+  expect(await page.evaluate(() => DataForge.Repo.project.project.name) === 'Retail Warehouse', 'rename not stored');
+  // A mapping whose upload is NOT remembered on this device: the project file must still carry its data.
+  await page.click('#btnNew'); await page.waitForTimeout(300);
+  await page.evaluate(async () => {
+    const { Actions: A, state, History } = DataForge;
+    state.doc.mapping.name = 'Unremembered upload'; History.commit();
+    A.addNode('csv_source', 60, 100); A.addNode('filter', 340, 100); A.addNode('csv_target', 620, 100);
+    const [src, fil, tgt] = state.doc.nodes; A.link(src.id, fil.id); A.link(fil.id, tgt.id);
+    fil.config.condition = 'amount >= 20'; state.doc.parameters.$$MIN = { kind: 'parameter', type: 'INTEGER', value: '20' }; History.commit();
+    await A.attachFile(src.id, new File(['id,amount\n1,10\n2,20\n3,30\n4,40\n'], 'payments.csv', { type: 'text/csv' }));
+  });
+  await page.waitForTimeout(800); await run(page);
+  let s = await summary(page); expect(s?.ok && s.rows === 3, 'first run ' + JSON.stringify(s));
+  // Switching away and back used to lose an upload that was not remembered.
+  const ids = await page.evaluate(() => DataForge.Repo.project.mappings.map((m) => m.mapping.id));
+  await page.evaluate((id) => DataForge.Repo.openMapping(id), ids[0]); await page.waitForTimeout(300);
+  await page.evaluate((id) => DataForge.Repo.openMapping(id), ids[ids.length - 1]); await page.waitForTimeout(500);
+  await run(page); s = await summary(page); expect(s?.ok && s.rows === 3, 'upload lost after switching mappings ' + JSON.stringify(s));
+  await page.evaluate(async () => { await DataForge.Versions.save('before project file'); const R = DataForge.Repo; R.project.parameterSets.push({ id: 'ps_test', name: 'Prod values', values: { $$MIN: '30' } }); R.save(); R.render(); });
+  await page.waitForTimeout(400);
+  expect(await page.getAttribute('#projectState', 'data-state') !== 'clean', 'project shown as saved before any save');
+  const dir = mkdtempSync(join(tmpdir(), 'dataforge-proj-'));
+  const [dl] = await Promise.all([page.waitForEvent('download'), page.click('#btnProjectSave')]);
+  expect(dl.suggestedFilename() === 'retail_warehouse.dfproj', 'file name ' + dl.suggestedFilename());
+  projectFile = join(dir, dl.suggestedFilename()); await dl.saveAs(projectFile);
+  const head = readFileSync(projectFile).subarray(0, 2);
+  expect(head[0] === 0x1f && head[1] === 0x8b, 'project file is not gzip-compressed');
+  await page.waitForTimeout(300);
+  expect(await page.getAttribute('#projectState', 'data-state') === 'clean', 'state after save: ' + await page.textContent('#projectState'));
+  projectSnapshot = await page.evaluate(() => { const R = DataForge.Repo; return { name: R.project.project.name, mappings: R.project.mappings.map((m) => m.mapping.name).sort(), workflows: R.project.workflows.length, sets: R.project.parameterSets.length, versions: Object.values(R.project.versions).flat().length, runs: R.runs.length, active: R.activeId }; });
+  await page.evaluate(() => { DataForge.state.doc.mapping.name = 'Unremembered upload v2'; DataForge.History.commit(); });
+  await page.waitForTimeout(500);
+  expect(await page.getAttribute('#projectState', 'data-state') === 'dirty', 'edit after save not flagged');
+  await page.evaluate(() => { DataForge.state.doc.mapping.name = 'Unremembered upload'; DataForge.History.commit(); });
+  return `${(readFileSync(projectFile).length / 1024).toFixed(1)} KB, ${projectSnapshot.mappings.length} mappings, ${projectSnapshot.runs} runs`;
+});
+await check('fresh session: open the .dfproj, everything is back and runs without re-uploading', async () => {
+  const fresh = await browser.newContext({ viewport: { width: 1440, height: 900 }, acceptDownloads: true });
+  if (mirror) await fresh.route('https://cdn.jsdelivr.net/**', mirrorRoute);
+  const p2 = await fresh.newPage(); watch(p2); p2.setDefaultTimeout(10000);
+  await p2.goto(base);
+  await p2.waitForFunction(() => window.DataForge?.Repo.project && document.querySelector('#enginePill').dataset.state !== 'loading', null, { timeout: 120000 });
+  await p2.waitForTimeout(400);
+  expect(await p2.evaluate(() => DataForge.Repo.project.mappings.length) === 0, 'fresh context is not empty');
+  await p2.click('#generalModal >> text=Continue');
+  await p2.setInputFiles('#projectInput', projectFile); await p2.waitForTimeout(1200);
+  const got = await p2.evaluate(() => { const R = DataForge.Repo; return { name: R.project.project.name, mappings: R.project.mappings.map((m) => m.mapping.name).sort(), workflows: R.project.workflows.length, sets: R.project.parameterSets.length, versions: Object.values(R.project.versions).flat().length, runs: R.runs.length, active: R.activeId }; });
+  expect(got.versions >= 1 && got.sets >= 1, 'version or parameter set missing from the snapshot ' + JSON.stringify(got));
+  expect(JSON.stringify(got) === JSON.stringify(projectSnapshot), 'restored ' + JSON.stringify(got) + '\n       expected ' + JSON.stringify(projectSnapshot));
+  expect(!(await p2.isVisible('#welcomeStage')), 'welcome screen still shown');
+  // The mapping that was open when saving is open again, with its data and parameters.
+  expect(await p2.evaluate(() => DataForge.state.doc.mapping.name === 'Unremembered upload' && DataForge.state.doc.parameters.$$MIN?.value === '20'), 'wrong mapping or parameters reopened');
+  await run(p2); let s = await summary(p2); expect(s?.ok && s.rows === 3, 'unremembered upload did not travel: ' + JSON.stringify(s));
+  const csv = await p2.evaluate(() => DataForge.Repo.project.mappings.find((m) => m.nodes.some((n) => n.config.fileName === 'my data (1).csv'))?.mapping.id);
+  await p2.evaluate((id) => DataForge.Repo.openMapping(id), csv); await p2.waitForTimeout(500);
+  await run(p2); s = await summary(p2); expect(s?.ok && s.rows === 2, 'remembered upload did not travel: ' + JSON.stringify(s));
+  await p2.waitForTimeout(1600);
+  expect(await p2.getAttribute('#projectState', 'data-state') === 'clean', 'opened project not shown as up to date: ' + await p2.textContent('#projectState'));
+  // Reload in the new session: the restored data is now remembered on this device too.
+  await p2.reload();
+  await p2.waitForFunction(() => window.DataForge?.Repo.project && document.querySelector('#enginePill').dataset.state !== 'loading', null, { timeout: 120000 });
+  await p2.waitForTimeout(600);
+  const pay = await p2.evaluate(() => DataForge.Repo.project.mappings.find((m) => m.mapping.name === 'Unremembered upload').mapping.id);
+  await p2.evaluate((id) => DataForge.Repo.openMapping(id), pay); await p2.waitForTimeout(500);
+  await run(p2); s = await summary(p2); expect(s?.ok && s.rows === 3, 'data lost after reload in the new session: ' + JSON.stringify(s));
+  // The sample workflow runs too (sample data is re-attached automatically).
+  await p2.evaluate(() => DataForge.Workflow.open(DataForge.Repo.project.workflows[0].id)); await p2.waitForTimeout(300);
+  await run(p2);
+  const wf = await p2.evaluate(() => DataForge.Repo.runs.find((r) => r.type === 'workflow')?.status);
+  expect(wf === 'SUCCEEDED', 'workflow run ' + wf);
+  // New project: offers to save first, then starts empty.
+  await p2.click('#btnProjectMenu'); await p2.click('#ctxMenu button:has-text("New project")');
+  await dialog(p2, 'Discard and start new'); await p2.waitForTimeout(500);
+  const after = await p2.evaluate(() => ({ n: DataForge.Repo.project.mappings.length + DataForge.Repo.project.workflows.length, runs: DataForge.Repo.runs.length, name: DataForge.Repo.project.project.name }));
+  expect(after.n === 0 && after.runs === 0 && after.name === 'My DataForge Project', 'new project ' + JSON.stringify(after));
+  await fresh.close();
+  return `${got.mappings.length} mappings, ${got.workflows} workflows, ${got.versions} versions, ${got.runs} runs restored`;
+});
+const fillDialog = async (pg, label, text) => { await pg.waitForSelector('#dialogOverlay:not([hidden])'); await pg.fill('#dialogBox input', text); await pg.click(`#dialogBox button:text-is("${label}")`); await pg.waitForTimeout(300); };
+const newMapping = async (pg, nodes, wire) => pg.evaluate(async ([nodes, wire]) => {
+  const { Actions: A, state, History, Repo } = DataForge;
+  Repo.createMapping(); nodes.forEach(([type, x, y]) => A.addNode(type, x, y));
+  const n = state.doc.nodes; wire.forEach(([a, b, port]) => A.link(n[a].id, n[b].id, null, port || null));
+  History.commit(); return n.map((x) => x.id);
+}, [nodes, wire]);
+await check('profile: column statistics and personal-data hints', async () => {
+  const [src] = await newMapping(page, [['csv_source', 60, 100], ['preview_target', 380, 100]], [[0, 1]]);
+  await page.evaluate(async (id) => DataForge.Actions.attachFile(id, new File(['id,email,city\n1,a@x.com,Oslo\n2,b@y.org,\n3,c@z.net,Oslo\n'], 'people.csv')), src);
+  await page.waitForTimeout(800);
+  await page.evaluate((id) => DataForge.Profile.run(id), src); await page.waitForFunction(() => DataForge.Profile.result && !DataForge.Profile.result.loading);
+  const r = await page.evaluate(() => DataForge.Profile.result);
+  expect(!r.error && r.rows === 3 && r.columns.length === 3, 'profile ' + JSON.stringify(r).slice(0, 200));
+  const by = Object.fromEntries(r.columns.map((c) => [c.name, c]));
+  expect(by.id.distinct === 3 && by.email.pii === 'Email' && Math.round(by.city.nullPct) === 33 && by.city.top[0].value === 'Oslo', 'column stats ' + JSON.stringify(by).slice(0, 300));
+  expect(await page.isVisible('#pane-profile .profile-table'), 'profile table not shown');
+  expect((await page.textContent('#pane-profile')).includes('Personal data: Email'), 'personal-data hint missing');
+  return '3 rows · key, email and fill rate detected';
+});
+await check('SQL node: two inputs, detected types, one statement only', async () => {
+  const [a, b, q] = await newMapping(page, [['csv_source', 60, 60], ['csv_source', 60, 260], ['sql_transform', 360, 140], ['preview_target', 640, 140]], [[0, 2, 'in'], [1, 2, 'in2'], [2, 3]]);
+  await page.evaluate(async ([a, b, q]) => {
+    const { Actions: A, Graph, History } = DataForge;
+    await A.attachFile(a, new File(['cust,amount\n1,10\n1,5\n2,7\n'], 'orders.csv')); await A.attachFile(b, new File(['cust,name\n1,Ana\n2,Bo\n'], 'customers.csv'));
+    Graph.node(q).config.sql = 'SELECT c.name, SUM(o.amount) AS total\nFROM input o JOIN input2 c ON o.cust = c.cust\nGROUP BY c.name\nORDER BY c.name;'; History.commit();
+  }, [a, b, q]);
+  await page.waitForTimeout(1200);
+  const ports = await page.evaluate((q) => DataForge.Graph.node(q).ports.out.map((p) => p.name + ':' + p.type).join(','), q);
+  expect(ports === 'name:VARCHAR,total:HUGEINT' || ports === 'name:VARCHAR,total:BIGINT' || /^name:VARCHAR,total:/.test(ports), 'ports ' + ports);
+  await run(page); const s = await summary(page); expect(s?.ok, 'SQL mapping run ' + JSON.stringify(s));
+  const rows = await page.evaluate(() => DataForge.state.preview?.rows?.map((r) => Object.values(r).join('=')) || DataForge.state.preview);
+  expect(JSON.stringify(rows).includes('Ana') && JSON.stringify(rows).includes('15'), 'preview ' + JSON.stringify(rows).slice(0, 200));
+  const issues = await page.evaluate(async (q) => { const D = DataForge; D.Graph.node(q).config.sql = 'SELECT * FROM input; DROP TABLE x'; D.History.commit(); await D.Actions.validate(); return D.state.issues.map((i) => i.message); }, q);
+  expect(issues.some((m) => /Only one statement/.test(m)), 'second statement not rejected: ' + JSON.stringify(issues));
+  return 'join over input and input2: ' + ports;
+});
+await check('Excel: write a workbook, read it back with types and a chosen sheet', async () => {
+  const [src, , tgt] = await newMapping(page, [['csv_source', 60, 100], ['filter', 330, 100], ['excel_target', 600, 100]], [[0, 1], [1, 2]]);
+  await page.evaluate(async ([src, tgt]) => {
+    const { Actions: A, Graph, History, state } = DataForge;
+    await A.attachFile(src, new File(['region,amount,day,ok\nEast,10.5,2026-01-01,true\nWest,4,2026-01-02,false\nNorth,-1,2026-01-03,true\n'], 'sales.csv'));
+    state.doc.nodes.find((n) => n.type === 'filter').config.condition = 'amount > 0'; Graph.node(tgt).config.sheetName = 'Totals'; History.commit();
+  }, [src, tgt]);
+  await page.waitForTimeout(900); await run(page);
+  expect((await summary(page))?.ok, 'Excel target run failed');
+  const back = await page.evaluate(async (tgt) => {
+    const D = DataForge, bytes = new Uint8Array(await (await fetch(D.state.outputs[tgt].url)).arrayBuffer());
+    D.Repo.createMapping(); D.Actions.addNode('excel_source', 60, 100); D.Actions.addNode('preview_target', 380, 100);
+    const [x, p] = D.state.doc.nodes; D.Actions.link(x.id, p.id); x.config.sheet = 'Totals'; D.History.commit();
+    await D.Actions.attachFile(x.id, new File([bytes], 'totals.xlsx')); await new Promise((r) => setTimeout(r, 1200));
+    return { sheets: await D.XLSX.sheetNames(bytes), ports: x.ports.out.map((p) => p.name + ':' + p.type).join(',') };
+  }, tgt);
+  expect(back.sheets.join() === 'Totals' && back.ports === 'region:VARCHAR,amount:DOUBLE,day:DATE,ok:BOOLEAN', 'read back ' + JSON.stringify(back));
+  await run(page); const s = await summary(page); expect(s?.ok, 'Excel source run ' + JSON.stringify(s));
+  const rows = await page.evaluate(() => DataForge.state.preview?.rows?.length);
+  expect(rows === 2, 'expected 2 rows back, got ' + rows);
+  return back.ports;
+});
+if (mirror) console.log('  skip Parquet target and source (offline run: the Parquet extension cannot be downloaded)');
+else await check('Parquet: write a target, read it back as a source', async () => {
+  const [src, , tgt] = await newMapping(page, [['csv_source', 60, 100], ['filter', 330, 100], ['parquet_target', 600, 100]], [[0, 1], [1, 2]]);
+  await page.evaluate(async (src) => { const D = DataForge; await D.Actions.attachFile(src, new File(['a,b\n1,x\n2,y\n3,z\n'], 'abc.csv')); D.state.doc.nodes.find((n) => n.type === 'filter').config.condition = 'a > 1'; D.History.commit(); }, src);
+  await page.waitForTimeout(900); await run(page); expect((await summary(page))?.ok, 'Parquet target run failed');
+  await page.evaluate(async (tgt) => {
+    const D = DataForge, bytes = new Uint8Array(await (await fetch(D.state.outputs[tgt].url)).arrayBuffer());
+    D.Repo.createMapping(); D.Actions.addNode('parquet_source', 60, 100); D.Actions.addNode('preview_target', 380, 100);
+    const [x, p] = D.state.doc.nodes; D.Actions.link(x.id, p.id); D.History.commit();
+    await D.Actions.attachFile(x.id, new File([bytes], 'abc.parquet')); await new Promise((r) => setTimeout(r, 1200));
+  }, tgt);
+  await run(page); expect((await summary(page))?.rows === 0 || (await summary(page))?.ok, 'Parquet source run failed');
+  expect(await page.evaluate(() => DataForge.state.preview?.rows?.length) === 2, 'Parquet round trip lost rows');
+});
+await check('mapping tests: capture, pass, catch a logic change, travel with the project file', async () => {
+  await page.click('#btnSampleMenu'); await page.click('[data-sample="original"]'); await page.waitForTimeout(700);
+  await page.click('.tab[data-tab="tests"]'); await page.click('#pane-tests button:text-is("New test from current data")');
+  await page.waitForFunction(() => DataForge.state.doc.tests?.length === 1 && !DataForge.MappingTests.busy);
+  expect(await page.evaluate(() => DataForge.MappingTests.results[DataForge.state.doc.tests[0].id]?.status) === 'pass', 'captured test does not pass');
+  await page.evaluate(() => { const f = DataForge.state.doc.nodes.find((n) => n.type === 'filter'); f.config.condition = "status = 'CANCELLED'"; DataForge.History.commit(); });
+  await page.click('#pane-tests button:text-is("Run all tests")'); await page.waitForFunction(() => !DataForge.MappingTests.busy);
+  const detail = await page.textContent('#pane-tests .test-detail');
+  expect(/expected rows? missing/.test(detail), 'logic change not caught: ' + detail);
+  expect(await page.textContent('#testCnt') === '1✕', 'tab badge ' + await page.textContent('#testCnt'));
+  await page.evaluate(() => { const f = DataForge.state.doc.nodes.find((n) => n.type === 'filter'); f.config.condition = "status = 'DELIVERED'"; DataForge.History.commit(); });
+  const ok = await page.evaluate(() => DataForge.MappingTests.runAll());
+  expect(ok?.failed === 0, 'fixed logic still fails');
+  const json = await page.evaluate(() => JSON.stringify(DataForge.Repo.normalize(JSON.parse(JSON.stringify(DataForge.Repo.project))).mappings.find((m) => m.mapping.id === DataForge.Repo.activeId).tests));
+  expect(JSON.parse(json).length === 1, 'tests lost when the project is saved and opened');
+  return 'pass → fail on change → pass';
+});
+await check('components: save a selection, insert it into another mapping', async () => {
+  await page.evaluate(() => { const D = DataForge; D.Actions.select(D.state.doc.nodes.filter((n) => ['filter', 'expression'].includes(n.type)).map((n) => n.id)); });
+  const saving = page.evaluate(() => DataForge.Components.save()); await fillDialog(page, 'Save component', 'Reusable price block'); await saving;
+  expect((await page.textContent('#repoTree')).includes('Components (1)'), 'component not listed in the repository');
+  await page.evaluate(() => DataForge.Repo.createMapping()); await page.waitForTimeout(200);
+  await page.dblclick('#repoTree .repo-item:has-text("Reusable price block") .repo-open'); await page.waitForTimeout(400);
+  const got = await page.evaluate(() => ({ nodes: DataForge.state.doc.nodes.map((n) => n.type).join(), links: DataForge.state.doc.links.length }));
+  expect(got.nodes === 'filter,expression' && got.links === 1, 'inserted ' + JSON.stringify(got));
+});
+await check('password-protected project file: unreadable without it, wrong password rejected', async () => {
+  await page.click('#btnProjectMenu'); await page.click('#ctxMenu button:has-text("Protect with a password")');
+  await fillDialog(page, 'Continue', 'correct horse');
+  const [dl] = await Promise.all([page.waitForEvent('download'), fillDialog(page, 'Continue', 'correct horse')]);
+  const file = join(mkdtempSync(join(tmpdir(), 'dataforge-enc-')), dl.suggestedFilename()); await dl.saveAs(file);
+  const text = readFileSync(file, 'utf8'), env = JSON.parse(text);
+  expect(env.format === 'dataforge-project-encrypted' && env.cipher.name === 'AES-GCM' && !/Reusable price block|SRC_retail/.test(text), 'file is not encrypted');
+  expect((await page.textContent('#projectState')).includes('Password-protected'), 'status does not mention the password');
+  const fresh = await browser.newContext({ viewport: { width: 1440, height: 900 } }); if (mirror) await fresh.route('https://cdn.jsdelivr.net/**', mirrorRoute);
+  const p3 = await fresh.newPage(); watch(p3); p3.setDefaultTimeout(10000); await p3.goto(base);
+  await p3.waitForFunction(() => window.DataForge?.Repo.project && document.querySelector('#enginePill').dataset.state !== 'loading', null, { timeout: 120000 });
+  await p3.click('#generalModal >> text=Continue');
+  await p3.setInputFiles('#projectInput', file); await fillDialog(p3, 'Open', 'not it');
+  expect(/not correct/.test(await p3.textContent('#dialogBox p')), 'wrong password accepted');
+  await fillDialog(p3, 'Open', 'correct horse'); await p3.waitForTimeout(1200);
+  const got = await p3.evaluate(() => ({ comps: DataForge.Repo.project.components.length, maps: DataForge.Repo.project.mappings.length, pw: !!DataForge.ProjectFile.password }));
+  expect(got.comps === 1 && got.maps > 3 && got.pw, 'opened ' + JSON.stringify(got));
+  await fresh.close();
+  await page.click('#btnProjectMenu'); await page.click('#ctxMenu button:has-text("Remove password")');
+  // Later checks share the mapping that was open before this block.
+  await page.evaluate(() => DataForge.Repo.openMapping(DataForge.Repo.project.mappings.find((m) => m.mapping.name === 'Unremembered upload').mapping.id)); await page.waitForTimeout(500);
+  return 'AES-256-GCM, PBKDF2 ' + env.kdf.iterations;
+});
+await check('project lineage: impact of a column across chained mappings, governance and masking', async () => {
+  const r = await page.evaluate(async () => {
+    const D = DataForge, A = D.Actions, S = D.state, sleep = (ms) => new Promise((x) => setTimeout(x, ms));
+    D.Repo.createMapping(); S.doc.mapping.name = 'Lineage A';
+    A.addNode('csv_source', 60, 100); A.addNode('expression', 330, 100); A.addNode('csv_target', 600, 100);
+    let [s, e, t] = S.doc.nodes; A.link(s.id, e.id); A.link(e.id, t.id);
+    e.config.fields = [{ name: 'email_domain', expression: "split_part(email,'@',2)" }]; t.config.fileName = 'lin_clean.csv'; D.History.commit();
+    await A.attachFile(s.id, new File(['id,email,spend\n1,ana@x.com,10\n2,bo@y.org,20\n'], 'lin_people.csv')); await sleep(1000);
+    const first = S.doc.nodes[0].id;
+    D.Repo.createMapping(); S.doc.mapping.name = 'Lineage B';
+    A.addNode('csv_source', 60, 100); A.addNode('aggregator', 330, 100); A.addNode('excel_target', 600, 100);
+    [s, e, t] = S.doc.nodes; A.link(s.id, e.id); A.link(e.id, t.id); s.config.fileName = 'lin_clean.csv';
+    s.ports.out = [{ name: 'id', type: 'BIGINT' }, { name: 'email', type: 'VARCHAR' }, { name: 'spend', type: 'BIGINT' }, { name: 'email_domain', type: 'VARCHAR' }];
+    e.config.groupBy = ['email_domain']; e.config.fields = [{ name: 'total', expression: 'SUM(spend)' }]; t.config.fileName = 'lin_report.xlsx'; D.History.commit(); await sleep(600);
+    const m = D.ProjectLineage.build(), imp = D.ProjectLineage.impact(m, 'lin_people.csv', 'email', 'down');
+    const inv = D.Governance.inventory().filter((x) => x.dataset.startsWith('lin_'));
+    await D.Repo.openMapping(D.Repo.project.mappings.find((x) => x.mapping.name === 'Lineage A').mapping.id); await sleep(500);
+    D.Governance.settings().maskPreview = true; await D.Preview.node(S.doc.nodes.find((n) => n.type === 'csv_source').id); await sleep(300);
+    const cells = [...document.querySelectorAll('#pane-preview tbody tr:first-child td')].map((td) => td.textContent);
+    D.Governance.settings().maskPreview = false;
+    return { roles: [...m.datasets.values()].filter((d) => d.key.startsWith('lin_')).map((d) => d.key + ':' + d.role).sort(), impact: imp.steps.map((x) => x.dataset + '.' + x.column), mappings: imp.mappings,
+      email: inv.find((x) => x.dataset === 'lin_people.csv' && x.column === 'email')?.label, derived: inv.find((x) => x.dataset === 'lin_report.xlsx' && x.column === 'email_domain')?.inherited, cells };
+  });
+  expect(r.roles.join() === 'lin_clean.csv:intermediate,lin_people.csv:input,lin_report.xlsx:output', 'roles ' + r.roles);
+  expect(r.impact.includes('lin_report.xlsx.email_domain') && r.mappings.length === 2, 'impact ' + JSON.stringify(r));
+  expect(r.email === 'Email' && /lin_people\.csv\.email/.test(r.derived || ''), 'classification ' + JSON.stringify(r));
+  expect(r.cells.includes('a•••@x.com') && !r.cells.includes('ana@x.com'), 'email not masked: ' + r.cells.join('|'));
+  await page.evaluate(() => DataForge.ProjectLineage.open()); await page.waitForTimeout(300);
+  expect(await page.isVisible('#generalModal .plin-svg'), 'project lineage diagram not shown');
+  await page.keyboard.press('Escape');
+  return 'people.email → clean.email_domain → report.email_domain';
+});
+await check('data contract: fail blocks the write, warn writes and reports', async () => {
+  const r = await page.evaluate(async () => {
+    const D = DataForge, S = D.state, tgt = S.doc.nodes.find((n) => n.type === 'csv_target');
+    tgt.config.contract = { mode: 'fail', allowExtra: true, columns: [{ name: 'id', type: 'BIGINT', unique: true, required: true }, { name: 'email', type: 'VARCHAR', required: true }, { name: 'not_there', type: '' }] }; D.History.commit();
+    await D.Runner.run(); const failed = S.log.filter((l) => l.kind === 'step').pop(), wrote1 = !!S.outputs[tgt.id];
+    tgt.config.contract.mode = 'warn'; D.History.commit(); await D.Runner.run(); const warned = S.log.filter((l) => l.kind === 'step').pop(), wrote2 = !!S.outputs[tgt.id];
+    tgt.config.contract.columns.pop(); D.History.commit(); await D.Runner.run(); const clean = S.log.filter((l) => l.kind === 'step').pop();
+    return { failed: failed.status + ' ' + failed.note, wrote1, warned: warned.status + ' ' + warned.note, wrote2, clean: clean.status + ' ' + (clean.note || '') };
+  });
+  expect(/^fail Data contract failed: missing column not_there/.test(r.failed) && !r.wrote1, 'fail mode ' + JSON.stringify(r));
+  expect(/^ok .*missing column not_there/.test(r.warned) && r.wrote2, 'warn mode ' + JSON.stringify(r));
+  expect(r.clean === 'ok ', 'contract that holds still reported: ' + r.clean);
+});
+await check('Airflow export: DAG, trigger rules, one job per mapping, chained-file warning', async () => {
+  const r = await page.evaluate(() => {
+    const D = DataForge, w = D.Repo.createWorkflow(), id = (n) => D.Repo.project.mappings.find((m) => m.mapping.name === n).mapping.id;
+    w.name = 'Lineage nightly'; w.scheduleMinutes = 30;
+    const add = (type, name, cfg) => { const n = { id: 't' + (w.nodes.length + 1), type, name, position: { x: 100 * w.nodes.length, y: 150 }, config: { ...D.TaskRegistry.get(type).defaultConfig(), ...cfg } }; w.nodes.push(n); return n; };
+    const a = add('session', 'Run A', { mappingId: id('Lineage A') }), b = add('session', 'Run B', { mappingId: id('Lineage B') }), alert = add('notification', 'Tell ops', { message: 'A failed' });
+    w.links.push({ id: 'wl1', from: 't1', to: a.id, condition: 'always', expression: '' }, { id: 'wl2', from: a.id, to: b.id, condition: 'success', expression: '' }, { id: 'wl3', from: a.id, to: alert.id, condition: 'failure', expression: '' });
+    const out = D.AirflowExport.build(w); return { files: Object.keys(out.files), dag: out.files['dags/lineage_nightly.py'], warnings: out.warnings };
+  });
+  expect(r.files.includes('jobs/lineage_a.py') && r.files.includes('jobs/lineage_b.py') && r.files.includes('README.md'), 'files ' + r.files);
+  expect(/schedule=timedelta\(minutes=30\)/.test(r.dag) && /tell_ops = BashOperator\([^\n]*trigger_rule="one_failed"/.test(r.dag) && /run_a >> run_b/.test(r.dag), 'DAG ' + r.dag);
+  expect(r.warnings.some((x) => /Lineage B reads lin_clean\.csv, which Lineage A writes/.test(x)), 'no chained-file warning ' + JSON.stringify(r.warnings));
+  await page.evaluate(() => DataForge.Repo.openMapping(DataForge.Repo.project.mappings.find((m) => m.mapping.name === 'Unremembered upload').mapping.id)); await page.waitForTimeout(500);
+  return r.files.length + ' files';
 });
 // JSON sources and targets need DuckDB's JSON extension, which the engine downloads from extensions.duckdb.org on first use.
 // An offline run (DATAFORGE_TEST_MIRROR) cannot reach that host, so these checks only run online.
