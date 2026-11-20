@@ -662,7 +662,7 @@ td.masked{color:var(--muted);letter-spacing:.04em}
 
 <div id="codegenOverlay" class="codegen-overlay" hidden>
   <div class="codegen-modal" role="dialog" aria-modal="true" aria-labelledby="codegenTitle">
-    <div class="codegen-head"><span class="node-ic" style="color:var(--accent)" id="codegenIcon"></span><strong id="codegenTitle">Export Code</strong><span class="gen-tag">Phase 4</span><button class="icon-btn" type="button" id="codegenClose" title="Close" aria-label="Close"></button></div>
+    <div class="codegen-head"><span class="node-ic" style="color:var(--accent)" id="codegenIcon"></span><strong id="codegenTitle">Export Code</strong><button class="icon-btn" type="button" id="codegenClose" title="Close" aria-label="Close"></button></div>
     <div class="codegen-tabs" id="codegenTabs"></div>
     <div class="codegen-body">
       <aside class="codegen-sidebar" id="codegenOptions"></aside>
@@ -7461,7 +7461,7 @@ const Workflow = {
       h('button',{class:'icon-btn',type:'button',title:'Zoom out','aria-label':'Zoom out',html:svgIcon('minus'),onclick:()=>this.zoom(.82)}),h('span',{class:'zoom-val',id:'wfZoom',text:'100%'}),h('button',{class:'icon-btn',type:'button',title:'Zoom in','aria-label':'Zoom in',html:svgIcon('plus'),onclick:()=>this.zoom(1.2)}),h('button',{class:'icon-btn',type:'button',title:'Fit to view','aria-label':'Fit to view',html:svgIcon('fit'),onclick:()=>this.fit()}));
     this.layer.append(this.linkSvg,this.world,tools);els.canvas.append(this.layer);this.bind();
   },
-  render(){if(!this.active||Studio.mode!=='workflow')return;this.ensureLayer();this.layer.hidden=false;this.renderNodes();this.renderLinks();this.renderProps();this.applyView();els.mapName.value=this.active.name;els.statCounts.textContent=`${this.active.nodes.length} tasks · ${this.active.links.length} links`;},
+  render(){if(!this.active||Studio.mode!=='workflow')return;this.ensureLayer();this.layer.hidden=false;this.renderNodes();this.renderLinks();this.renderProps();this.applyView();els.mapName.value=this.active.name;els.statCounts.textContent=`${countOf(this.active.nodes.length,'task')} · ${countOf(this.active.links.length,'link')}`;},
   renderNodes(){if(!this.world)return;const focused=document.activeElement?.classList?.contains('wf-node')&&this.world.contains(document.activeElement)?document.activeElement.dataset.id:null;this.world.replaceChildren(...this.active.nodes.map(n=>{const def=TaskRegistry.get(n.type),status=this.runState?.tasks?.[n.id]?.status||'';return h('div',{class:'node cat-'+(n.type==='start'?'source':n.type==='notification'||n.type==='control'?'target':'transformation')+(this.sel.has(n.id)?' selected':'')+' wf-node'+(status?' wf-'+status:''),'data-id':n.id,tabindex:0,role:'button','aria-pressed':this.sel.has(n.id)?'true':'false','aria-describedby':'canvasKeys','aria-label':`${def.label}: ${n.name}${status?'. '+status:''}.`,style:`left:${n.position.x}px;top:${n.position.y}px;height:70px`},
        n.type!=='start'?h('span',{class:'handle in',title:'Task input'}):null,h('span',{class:'node-ic',html:svgIcon(def.icon,17)}),
        h('div',{class:'node-body'},h('div',{class:'node-type',text:def.label}),h('div',{class:'node-name',text:n.name,title:n.name}),h('div',{class:'node-meta',text:status?(status+(this.runState?.tasks?.[n.id]?.remaining!=null?' · '+this.runState.tasks[n.id].remaining+'s':'')):n.type==='session'?(Repo.project.mappings.find(m=>m.mapping.id===n.config.mappingId)?.mapping.name||'Choose mapping'):'Ready'})),
@@ -7744,7 +7744,7 @@ const Monitor = {
   statTables(run){const steps=run.steps||[],total=steps.reduce((a,s)=>a+(Number(s.ms)||0),0)||1;
     const headers=['Node / task','Type','Status','Rows in','Rows out','Applied','Rejected','Rows/sec','Duration ms','% of time'];
     const makeTable=list=>h('table',{class:'monitor-table'},h('thead',null,h('tr',null,headers.map(x=>h('th',{text:x})))),h('tbody',null,...list.map(s=>{
-      const ms=s.ms||0;return h('tr',{tabindex:0,title:'Show the session log for this step',onclick:()=>this.sessionDetails(run,s),onkeydown:(e)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();this.sessionDetails(run,s);}}},h('td',{text:s.name}),h('td',{text:s.type}),h('td',{class:'monitor-'+String(s.status||'').toLowerCase(),text:s.status}),h('td',{text:fmtNum(s.rowsIn)}),h('td',{text:fmtNum(s.rowsOut)}),h('td',{text:fmtNum(s.applied??s.rowsOut)}),h('td',{text:fmtNum(s.rejected)}),h('td',{text:fmtNum(s.throughput??(ms?s.rowsOut/ms*1000:0))}),h('td',{text:fmtMs(ms)}),h('td',{text:(s.pctTime??(100*ms/total)).toFixed(1)+'%'}));})));
+      const ms=s.ms||0;return h('tr',{tabindex:0,title:'Show the session log for this step',onclick:()=>this.sessionDetails(run,s),onkeydown:(e)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();this.sessionDetails(run,s);}}},h('td',{text:s.name}),h('td',{text:s.type}),h('td',{class:'monitor-'+String(s.status||'').toLowerCase(),text:s.status}),h('td',{text:fmtNum(s.rowsIn)}),h('td',{text:fmtNum(s.rowsOut)}),h('td',{text:fmtNum(s.applied??s.rowsOut)}),h('td',{text:fmtNum(s.rejected)}),h('td',{text:fmtNum(Math.round(s.throughput??(ms?s.rowsOut/ms*1000:0)))}),h('td',{text:fmtMs(ms)}),h('td',{text:(s.pctTime??(100*ms/total)).toFixed(1)+'%'}));})));
     return h('div',{class:'monitor-section'},h('h2',{text:'Session Statistics'}),makeTable(steps),
       h('h3',{text:'Source statistics'}),makeTable(run.sourceStats||steps.filter(s=>Registry.get(s.type)?.category==='source')),
       h('h3',{text:'Target statistics'}),makeTable(run.targetStats||steps.filter(s=>Registry.get(s.type)?.category==='target')));
@@ -7969,7 +7969,7 @@ const Studio = {
     $('#btnSaveVersion').hidden=mode!=='mapping';
     if(mode==='mapping') {els.mapName.value=state.doc.mapping.name;els.mapName.disabled=Versions.readonly;UI.renderAll();UI.showTab(state.tab);View.apply();}
     if(mode==='workflow'){Workflow.render();Workflow.renderLog();UI.showTab('log');els.mapName.value=Workflow.active?.name||'';els.mapName.disabled=false;}
-    if(mode==='monitor'){Monitor.show();els.mapName.value='Run Monitor';els.mapName.disabled=true;}
+    if(mode==='monitor'){Monitor.show();els.mapName.value='Run Monitor';els.mapName.disabled=true;els.statCounts.textContent=countOf(Repo.runs.length,'recorded run');}
     UI.renderPalette();Repo.render();this.updateToolbar();
   },
   updateToolbar(){const mode=this.mode;$('#btnNew').title=mode==='workflow'?'New workflow':'New mapping';$('#btnSave').title=mode==='workflow'?'Export workflow with its mappings as .dfproj.json (Ctrl+S)':'Save mapping as JSON (Ctrl+S)';$('#btnValidate').title=mode==='workflow'?'Validate workflow':'Validate mapping';},
