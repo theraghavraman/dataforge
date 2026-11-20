@@ -2364,7 +2364,7 @@ function routerPredicate(c, index) {
 Registry.register('router', {
   label: 'Router', icon: 'router', category: 'transformation', prefix: 'RTR',
   outputs(node) { return [...(node.config.groups || []).map((g) => ({ key: g.key, label: g.name || g.key, kind: 'data' })), { key: 'default', label: 'DEFAULT', kind: 'reject' }]; },
-  defaultConfig() { return { groups: [{ key: 'g1', name: 'HIGH_VALUE', condition: 'total_amount >= 500' }], multiple: true }; },
+  defaultConfig() { return { groups: [{ key: 'g1', name: 'GROUP_1', condition: '' }], multiple: true }; },
   renderProperties(node, ui) {
     const c = node.config, rows = c.groups.map((g, i) => {
       const editor = P.input(g, 'condition', { multiline: true, mono: true, rows: 2, placeholder: 'total_amount >= 500' });
@@ -2390,7 +2390,8 @@ Registry.register('router', {
   validate(node, ctx) {
     const issues = [], seen = new Set(), ports = ctx.inPorts || [];
     for (const g of node.config.groups || []) {
-      if (!g.key || !g.name?.trim() || !g.condition?.trim()) issues.push({ severity: 'error', message: 'Every group needs a name, key and condition.' });
+      if (!g.key || !g.name?.trim()) issues.push({ severity: 'error', message: `Routing group ${g.key || ''} needs a name.`.replace('  ', ' ') });
+      else if (!g.condition?.trim()) issues.push({ severity: 'error', message: `Routing group "${g.name}" needs a condition, for example amount >= 500.` });
       if (seen.has(g.name?.toLowerCase())) issues.push({ severity: 'error', message: `Duplicate group name "${g.name}".` });
       seen.add(g.name?.toLowerCase());
       if (ports.length) for (const col of unknownColumns(g.condition, ports.map((p) => p.name))) issues.push({ severity: 'error', message: `Unknown column "${col}" in group "${g.name}".` });
@@ -2429,7 +2430,6 @@ Registry.register('union', {
   },
   validate(node, ctx) {
     const sources = ctx.inputs.in?.sources || [], issues = [];
-    if (sources.length < 2) issues.push({ severity: 'error', message: 'Union requires at least two incoming connections.' });
     const count = new Map();
     for (const source of sources) for (const p of source.ports) count.set(p.name.toLowerCase(), (count.get(p.name.toLowerCase()) || 0) + 1);
     const missing = [...count.keys()].filter((key) => count.get(key) < sources.length);
@@ -2489,7 +2489,8 @@ Registry.register('rank', {
     return `SELECT * FROM (\n  SELECT base.*, ${fn}() OVER (${part}ORDER BY base.${qid(c.column || 'column')} ${direction} NULLS LAST) AS ${rank}\n  FROM ${ctx.input} base\n) ranked\nWHERE ${rank} <= ${Math.max(1, Math.trunc(Number(c.n) || 1))}\nORDER BY ${[...c.groupBy.map(qid), rank].join(', ')}`;
   },
   async inferPorts(node, ctx) {
-    const described = await ctx.describe('out');
+    // Until a rank-by column is chosen there is nothing to run; validation asks for the column instead of showing a SQL error.
+    const described = node.config.column ? await ctx.describe('out') : null;
     return described || clone(ctx.inPorts).concat([{ name: node.config.outputName || 'rank_index', type: 'BIGINT' }]);
   }
 });
@@ -3205,7 +3206,8 @@ const Validator = {
       for (const slot of Graph.inputDefs(node)) {
         const matches = Graph.inputLinks(node, slot.key);
         const min = slot.optional ? 0 : slot.multiple ? (slot.min || 1) : 1;
-        if (matches.length < min) add('error', node.id, `Connect ${slot.multiple ? 'at least ' + min + ' ' : ''}${slot.label || slot.key} input${slot.multiple ? 's' : ''}.`);
+        if (matches.length < min) add('error', node.id, !slot.multiple ? `Connect the ${slot.label || slot.key} input.`
+          : /^(input|in)$/i.test(slot.label || slot.key) ? `Connect at least ${countOf(min, 'input')}.` : `Connect at least ${countOf(min, 'input')} to ${slot.label}.`);
         if (!slot.multiple && matches.length > 1) add('error', node.id, `Input ${slot.label} accepts only one connection.`);
       }
       for (const link of ins) {
@@ -3219,7 +3221,7 @@ const Validator = {
           add('warning', node.id, 'Output is not connected, so this node is skipped on run.');
         for (const group of outputs) {
           const used = outs.some((link) => Graph.outKey(link) === group.key);
-          if (!used && group.kind === 'reject') add('info', node.id, `${group.label} reject output is unconnected; its rows will be discarded.`);
+          if (!used && group.kind === 'reject') add('info', node.id, `The ${group.label} output (rejected rows) is not connected, so those rows are discarded.`);
           else if (!used && outputs.length > 1 && group.kind === 'data') add('warning', node.id, `${group.label} output has no downstream connection.`);
         }
       }
