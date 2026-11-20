@@ -484,7 +484,7 @@ td.masked{color:var(--muted);letter-spacing:.04em}
 .general-modal .monitor-table{margin-top:8px}.general-modal .wrap{white-space:pre-wrap;word-break:break-word}
 .command-modal{width:min(610px,96vw);padding:10px}.command-modal>.inp{font-size:15px;padding:12px 10px;height:43px}.command-results{display:grid;gap:2px;margin-top:8px;max-height:60vh;overflow:auto}
 .command-row{background:transparent;border:none;border-radius:4px;padding:10px 12px;display:flex;align-items:center;gap:11px;text-align:left;color:var(--text)}.command-row:hover,.command-row.active{background:var(--accent-soft);color:var(--accent)}
-.about-logo{display:flex;align-items:center;gap:12px}.about-logo h2{font:700 24px var(--disp);margin:0}.about-features{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:14px 0}.about-features>div{background:var(--panel-2);padding:8px;border-radius:3px;font-size:11px;color:var(--muted)}
+.about-logo{display:flex;align-items:center;gap:12px}.about-keys{margin:4px 0 6px}.general-modal a{color:var(--accent)}.about-logo h2{font:700 24px var(--disp);margin:0}.about-features{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:14px 0}.about-features>div{background:var(--panel-2);padding:8px;border-radius:3px;font-size:11px;color:var(--muted)}
 .upload-banner{position:fixed;right:16px;top:58px;z-index:100;width:min(340px,85vw);padding:11px;background:var(--panel);border:1px solid var(--accent);border-radius:5px;box-shadow:var(--shadow);font:11px var(--mono)}
 .upload-track{height:7px;background:var(--line);border-radius:4px;margin-top:7px;overflow:hidden}.upload-track>div{height:100%;background:var(--ok);width:0}
 .dialog-overlay{position:fixed;inset:0;z-index:130;background:rgba(0,0,0,.7);display:grid;place-items:center;padding:15px}
@@ -748,6 +748,7 @@ const ICONS = {
   flask: '<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M7.5 15h9"/>',
   sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/>',
   moon: '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',
+  brand: '<path d="M3 8h13a5 5 0 0 0 5-3H8"/><path d="M8 5v6c0 2 1 3 3 3h2c2 0 3-1 3-3"/><path d="M9 14l-2 5h10l-2-5"/>',
   undo: '<path d="M8 7L4 11l4 4"/><path d="M4 11h10a6 6 0 0 1 0 12h-2" transform="translate(0 -3)"/>',
   redo: '<path d="M16 7l4 4-4 4"/><path d="M20 11H10a6 6 0 0 0 0 12h2" transform="translate(0 -3)"/>',
   fit: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
@@ -7882,10 +7883,11 @@ const Welcome = {
 };
 const About = {
   open(automatic=false){const body=$('#generalModalBody');const never=h('input',{type:'checkbox'});
-    body.replaceChildren(h('div',{class:'about-logo'},h('span',{class:'brand-mark',html:svgIcon('lineage',24)}),h('h2',{text:'DataForge · Browser ETL Studio'})),
+    body.replaceChildren(h('div',{class:'about-logo'},h('span',{class:'brand-mark',html:svgIcon('brand',22)}),h('h2',{text:'DataForge · Browser ETL Studio'})),
       h('p',{text:'A visual ETL studio for mappings, workflows, parameter sets, data quality, SQL generation, lineage and local run monitoring.'}),
-      h('div',{class:'about-features'},...['Visual mappings · DuckDB-WASM','Sequence, SCD1/SCD2 & Data Quality','Snowflake, PySpark and dbt exports','Workflow scheduling · run statistics','.dfproj project files · offline repository','Single HTML file · vanilla JavaScript'].map(s=>h('div',{text:s}))),
-      h('p',{class:'mono',text:'Ctrl+Enter  Run    Ctrl+S  Save    Ctrl+K  Commands    Ctrl+Shift+S  Save version    Ctrl+Z/Y  Undo/redo'}),
+      h('div',{class:'about-features'},...['Visual mappings run on DuckDB-WASM','CSV, JSON, Parquet and Excel files','SQL, SCD1/SCD2 and data quality rules','Profiling, mapping tests and data contracts','Project lineage, impact and privacy','Snowflake, PySpark, dbt and Airflow exports','Workflows, schedules and run statistics','.dfproj project files · nothing leaves your device'].map(s=>h('div',{text:s}))),
+      h('div',{class:'kbd about-keys'},...[['Ctrl+Enter','Run'],['Ctrl+S','Save the mapping or workflow'],['Ctrl+K','Command palette'],['Ctrl+Shift+S','Save a version'],['Ctrl+Z / Ctrl+Y','Undo / redo']].flatMap(([k,l])=>[h('kbd',{text:k}),h('span',{text:l})])),
+      h('p',{class:'small-muted',text:'On a Mac, use ⌘ in place of Ctrl.'}),
       h('p',{class:'small-muted'},`Version ${APP.version} · DuckDB-WASM ${APP.duckdb} · `,h('a',{href:APP.repoUrl,target:'_blank',rel:'noopener noreferrer',text:'GitHub'})),
       h('label',{class:'chk'},never,h('span',{text:"Don't show again"})),
       h('div',{class:'btn-row'},h('button',{class:'tb primary',text:'Continue',onclick:()=>{if(automatic||never.checked){try{localStorage.setItem('dataforge.about.seen','1');}catch(_){}}$('#generalModal').hidden=true;}})));

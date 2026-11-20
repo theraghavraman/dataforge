@@ -10,6 +10,7 @@
 - **Monitor from the keyboard.** Runs and steps can be chosen with Tab and Enter; sorted columns are announced.
 - **Run is always on screen on a phone.** The top bar used to need 900px, so Run and the Properties toggle sat off-screen at phone width and the repository toggle was squeezed to 18px. Below 900px the bar now starts with the mode switch, Run and the engine status, the remaining actions scroll after them, and the Properties toggle stays pinned to the right edge.
 - A long mapping name in the top bar ends in an ellipsis instead of being cut mid-word, and hovering it shows the whole name.
+- **About dialog** lists what DataForge does today (Parquet and Excel, profiling, tests, contracts, lineage, privacy, Airflow), shows the shortcuts as a readable key table with a note for ⌘ on a Mac, uses the same logo as the top bar, and its GitHub link follows the theme.
 
 ## 1.4.0
 
