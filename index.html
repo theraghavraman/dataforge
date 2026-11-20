@@ -331,6 +331,8 @@ table.log a{color:var(--accent)}
 .codegen-tree{width:218px;border-right:1px solid var(--line);overflow:auto;padding:9px;background:var(--panel-2);flex:none}
 .codegen-tree button{border:none;background:none;width:100%;padding:5px 4px;text-align:left;display:flex;align-items:center;gap:6px;font:11px/1.3 var(--mono);word-break:break-word;color:var(--muted);border-radius:3px}
 .codegen-tree button:hover,.codegen-tree button.selected{background:var(--accent-soft);color:var(--accent)}
+/* On the light theme's tinted highlight the accent falls just short of 4.5:1; the deeper accent keeps the text readable. */
+:root[data-theme="light"] :is(.codegen-tree button:hover,.codegen-tree button.selected,.command-row:hover,.command-row.active,.lineage-column.active){color:var(--accent-2)}
 .codegen-code{flex:1;min-width:0;overflow:auto}
 .codegen-code pre{font:12px/1.6 var(--mono);white-space:pre;tab-size:2;min-height:100%;margin:0;padding:12px 16px;color:var(--text)}
 .codegen-warnings{flex:none;max-height:104px;overflow:auto;border-top:1px solid var(--line);padding:7px 13px;color:var(--warn);font-size:11.5px}
@@ -652,7 +654,7 @@ td.masked{color:var(--muted);letter-spacing:.04em}
 <input type="file" id="projectInput" accept=".dfproj,.dfproj.json,.json,application/json" hidden>
 <input type="file" id="xmlInput" accept=".xml,text/xml,application/xml" hidden>
 <div id="generalModal" class="general-overlay" hidden><div class="general-modal" role="dialog" aria-modal="true" aria-label="DataForge dialog"><div class="general-modal-head"><button id="generalModalClose" type="button" class="icon-btn" aria-label="Close dialog"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><div id="generalModalBody"></div></div></div>
-<div id="commandOverlay" class="command-overlay" hidden><div class="command-modal" role="dialog" aria-modal="true" aria-label="Command palette"><input id="commandInput" class="inp" placeholder="Search actions, mappings, workflows and nodes…" autocomplete="off"><div id="commandResults" class="command-results" role="listbox" aria-label="Results"></div></div></div>
+<div id="commandOverlay" class="command-overlay" hidden><div class="command-modal" role="dialog" aria-modal="true" aria-label="Command palette"><input id="commandInput" class="inp" placeholder="Search actions, mappings, workflows and nodes…" autocomplete="off" role="combobox" aria-expanded="true" aria-controls="commandResults" aria-autocomplete="list" aria-label="Search commands"><div id="commandResults" class="command-results" role="listbox" aria-label="Results" tabindex="-1"></div></div></div>
 <div id="projectTools" hidden><button id="btnExportProject">Export Project</button><button id="btnImportProject">Import Project</button><button id="btnDiagramSVG">SVG</button><button id="btnDiagramPNG">PNG</button><button id="btnShareLink">Share</button></div>
 
 <div id="runDialog" class="run-overlay" hidden>
@@ -8048,11 +8050,12 @@ const Commands = {
   score(s,q){s=s.toLowerCase();q=q.toLowerCase();if(s.includes(q))return 100-s.indexOf(q);let i=0,score=0;for(const c of s){if(c===q[i]){score+=2;i++;if(i===q.length)break;}}return i===q.length?score:-1;},
   index:0,
   open(){const overlay=$('#commandOverlay'),input=$('#commandInput');overlay.hidden=false;input.value='';this.render();input.focus();},
-  move(delta){const rows=[...$('#commandResults').children];if(!rows.length)return;this.index=(this.index+delta+rows.length)%rows.length;rows.forEach((r,i)=>{r.classList.toggle('active',i===this.index);r.setAttribute('aria-selected',String(i===this.index));});rows[this.index].scrollIntoView({block:'nearest'});},
+  move(delta){const rows=[...$('#commandResults').children];if(!rows.length)return;this.index=(this.index+delta+rows.length)%rows.length;rows.forEach((r,i)=>{r.classList.toggle('active',i===this.index);r.setAttribute('aria-selected',String(i===this.index));});rows[this.index].scrollIntoView({block:'nearest'});$('#commandInput').setAttribute('aria-activedescendant',rows[this.index].id);},
   close(){$('#commandOverlay').hidden=true;},
   render(){const q=$('#commandInput').value.trim(),res=this.list().map(([title,act])=>({title,act,score:this.score(title,q)})).filter(x=>x.score>=0).sort((a,b)=>b.score-a.score).slice(0,14);
     this.index=0;
-    $('#commandResults').replaceChildren(...res.map((item,i)=>h('button',{class:'command-row'+(i===0?' active':''),role:'option','aria-selected':String(i===0),tabindex:'-1',onclick:()=>{this.close();item.act();}},h('span',{html:svgIcon(item.title.startsWith('Node')?'expression':'check',15)}),h('span',{text:item.title}))));
+    $('#commandResults').replaceChildren(...res.map((item,i)=>h('button',{class:'command-row'+(i===0?' active':''),id:'cmd-opt-'+i,role:'option','aria-selected':String(i===0),tabindex:'-1',onclick:()=>{this.close();item.act();}},h('span',{html:svgIcon(item.title.startsWith('Node')?'expression':'check',15),'aria-hidden':'true'}),h('span',{text:item.title}))));
+    if(res.length)$('#commandInput').setAttribute('aria-activedescendant','cmd-opt-0');else $('#commandInput').removeAttribute('aria-activedescendant');
   }
 };
 const Phase5 = {
