@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- **CI on current tooling.** GitHub Actions runs the tests on Node 26 (the current LTS; Node 20 is end-of-life) with `actions/checkout@v7`, `setup-node@v7`, `setup-python@v7` and `setup-java@v6`, which removes the Node 20 deprecation warnings. Checkout no longer keeps the repository token, since neither job pushes.
+
 ## 1.5.0
 
 Accessibility, security and polish, found by auditing every view with axe-core, probing generated code with crafted names, and adding every node type to a fresh mapping.
