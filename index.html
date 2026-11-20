@@ -5871,15 +5871,16 @@ const App = {
     canvas.addEventListener('dblclick', (e) => { const nodeEl = e.target.closest('.node'); if (nodeEl) Actions.rename(nodeEl.dataset.id); });
     // Keyboard: Tab reaches each node; arrows move the selection; Enter edits; Menu or Shift+F10 opens the node menu.
     canvas.addEventListener('scroll', () => { canvas.scrollLeft = 0; canvas.scrollTop = 0; });
+    const mappingNode = (t) => (t.classList?.contains('node') && els.world.contains(t) ? t : null);   // workflow tasks share the class
     canvas.addEventListener('focusin', (e) => {
-      const el = e.target.classList?.contains('node') ? e.target : null;
+      const el = mappingNode(e.target);
       if (!el) return;
       View.reveal(el.dataset.id);
       if (!state.sel.has(el.dataset.id)) Actions.select([el.dataset.id]);
     });
     let nudgeTimer = null;
     canvas.addEventListener('keydown', (e) => {
-      const el = e.target.classList?.contains('node') ? e.target : null;
+      const el = mappingNode(e.target);
       if (!el || e.ctrlKey || e.metaKey || e.altKey) return;
       const id = el.dataset.id, arrows = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
       if (arrows[e.key]) {
@@ -7404,6 +7405,12 @@ const Workflow = {
     const n={id,type,name:(type==='session'?'s_':type+'_')+count,position:{x:Math.round(x/10)*10,y:Math.round(y/10)*10},config:d.defaultConfig()};
     this.active.nodes.push(n);this.sel=new Set([id]);this.selLink=null;this.commit();this.renderProps();
   },
+  reveal(id){const n=this.node(id),r=this.layer?.getBoundingClientRect(),v=this.view;if(!n||!r?.width)return;const sx=n.position.x*v.k+v.x,sy=n.position.y*v.k+v.y;
+    if(sx<20||sy<20||sx+NODE_W*v.k>r.width-20||sy+70*v.k>r.height-20){v.x=r.width/2-(n.position.x+NODE_W/2)*v.k;v.y=r.height/2-(n.position.y+35)*v.k;this.applyView();}},
+  // Tasks this task can link to (no self links, no Start, no duplicates, no cycles), nearest first, for the keyboard menu.
+  connectChoices(from,limit=10){const a=this.node(from);if(!a)return[];const reaches=(x,y)=>{const seen=new Set(),stack=[x];while(stack.length){const v=stack.pop();if(v===y)return true;if(seen.has(v))continue;seen.add(v);stack.push(...this.outgoing(v).map(l=>l.to));}return false;};
+    return this.active.nodes.filter(b=>b.id!==from&&b.type!=='start'&&!this.active.links.some(l=>l.from===from&&l.to===b.id)&&!reaches(b.id,from))
+      .sort((p,q)=>Math.hypot(p.position.x-a.position.x,p.position.y-a.position.y)-Math.hypot(q.position.x-a.position.x,q.position.y-a.position.y)).slice(0,limit);},
   link(from,to){if(from===to)return toast('A task cannot link to itself.','warn');if(!this.node(from)||!this.node(to)||this.node(to).type==='start')return;
     if(this.active.links.some(l=>l.from===from&&l.to===to))return toast('Tasks are already connected.','warn');
     const visited=new Set(),stack=[to];while(stack.length){const v=stack.pop();if(v===from)return toast('The link would create a cycle.','warn');if(visited.has(v))continue;visited.add(v);stack.push(...this.outgoing(v).map(l=>l.to));}
@@ -7419,10 +7426,10 @@ const Workflow = {
     this.layer.append(this.linkSvg,this.world,tools);els.canvas.append(this.layer);this.bind();
   },
   render(){if(!this.active||Studio.mode!=='workflow')return;this.ensureLayer();this.layer.hidden=false;this.renderNodes();this.renderLinks();this.renderProps();this.applyView();els.mapName.value=this.active.name;els.statCounts.textContent=`${this.active.nodes.length} tasks · ${this.active.links.length} links`;},
-  renderNodes(){if(!this.world)return;this.world.replaceChildren(...this.active.nodes.map(n=>{const def=TaskRegistry.get(n.type),status=this.runState?.tasks?.[n.id]?.status||'';return h('div',{class:'node cat-'+(n.type==='start'?'source':n.type==='notification'||n.type==='control'?'target':'transformation')+(this.sel.has(n.id)?' selected':'')+' wf-node'+(status?' wf-'+status:''),'data-id':n.id,style:`left:${n.position.x}px;top:${n.position.y}px;height:70px`},
+  renderNodes(){if(!this.world)return;const focused=document.activeElement?.classList?.contains('wf-node')&&this.world.contains(document.activeElement)?document.activeElement.dataset.id:null;this.world.replaceChildren(...this.active.nodes.map(n=>{const def=TaskRegistry.get(n.type),status=this.runState?.tasks?.[n.id]?.status||'';return h('div',{class:'node cat-'+(n.type==='start'?'source':n.type==='notification'||n.type==='control'?'target':'transformation')+(this.sel.has(n.id)?' selected':'')+' wf-node'+(status?' wf-'+status:''),'data-id':n.id,tabindex:0,role:'button','aria-pressed':this.sel.has(n.id)?'true':'false','aria-describedby':'canvasKeys','aria-label':`${def.label}: ${n.name}${status?'. '+status:''}.`,style:`left:${n.position.x}px;top:${n.position.y}px;height:70px`},
        n.type!=='start'?h('span',{class:'handle in',title:'Task input'}):null,h('span',{class:'node-ic',html:svgIcon(def.icon,17)}),
        h('div',{class:'node-body'},h('div',{class:'node-type',text:def.label}),h('div',{class:'node-name',text:n.name,title:n.name}),h('div',{class:'node-meta',text:status?(status+(this.runState?.tasks?.[n.id]?.remaining!=null?' · '+this.runState.tasks[n.id].remaining+'s':'')):n.type==='session'?(Repo.project.mappings.find(m=>m.mapping.id===n.config.mappingId)?.mapping.name||'Choose mapping'):'Ready'})),
-       h('span',{class:'handle out',title:'Connect next task'}));}));},
+       h('span',{class:'handle out',title:'Connect next task'}));}));if(focused)this.world.querySelector(`.wf-node[data-id="${CSS.escape(focused)}"]`)?.focus({preventScroll:true});},
   renderLinks(){if(!this.linkLayer)return;const elements=[];for(const l of this.active.links){const a=this.node(l.from),b=this.node(l.to);if(!a||!b)continue;const x1=a.position.x+NODE_W+5,y1=a.position.y+35,x2=b.position.x-8,y2=b.position.y+35;
       const d=linkPath(x1,y1,x2,y2),g=document.createElementNS(SVG_NS,'g');g.dataset.link=l.id;g.setAttribute('class','link-g'+(this.selLink===l.id?' selected':''));
       const path=document.createElementNS(SVG_NS,'path');path.setAttribute('d',d);path.setAttribute('class','link');path.setAttribute('stroke',l.condition==='failure'?'var(--err)':'var(--muted)');
@@ -7459,7 +7466,18 @@ const Workflow = {
     window.addEventListener('pointerup',e=>{if(!drag||Studio.mode!=='workflow')return;const old=drag;drag=null;$('#wfTempLink')?.remove();if(old.type==='move'&&old.moved)this.commit();else if(old.type==='connect'){const target=document.elementFromPoint(e.clientX,e.clientY)?.closest('.wf-node');if(target)this.link(old.from,target.dataset.id);}else if(old.type==='pan'&&!old.moved)this.select();});
     this.layer.addEventListener('wheel',e=>{e.preventDefault();const r=this.layer.getBoundingClientRect();this.zoom(Math.exp(-e.deltaY*.0014),e.clientX-r.left,e.clientY-r.top);},{passive:false});
     this.layer.addEventListener('dragover',e=>e.preventDefault());this.layer.addEventListener('drop',e=>{e.preventDefault();const type=e.dataTransfer.getData('application/x-dataforge-workflow');if(TaskRegistry.get(type)){const p=this.toWorld(e.clientX,e.clientY);this.add(type,p.x-100,p.y-35);}});
-    this.layer.addEventListener('contextmenu',e=>{const node=e.target.closest('.wf-node');if(!node)return;e.preventDefault();const id=node.dataset.id;this.select([id]);UI.showContext(e.clientX,e.clientY,[{label:'Rename',run:()=>{if(Panels.small())Panels.set('right',true);$('#props input')?.focus();}},{label:'Duplicate',run:()=>this.duplicate()},{label:'Delete',run:()=>this.remove()}]);});
+    const taskMenu=(id,x,y,keyboard)=>{if(!this.sel.has(id))this.select([id]);const connect=this.connectChoices(id).map(b=>({label:`Connect to ${b.name}`,run:()=>{this.link(id,b.id);toast(`Connected ${this.node(id)?.name} to ${b.name}.`,'success');}}));
+      UI.showContext(x,y,[{label:'Rename',run:()=>{if(Panels.small())Panels.set('right',true);$('#props input')?.focus();}},...(connect.length?['-',...connect,'-']:[]),{label:'Duplicate',run:()=>this.duplicate()},{label:'Delete',run:()=>this.remove()}],{keyboard,opener:this.world.querySelector(`.wf-node[data-id="${CSS.escape(id)}"]`)});};
+    this.layer.addEventListener('contextmenu',e=>{const node=e.target.closest('.wf-node');if(!node)return;e.preventDefault();taskMenu(node.dataset.id,e.clientX,e.clientY,false);});
+    // Keyboard: the same keys as the mapping canvas.
+    this.layer.addEventListener('scroll',()=>{this.layer.scrollLeft=0;this.layer.scrollTop=0;});
+    this.layer.addEventListener('focusin',e=>{const el=e.target.classList?.contains('wf-node')?e.target:null;if(!el)return;this.reveal(el.dataset.id);if(!this.sel.has(el.dataset.id))this.select([el.dataset.id]);});
+    let nudge=null;
+    this.layer.addEventListener('keydown',e=>{const el=e.target.classList?.contains('wf-node')?e.target:null;if(!el||e.ctrlKey||e.metaKey||e.altKey)return;const id=el.dataset.id,arrows={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]};
+      if(arrows[e.key]){e.preventDefault();const step=GRID*(e.shiftKey?5:1),[dx,dy]=arrows[e.key];for(const nid of this.sel){const n=this.node(nid);if(n){n.position.x+=dx*step;n.position.y+=dy*step;}}this.renderNodes();this.renderLinks();this.reveal(id);clearTimeout(nudge);nudge=setTimeout(()=>this.commit(),400);}
+      else if(e.key==='Enter'||e.key===' '){e.preventDefault();this.select([id]);if(Panels.small())Panels.set('right',true);$('#props').querySelector('input:not([type=checkbox]),select,textarea')?.focus();}
+      else if(e.key==='ContextMenu'||(e.shiftKey&&e.key==='F10')){e.preventDefault();const r=el.getBoundingClientRect();taskMenu(id,r.left+24,r.bottom-8,true);}
+    });
   },
   validate(show=false) {
     const w=this.active,issues=[];if(!w)return issues;const error=(id,msg)=>issues.push({severity:'error',node:id,message:msg}),warn=(id,msg)=>issues.push({severity:'warning',node:id,message:msg});
@@ -8044,7 +8062,7 @@ const Phase5 = {
         if(mod&&e.shiftKey&&key==='v'){e.preventDefault();e.stopImmediatePropagation();Workflow.validate(true);return;}
         if(!/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||'')){
           if(mod&&key==='a'){e.preventDefault();e.stopImmediatePropagation();Workflow.select(Workflow.active.nodes.map(n=>n.id));return;}
-          if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();e.stopImmediatePropagation();Workflow.remove();return;}
+          if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();e.stopImmediatePropagation();const f=document.activeElement?.classList?.contains('wf-node')?document.activeElement.dataset.id:null,order=f?[...Workflow.world.querySelectorAll('.wf-node')].map(n=>n.dataset.id):[];Workflow.remove();if(f){const i=order.indexOf(f),next=order.slice(i+1).concat(order.slice(0,i).reverse()).find(id=>Workflow.node(id));if(next)Workflow.world.querySelector(`.wf-node[data-id="${CSS.escape(next)}"]`)?.focus();}return;}
         }
       }
       if(Studio.mode==='monitor'&&mod&&(e.key==='Enter'||key==='s')){e.preventDefault();e.stopImmediatePropagation();return;}

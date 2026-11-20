@@ -515,7 +515,7 @@ await check('share link opens in another tab; the first tab is warned about the 
   expect((await bad.$$eval('#toasts .toast', (t) => t.map((e) => e.textContent))).some((t) => /Invalid shared mapping link/.test(t)), 'bad link not reported');
   await bad.close();
 });
-await check('keyboard: build a mapping without a mouse (focus, move, Connect to, edit, delete)', async () => {
+await check('keyboard: build mappings and workflows without a mouse (focus, move, Connect to, edit, delete)', async () => {
   await page.selectOption('#studioMode', 'mapping');
   const previous = await page.evaluate(() => DataForge.state.doc.mapping.id);
   await page.click('#btnNew'); await page.waitForTimeout(300);
@@ -537,6 +537,12 @@ await check('keyboard: build a mapping without a mouse (focus, move, Connect to,
   await page.focus('.node >> nth=1'); await page.keyboard.press('Delete'); await page.waitForTimeout(100);
   expect(await page.evaluate(() => DataForge.state.doc.nodes.length === 1 && document.activeElement?.dataset.id === 'n1'), 'Delete did not remove the node and focus the next one');
   await page.evaluate((id) => DataForge.Repo.openMapping(id), previous); await page.waitForTimeout(300);
+  await page.selectOption('#studioMode', 'workflow'); await page.waitForTimeout(300);
+  await page.focus('.wf-node >> nth=0'); await page.keyboard.press('Shift+F10'); await page.waitForSelector('#ctxMenu:not([hidden])');
+  expect((await page.$$eval('#ctxMenu button', (b) => b.map((x) => x.textContent))).some((t) => t.startsWith('Connect to')), 'workflow task menu has no Connect to');
+  await page.keyboard.press('Escape');
+  expect(await page.evaluate(() => document.activeElement?.classList.contains('wf-node')), 'Escape did not return focus to the workflow task');
+  await page.selectOption('#studioMode', 'mapping'); await page.waitForTimeout(300);
 });
 const axeSource = readFileSync(join(root, 'node_modules/axe-core/axe.min.js'), 'utf8');
 async function axeViolations(p, where) {

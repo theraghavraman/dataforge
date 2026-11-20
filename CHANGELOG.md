@@ -14,7 +14,7 @@
 - Counts read correctly in the singular: "1 row written", "1 column", "1 step" (run messages, target summaries, Profile, Tests, the workflow log and the exported spec).
 
 ### Added
-- **Build mappings from the keyboard.** Tab reaches every node on the canvas and selects it; the arrow keys move the selection (Shift moves further, one undo step per nudge), Enter jumps to its properties, Delete removes it and focuses the next node, and the Menu key or Shift+F10 opens its menu, which now lists **Connect to …** for every node it can link to (also available with a right-click). Context menus can be used with the arrow keys and Escape, and focus returns to the node.
+- **Build mappings from the keyboard.** Tab reaches every node on the canvas and selects it; the arrow keys move the selection (Shift moves further, one undo step per nudge), Enter jumps to its properties, Delete removes it and focuses the next node, and the Menu key or Shift+F10 opens its menu, which now lists **Connect to …** for every node it can link to (also available with a right-click). Context menus can be used with the arrow keys and Escape, and focus returns to the node. The Workflow Designer works the same way for tasks.
 - **Accessibility check in the smoke test.** `npm test` (and GitHub Actions) runs axe-core over the mapping, results tabs, export dialog, workflow and monitor views and the light theme, and fails on any violation. It also checks keyboard movement between the results tabs, Monitor search, and that Run and the drawer toggles are on screen at phone width.
 
 ## 1.4.0
