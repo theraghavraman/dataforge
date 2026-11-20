@@ -1567,8 +1567,9 @@ const P = {
     el.addEventListener('change', () => { History.commit(); if (opts.onchange) opts.onchange(el); });
     return el;
   },
-  select(obj, key, options, onchange) {
-    const el = h('select', { class: 'inp' }, options.map(([v, l]) => h('option', { value: v, text: l })));
+  // label: accessible name for selects that are not wrapped in a P.field (rows of list editors).
+  select(obj, key, options, onchange, label = null) {
+    const el = h('select', { class: 'inp', 'aria-label': label }, options.map(([v, l]) => h('option', { value: v, text: l })));
     el.value = obj[key];
     el.addEventListener('change', () => { obj[key] = el.value; History.commit(); if (onchange) onchange(); });
     return el;
@@ -2001,7 +2002,7 @@ Registry.register('expression', {
           h('button', { type: 'button', class: 'icon-btn', title: 'Remove field', html: svgIcon('x', 14), onclick: () => { c.fields.splice(i, 1); History.commit(); ui.rerender(); } })),
         expr,
         h('div', { class: 'sub-l', text: 'Also update variable' }),
-        P.select(f, 'setVariable', [['', 'None'], ...Object.entries(Params.definitions()).filter(([, p]) => p.kind === 'variable').map(([name]) => [name, name])]) );
+        P.select(f, 'setVariable', [['', 'None'], ...Object.entries(Params.definitions()).filter(([, p]) => p.kind === 'variable').map(([name]) => [name, name])], null, `Also update variable with ${f.name || 'this field'}`) );
     }));
     const insert = (t) => {
       const target = lastExpr && lastExpr.isConnected ? lastExpr : [...list.querySelectorAll('textarea')].pop();
@@ -2068,8 +2069,8 @@ Registry.register('sorter', {
       if (k.column && !ins.some((p) => p.name === k.column)) options.unshift([k.column, k.column + ' (missing)']);
       if (!k.column) options.unshift(['', 'Choose a column']);
       return h('div', { class: 'krow' },
-        P.select(k, 'column', options, ui.rerender),
-        P.select(k, 'direction', [['ASC', 'ASC'], ['DESC', 'DESC']]),
+        P.select(k, 'column', options, ui.rerender, `Sort key ${i + 1} column`),
+        P.select(k, 'direction', [['ASC', 'ASC'], ['DESC', 'DESC']], null, `Sort key ${i + 1} direction`),
         h('button', { type: 'button', class: 'icon-btn', title: 'Remove sort key', html: svgIcon('x', 14), onclick: () => { c.keys.splice(i, 1); History.commit(); ui.rerender(); } }));
     });
     return [P.section('Sort keys',
@@ -2123,9 +2124,9 @@ function pairEditor(node, ui, leftKey, rightKey, leftPorts, rightPorts, expressi
     if (rightExpr) rightExpr.addEventListener('focus', () => { focused = rightExpr; });
     return h('div', { class: 'frow' },
       h('div', { class: 'pair-row' },
-        P.select(pair, leftKey, columnChoices(leftPorts, pair[leftKey]), ui.rerender),
-        h('span', { class: 'pair-eq', text: '=' }),
-        P.select(pair, rightKey, columnChoices(rightPorts, pair[rightKey]), ui.rerender),
+        P.select(pair, leftKey, columnChoices(leftPorts, pair[leftKey]), ui.rerender, `Condition ${i + 1}: ${leftKey} column`),
+        h('span', { class: 'pair-eq', text: '=', 'aria-hidden': 'true' }),
+        P.select(pair, rightKey, columnChoices(rightPorts, pair[rightKey]), ui.rerender, `Condition ${i + 1}: ${rightKey} column`),
         h('button', { class: 'icon-btn', type: 'button', title: 'Remove condition', html: svgIcon('x', 14), onclick: () => { c.conditions.splice(i, 1); History.commit(); ui.rerender(); } })),
       expressionMode ? h('div', { class: 'row2' },
         P.field('Input key SQL (optional)', leftExpr),
@@ -6613,7 +6614,7 @@ const Contracts = {
     const c = this.get(node), ins = node.ports.in || [];
     const rows = h('div', { class: 'contract-rows' }, c.columns.map((col, i) => h('div', { class: 'contract-row' },
       h('input', { class: 'inp mono', value: col.name, 'aria-label': 'Column', onchange: (e) => { col.name = e.target.value.trim(); History.commit(); } }),
-      P.select(col, 'type', this.types),
+      P.select(col, 'type', this.types, null, `Type of ${col.name || 'column ' + (i + 1)}`),
       h('label', { class: 'chk', title: 'No empty values' }, (() => { const cb = h('input', { type: 'checkbox' }); cb.checked = !!col.required; cb.onchange = () => { col.required = cb.checked; History.commit(); }; return cb; })(), h('span', { text: 'Required' })),
       h('label', { class: 'chk', title: 'No duplicate values' }, (() => { const cb = h('input', { type: 'checkbox' }); cb.checked = !!col.unique; cb.onchange = () => { col.unique = cb.checked; History.commit(); }; return cb; })(), h('span', { text: 'Unique' })),
       h('button', { class: 'icon-btn', type: 'button', title: 'Remove', 'aria-label': 'Remove column', html: svgIcon('x', 13), onclick: () => { c.columns.splice(i, 1); History.commit(); ui.rerender(); } }))));

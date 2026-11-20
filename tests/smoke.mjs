@@ -592,8 +592,25 @@ await check('accessibility (axe-core): mapping, results tabs, export, workflow, 
   await page.selectOption('#studioMode', 'monitor'); await page.waitForTimeout(300); found.push(...await axeViolations(page, 'monitor'));
   await page.selectOption('#studioMode', 'mapping'); await page.waitForTimeout(300);
   await page.click('#btnTheme'); await page.waitForTimeout(200); found.push(...await axeViolations(page, 'light theme')); await page.click('#btnTheme');
+  // The properties panel of every node type, with a row added to list editors so their controls exist.
+  const previous = await page.evaluate(() => DataForge.state.doc.mapping.id);
+  const types = await page.evaluate(() => DataForge.Registry.list().map((d) => d.type));
+  for (const t of types) {
+    await page.click('#btnNew'); await page.waitForTimeout(120);
+    await page.evaluate(async (t) => {
+      const { Actions: A, state, History, Registry } = DataForge;
+      if (Registry.get(t).category === 'source') A.addNode(t, 60, 100);
+      else { A.addNode('csv_source', 60, 100); A.addNode(t, 340, 100); A.link('n1', 'n2'); await A.attachFile('n1', new File(['id,name,amount\n1,a,2.5\n'], 's.csv', { type: 'text/csv' })); }
+      History.commit(); A.select([state.doc.nodes[state.doc.nodes.length - 1].id]);
+    }, t);
+    await page.waitForTimeout(400);
+    await page.evaluate(() => { for (const b of document.querySelectorAll('#props button')) if (/^\s*Add (field|rule|sort key|match condition|output field|column|group)/i.test(b.textContent)) { b.click(); break; } });
+    await page.waitForTimeout(150);
+    found.push(...(await page.evaluate(async () => (await window.axe.run('#props', { resultTypes: ['violations'], preload: false })).violations.map((v) => `${v.id}: ${v.nodes[0].target.join(' ')}`))).map((f) => t + ' properties: ' + f));
+  }
+  await page.evaluate((id) => DataForge.Repo.openMapping(id), previous); await page.waitForTimeout(300);
   expect(!found.length, found.join('\n       '));
-  return 'no violations in 6 views';
+  return `no violations in 6 views and ${types.length} property panels`;
 });
 await check('phone layout: drawers, tap to add, run', async () => {
   await page.setViewportSize({ width: 390, height: 800 }); await page.waitForTimeout(200);
