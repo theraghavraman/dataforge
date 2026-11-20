@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- **Readable text in both themes.** Hints, captions, code comments and the light theme's orange accent now meet the WCAG AA contrast ratio of 4.5:1 (some were as low as 2.5:1). The muted and faint greys stay distinct, and exported diagrams use the same colors.
+
 ## 1.4.0
 
 ### Added

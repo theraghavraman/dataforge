@@ -24,12 +24,12 @@
 <style>
 :root{
   --bg:#0c1116; --panel:#121920; --panel-2:#18212a; --panel-3:#1f2a35; --line:#25313c; --line-2:#33424f;
-  --text:#d9e0e7; --muted:#8696a5; --faint:#5b6b79;
+  --text:#d9e0e7; --muted:#93a2b0; --faint:#7b8b99;
   --accent:#f5a524; --accent-2:#f97316; --accent-ink:#1a1206; --accent-soft:rgba(245,165,36,.13);
   --ok:#3fbf86; --err:#f0605d; --warn:#f5a524; --info:#5aa9e6;
   --src:#45b8a6; --trn:#f5a524; --tgt:#6f9cf2;
   --grid-1:rgba(134,150,165,.07); --grid-2:rgba(134,150,165,.13);
-  --shadow:0 6px 18px rgba(0,0,0,.38); --code-kw:#f5a524; --code-fn:#6fb6f2; --code-str:#8fd19e; --code-num:#e79bd0; --code-id:#d9e0e7; --code-cm:#5b6b79;
+  --shadow:0 6px 18px rgba(0,0,0,.38); --code-kw:#f5a524; --code-fn:#6fb6f2; --code-str:#8fd19e; --code-num:#e79bd0; --code-id:#d9e0e7; --code-cm:#7b8b99;
   --pal-w:204px; --props-w:316px; --drawer-h:270px;
   --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --disp:"Barlow Semi Condensed","IBM Plex Sans",system-ui,sans-serif;
@@ -38,12 +38,12 @@
 }
 :root[data-theme="light"]{
   --bg:#e9edf1; --panel:#ffffff; --panel-2:#f5f7f9; --panel-3:#e9eef2; --line:#d5dce3; --line-2:#b9c4ce;
-  --text:#17212b; --muted:#566573; --faint:#8a97a3;
-  --accent:#c96a06; --accent-2:#b4530a; --accent-ink:#ffffff; --accent-soft:rgba(201,106,6,.11);
-  --ok:#168a57; --err:#cf3835; --warn:#b76a00; --info:#1f6fb5;
-  --src:#0f8a79; --trn:#c96a06; --tgt:#2f62c9;
+  --text:#17212b; --muted:#4b5966; --faint:#66737f;
+  --accent:#a85802; --accent-2:#924702; --accent-ink:#ffffff; --accent-soft:rgba(168,88,2,.11);
+  --ok:#11764a; --err:#c4302d; --warn:#a35e00; --info:#1f6fb5;
+  --src:#0b7a6b; --trn:#a85802; --tgt:#2f62c9;
   --grid-1:rgba(23,33,43,.05); --grid-2:rgba(23,33,43,.10);
-  --shadow:0 4px 14px rgba(23,33,43,.14); --code-kw:#b4530a; --code-fn:#1f6fb5; --code-str:#168a57; --code-num:#a0318a; --code-id:#17212b; --code-cm:#8a97a3;
+  --shadow:0 4px 14px rgba(23,33,43,.14); --code-kw:#b4530a; --code-fn:#1f6fb5; --code-str:#11764a; --code-num:#a0318a; --code-id:#17212b; --code-cm:#66737f;
   color-scheme:light;
 }
 *{box-sizing:border-box}
@@ -348,7 +348,7 @@ table.log a{color:var(--accent)}
 .lineage-card-title small{display:block;font:10px var(--mono);color:var(--faint);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lineage-column{display:flex;gap:7px;align-items:center;background:none;border:0;border-bottom:1px solid var(--line);text-align:left;width:100%;padding:5px 8px;min-width:0;font:11px var(--mono);color:var(--muted)}
 .lineage-column span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lineage-column small{font:9.5px var(--mono);color:var(--faint);max-width:54px;overflow:hidden;text-overflow:ellipsis}
-.lineage-column:hover{color:var(--text);background:var(--panel-2)}.lineage-column.active{color:var(--accent);background:var(--accent-soft)}
+.lineage-column:hover{color:var(--text);background:var(--panel-2)}.lineage-column.active{color:var(--accent);background:var(--accent-soft)}.lineage-column.active small{color:var(--muted)}
 .lineage-edge{fill:none;stroke:var(--muted);stroke-width:1.5;opacity:.55}.lineage-edge.active{stroke:var(--accent);stroke-width:2.1;opacity:1}
 .lineage-empty{padding:28px;color:var(--muted);text-align:center}
 #lineageOverlay .lineage-viewport{height:100%}
@@ -7619,7 +7619,7 @@ const Diagrams = {
   markup(){const data=this.source(),nodes=data.nodes;if(!nodes.length)throw new Error('No diagram nodes to export.');
     const x1=Math.min(...nodes.map(n=>n.position.x)),y1=Math.min(...nodes.map(n=>n.position.y)),x2=Math.max(...nodes.map(n=>n.position.x+NODE_W)),y2=Math.max(...nodes.map(n=>n.position.y+(data.workflow?70:nodeHeight(n))));
     const ox=70-x1,oy=85-y1,width=Math.ceil(x2-x1+140),height=Math.ceil(y2-y1+165),theme=document.documentElement.dataset.theme;
-    const palette=theme==='light'?{bg:'#eef2f5',node:'#ffffff',fg:'#17212b',muted:'#526677',line:'#a0aeba',source:'#138a78',transform:'#c96a06',target:'#2f62c9',accent:'#c96a06',bad:'#cf3835'}:{bg:'#0c1116',node:'#18212a',fg:'#d9e0e7',muted:'#8696a5',line:'#596e80',source:'#45b8a6',transform:'#f5a524',target:'#6f9cf2',accent:'#f5a524',bad:'#f0605d'};
+    const palette=theme==='light'?{bg:'#eef2f5',node:'#ffffff',fg:'#17212b',muted:'#526677',line:'#a0aeba',source:'#0b7a6b',transform:'#a85802',target:'#2f62c9',accent:'#a85802',bad:'#c4302d'}:{bg:'#0c1116',node:'#18212a',fg:'#d9e0e7',muted:'#8696a5',line:'#596e80',source:'#45b8a6',transform:'#f5a524',target:'#6f9cf2',accent:'#f5a524',bad:'#f0605d'};
     const paths=data.links.map(l=>{const a=nodes.find(n=>n.id===l.from),b=nodes.find(n=>n.id===l.to);if(!a||!b)return '';
       let p,q,color=palette.line,dash='';if(data.workflow){p={x:a.position.x+206,y:a.position.y+35};q={x:b.position.x-8,y:b.position.y+35};if(l.condition==='failure')color=palette.bad;}
       else {p=outPoint(a,l.fromPort);q=inPoint(b,l.toPort,l.id);const group=Graph.outputGroups(a).find(g=>g.key===(l.fromPort||Graph.outputGroups(a)[0]?.key));if(group?.kind==='reject'){color=palette.bad;dash='stroke-dasharray="7 5"';}}
