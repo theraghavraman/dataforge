@@ -69,7 +69,7 @@ button{cursor:pointer}
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .mapname{display:flex;align-items:center;gap:8px;min-width:0;flex:0 1 250px;padding-left:14px;border-left:1px solid var(--line)}
 .mapname label{color:var(--faint);font-size:11px;flex:none}
-.mapname input{min-width:0;width:100%;background:transparent;border:1px solid transparent;border-radius:4px;padding:5px 7px;font-weight:600}
+.mapname input{min-width:0;width:100%;background:transparent;border:1px solid transparent;border-radius:4px;padding:5px 7px;font-weight:600;text-overflow:ellipsis}
 .mapname input:hover{border-color:var(--line)}
 .mapname input:focus{border-color:var(--accent);background:var(--panel-2);outline:none}
 .tb-actions{display:flex;align-items:center;gap:4px;flex:none}
@@ -5871,6 +5871,8 @@ const App = {
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
     els.openInput.addEventListener('change', () => { const f = els.openInput.files[0]; els.openInput.value = ''; if (f) Actions.open(f); });
     els.mapName.addEventListener('input', () => { if(Studio.mode === 'mapping') state.doc.mapping.name = els.mapName.value; });
+    // The name is often longer than the field: it ends in an ellipsis, and hovering shows all of it.
+    els.mapName.addEventListener('pointerenter', () => { els.mapName.title = els.mapName.value.length > 18 ? els.mapName.value : ''; });
     els.mapName.addEventListener('change', () => { if(Studio.mode !== 'mapping')return; if (!els.mapName.value.trim()) { state.doc.mapping.name = 'Untitled mapping'; els.mapName.value = state.doc.mapping.name; } History.commit(); });
     document.querySelectorAll('#drawer .tab').forEach((t) => t.addEventListener('click', () => UI.showTab(t.dataset.tab)));
     // Arrow keys, Home and End move between the visible drawer tabs (WAI-ARIA tabs pattern).
