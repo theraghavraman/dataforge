@@ -502,6 +502,7 @@ td.masked{color:var(--muted);letter-spacing:.04em}
 @media(max-width:1370px){.topbar .brand-name{display:none}.mapname{flex-basis:125px;padding-left:6px}.tb.export span{display:none!important}.tb.export{width:32px!important;padding:0!important;justify-content:center}.mode-switch{width:150px}}
 @media(max-width:1140px){.mapname{display:none}.topbar{gap:5px}.monitor-grid{grid-template-columns:1fr}.monitor-history,.monitor-details{max-height:none}.mode-switch{width:150px}}
 .panel-toggle,#panelScrim{display:none}
+.panel-toggle{flex:none}
 /* Small screens: the canvas gets the full width; repository/palette and properties slide in as drawers. */
 @media(max-width:900px){
   #app{grid-template-columns:minmax(0,1fr);grid-template-areas:"top" "canvas" "drawer" "foot"}
@@ -513,7 +514,16 @@ td.masked{color:var(--muted);letter-spacing:.04em}
   .panel-toggle{display:inline-flex}
   .topbar{overflow-x:auto;overflow-y:hidden;scrollbar-width:none;gap:6px}
   .topbar::-webkit-scrollbar{display:none}
-  .tb-right{margin-left:6px;flex:none}
+  /* Every top-bar button becomes one scrolling row, ordered by importance: mode, Run and engine state first,
+     the rest after them, and the Properties toggle pinned to the right edge so it never scrolls away. */
+  .tb-actions,.tb-right{display:contents}
+  .topbar>*,.tb-actions>*,.tb-right>*{flex:none}
+  .brand,#btnPanelLeft,#studioMode{order:-3}
+  #btnRun,#btnStopWorkflow{order:-2}
+  #enginePill{order:-1}
+  #btnPanelRight{order:5;position:sticky;right:0;box-shadow:-14px 0 12px -4px var(--panel);z-index:1}
+  #enginePill b{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  #enginePill{padding:0 9px}
   .pill span:last-child{display:none!important}
   .sample-menu{position:fixed;top:46px;right:8px;left:auto;max-width:calc(100vw - 16px)}
   .tab-list{overflow-x:auto;scrollbar-width:none}.tabs .tab{white-space:nowrap;flex:none}

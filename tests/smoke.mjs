@@ -518,6 +518,8 @@ await check('share link opens in another tab; the first tab is warned about the 
 await check('phone layout: drawers, tap to add, run', async () => {
   await page.setViewportSize({ width: 390, height: 800 }); await page.waitForTimeout(200);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= 390), 'page overflows horizontally');
+  const reach = await page.evaluate(() => ['#btnRun', '#btnPanelLeft', '#btnPanelRight', '#studioMode'].filter((s) => { const r = document.querySelector(s).getBoundingClientRect(); return r.width < 28 || r.left < 0 || r.right > 390; }));
+  expect(!reach.length, 'not fully on screen without scrolling: ' + reach.join(', '));
   const n = await page.evaluate(() => DataForge.state.doc.nodes.length);
   await page.click('#btnPanelLeft'); await page.click('.pal-item:has-text("Sorter")'); await page.waitForTimeout(200);
   expect(await page.evaluate(() => DataForge.state.doc.nodes.length) === n + 1, 'tap did not add a node');

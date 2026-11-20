@@ -8,6 +8,7 @@
 - Switching drawer tabs no longer clears the selected dialect in an open Export Code dialog.
 - **Monitor search kept only the first letter.** Every keystroke redrew the Monitor and dropped focus, so typing "retail" searched for "r". Focus, the caret and the list position now survive every redraw, including choosing a run and ticking compare boxes.
 - **Monitor from the keyboard.** Runs and steps can be chosen with Tab and Enter; sorted columns are announced.
+- **Run is always on screen on a phone.** The top bar used to need 900px, so Run and the Properties toggle sat off-screen at phone width and the repository toggle was squeezed to 18px. Below 900px the bar now starts with the mode switch, Run and the engine status, the remaining actions scroll after them, and the Properties toggle stays pinned to the right edge.
 
 ## 1.4.0
 
