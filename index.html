@@ -281,7 +281,8 @@ table.log a{color:var(--accent)}
 .legend .st-dot{position:static}
 
 /* overlays */
-#toasts{position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:50;display:flex;flex-direction:column;align-items:center;gap:7px;pointer-events:none}
+/* Toasts sit at the bottom of the canvas, just above the results drawer, so they never cover the canvas tools. */
+#toasts{position:fixed;bottom:calc(var(--drawer-h) + 38px);left:50%;transform:translateX(-50%);z-index:50;display:flex;flex-direction:column;align-items:center;gap:7px;pointer-events:none}
 .toast{pointer-events:auto;max-width:520px;padding:8px 13px;border-radius:4px;background:var(--panel-3);border:1px solid var(--line-2);border-left:4px solid var(--info);box-shadow:var(--shadow);animation:tin .16s ease-out}
 .toast.success{border-left-color:var(--ok)} .toast.warn{border-left-color:var(--warn)} .toast.error{border-left-color:var(--err)}
 .toast.out{opacity:0;transition:opacity .25s}
@@ -642,8 +643,8 @@ td.masked{color:var(--muted);letter-spacing:.04em}
   <div id="readonlyBar" hidden><b id="readonlyBarText"></b><button id="btnVersionClose" class="btn">Return to current</button></div>
   <section id="monitorStage" class="monitor-stage" aria-label="Run monitor" hidden></section>
   <section id="welcomeStage" class="welcome-stage" aria-label="Welcome" hidden></section>
+  <div id="toasts" aria-live="polite"></div>
 </div>
-<div id="toasts" aria-live="polite"></div>
 <div id="uploadBanner" class="upload-banner" hidden><div id="uploadBannerText"></div><div class="upload-track"><div id="uploadBar"></div></div></div>
 <div id="ctxMenu" class="ctx" hidden></div>
 <div id="dialogOverlay" class="dialog-overlay" hidden><div class="dialog-box" id="dialogBox" role="alertdialog" aria-modal="true" aria-labelledby="dialogTitle"></div></div>
