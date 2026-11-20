@@ -65,7 +65,8 @@ button{cursor:pointer}
 .topbar{grid-area:top;display:flex;align-items:center;gap:14px;padding:0 12px;background:var(--panel);border-bottom:1px solid var(--line);min-width:0}
 .brand{display:flex;align-items:center;gap:9px;flex:none}
 .brand-mark{display:grid;place-items:center;width:28px;height:28px;border-radius:5px;background:linear-gradient(145deg,var(--accent),var(--accent-2));color:var(--accent-ink)}
-.brand-name{font:700 20px/1 var(--disp);letter-spacing:.01em}
+.brand-name{font:700 20px/1 var(--disp);letter-spacing:.01em;margin:0}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .mapname{display:flex;align-items:center;gap:8px;min-width:0;flex:0 1 250px;padding-left:14px;border-left:1px solid var(--line)}
 .mapname label{color:var(--faint);font-size:11px;flex:none}
 .mapname input{min-width:0;width:100%;background:transparent;border:1px solid transparent;border-radius:4px;padding:5px 7px;font-weight:600}
@@ -93,8 +94,8 @@ button{cursor:pointer}
 
 /* palette */
 .palette{grid-area:pal;background:var(--panel);border-right:1px solid var(--line);overflow:auto;padding:4px 0 12px}
-.pal-group h3,.p-sec h4,.props-head small{font:600 11.5px/1 var(--disp);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:0}
-.pal-group h3{padding:14px 14px 7px}
+.pal-group h2,.p-sec h3,.props-head small{font:600 11.5px/1 var(--disp);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:0}
+.pal-group h2{padding:14px 14px 7px}
 .pal-item{--cat:var(--trn);display:flex;align-items:center;gap:9px;margin:3px 9px;padding:7px 9px;border:1px solid var(--line);border-left:3px solid var(--cat);border-radius:4px;background:var(--panel-2);cursor:grab;user-select:none}
 .pal-item:hover{border-color:var(--line-2);border-left-color:var(--cat);background:var(--panel-3)}
 .pal-item:active{cursor:grabbing}
@@ -157,8 +158,8 @@ button{cursor:pointer}
 .props-head strong{display:block;font:600 16px/1.2 var(--disp)}
 .props-head small{display:block;margin-top:3px;font-size:11px}
 .p-sec{padding:13px 14px;border-bottom:1px solid var(--line)}
-.p-sec h4{margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
-.p-sec h4 span{font:11px var(--mono);letter-spacing:0;text-transform:none;color:var(--faint)}
+.p-sec h3{margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.p-sec h3 span{font:11px var(--mono);letter-spacing:0;text-transform:none;color:var(--faint)}
 .fld{display:block;margin-bottom:10px}
 .fld:last-child{margin-bottom:0}
 .fld-l{display:block;font-size:11.5px;color:var(--muted);margin-bottom:4px}
@@ -214,7 +215,7 @@ textarea.inp{resize:vertical;line-height:1.45;font-size:12px}
 .node .node-name{max-width:135px}
 .node .node-meta{max-width:140px}
 .ports{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ports h5{margin:0 0 5px;font:500 11.5px var(--ui);color:var(--muted)}
+.ports h4{margin:0 0 5px;font:500 11.5px var(--ui);color:var(--muted)}
 .port{display:flex;justify-content:space-between;gap:6px;font:11px/1.7 var(--mono);border-bottom:1px dotted var(--line)}
 .port span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .port span:last-child{color:var(--faint);flex:none}
@@ -225,6 +226,7 @@ textarea.inp{resize:vertical;line-height:1.45;font-size:12px}
 .drawer{grid-area:drawer;display:flex;flex-direction:column;min-height:0;background:var(--panel);border-top:1px solid var(--line);position:relative}
 .drawer-grip{position:absolute;left:0;right:0;top:-4px;height:8px;cursor:ns-resize;z-index:5}
 .tabs{display:flex;align-items:stretch;height:34px;flex:none;border-bottom:1px solid var(--line);padding:0 6px}
+.tab-list{display:flex;align-items:stretch;min-width:0;flex:1}
 .tab{border:0;background:none;padding:0 13px;color:var(--muted);font-weight:500;border-bottom:2px solid transparent;display:flex;align-items:center;gap:7px}
 .tab:hover{color:var(--text)}
 .tab.active{color:var(--text);border-bottom-color:var(--accent)}
@@ -459,7 +461,7 @@ td.masked{color:var(--muted);letter-spacing:.04em}
 .monitor-toolbar input[type="date"]{min-width:126px;max-width:145px}
 .monitor-grid{display:grid;grid-template-columns:minmax(330px,44%) minmax(0,1fr);gap:12px;align-items:start}
 .monitor-history,.monitor-details{border:1px solid var(--line);background:var(--panel);border-radius:5px;overflow:auto;max-height:calc(100dvh - 148px)}
-.monitor-section{padding:14px;border-bottom:1px solid var(--line)}.monitor-section h3{font:600 17px var(--disp);margin:0 0 10px}.monitor-section h4{font:600 13px var(--disp);margin:12px 0 6px;color:var(--muted)}
+.monitor-section{padding:14px;border-bottom:1px solid var(--line)}.monitor-section h2{font:600 17px var(--disp);margin:0 0 10px}.monitor-section h3{font:600 13px var(--disp);margin:12px 0 6px;color:var(--muted)}
 .monitor-table{border-collapse:collapse;width:100%;font:11px/1.5 var(--mono)}
 .monitor-table th,.monitor-table td{padding:6px 9px;white-space:nowrap;text-align:left;border-bottom:1px solid var(--line)}
 .monitor-table th{background:var(--panel-2);color:var(--muted);font-weight:500;position:sticky;top:0;z-index:2}
@@ -470,7 +472,7 @@ td.masked{color:var(--muted);letter-spacing:.04em}
 .gantt-track{height:20px;background:var(--panel-2);border-radius:3px;position:relative;border:1px solid var(--line)}
 .gantt-bar{position:absolute;top:3px;height:12px;background:var(--info);border:0;border-radius:3px;min-width:4px}
 .gantt-bar.status-succeeded{background:var(--ok)}.gantt-bar.status-failed{background:var(--err)}.gantt-bar.status-skipped{background:var(--faint)}
-.monitor-trends{display:grid;grid-template-columns:1fr 1fr;gap:12px}.trend-card{min-width:0}.trend-card p{font-size:10px;color:var(--muted);margin:0 0 3px}.trend-card h4{margin:0 0 4px}.trend-svg{width:100%;height:auto;max-height:160px}
+.monitor-trends{display:grid;grid-template-columns:1fr 1fr;gap:12px}.trend-card{min-width:0}.trend-card p{font-size:10px;color:var(--muted);margin:0 0 3px}.trend-card h3{margin:0 0 4px}.trend-svg{width:100%;height:auto;max-height:160px}
 .welcome-stage{position:absolute;top:50px;left:0;right:0;bottom:26px;z-index:22;display:grid;place-items:center;background:var(--bg);overflow:auto;padding:25px}
 .welcome-inner{width:min(920px,100%)}.welcome-hero{text-align:center;margin:10px 0 28px}.welcome-hero .brand-mark{margin:auto}
 .welcome-hero h1{font:700 32px var(--disp);margin:14px 0 7px}.welcome-hero p{color:var(--muted)}.welcome-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:11px}
@@ -514,7 +516,7 @@ td.masked{color:var(--muted);letter-spacing:.04em}
   .tb-right{margin-left:6px;flex:none}
   .pill span:last-child{display:none!important}
   .sample-menu{position:fixed;top:46px;right:8px;left:auto;max-width:calc(100vw - 16px)}
-  .tabs{overflow-x:auto;scrollbar-width:none}.tabs .tab{white-space:nowrap;flex:none}
+  .tab-list{overflow-x:auto;scrollbar-width:none}.tabs .tab{white-space:nowrap;flex:none}
   .pal-item{padding:10px 9px}
   #readonlyBar{left:10px}
   .monitor-trends{grid-template-columns:1fr}
@@ -530,7 +532,7 @@ td.masked{color:var(--muted);letter-spacing:.04em}
   <header class="topbar">
     <div class="brand">
       <span class="brand-mark"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h13a5 5 0 0 0 5-3H8"/><path d="M8 5v6c0 2 1 3 3 3h2c2 0 3-1 3-3"/><path d="M9 14l-2 5h10l-2-5"/></svg></span>
-      <span class="brand-name">DataForge</span>
+      <h1 class="brand-name"><span aria-hidden="true">DataForge</span><span class="sr-only">DataForge · Browser ETL Studio</span></h1>
     </div>
     <button class="tb icon panel-toggle" id="btnPanelLeft" title="Repository and palette" aria-label="Repository and palette" aria-expanded="false" aria-controls="palette"><i data-icon="panelLeft"></i></button>
     <select id="studioMode" class="mode-switch" title="Designer mode" aria-label="Designer mode"><option value="mapping">Mapping Designer</option><option value="workflow">Workflow Designer</option><option value="monitor">Monitor</option></select>
@@ -592,27 +594,29 @@ td.masked{color:var(--muted);letter-spacing:.04em}
 
   <aside class="props" id="props" aria-label="Properties"></aside>
 
-  <section class="drawer" id="drawer">
+  <section class="drawer" id="drawer" aria-label="Results">
     <div class="drawer-grip" id="drawerGrip"></div>
-    <div class="tabs" role="tablist">
-      <button class="tab" data-tab="preview" role="tab">Data Preview</button>
-      <button class="tab" data-tab="sql" role="tab">Generated SQL</button>
-      <button class="tab" data-tab="validation" role="tab">Validation <span class="cnt" id="issueCnt" hidden></span></button>
-      <button class="tab" data-tab="log" role="tab">Run Log</button>
-      <button class="tab" data-tab="dq" role="tab">Data Quality</button>
-      <button class="tab" data-tab="lineage" role="tab">Lineage</button>
-      <button class="tab" data-tab="profile" role="tab">Profile</button>
-      <button class="tab" data-tab="tests" role="tab">Tests <span class="cnt" id="testCnt" hidden></span></button>
-      <button class="icon-btn" id="btnDrawer" title="Collapse or expand panel" data-icon="chevron"></button>
+    <div class="tabs">
+      <div class="tab-list" role="tablist" aria-label="Mapping results">
+        <button class="tab" type="button" data-tab="preview" role="tab" id="tab-preview" aria-controls="pane-preview" aria-selected="false" tabindex="-1">Data Preview</button>
+        <button class="tab" type="button" data-tab="sql" role="tab" id="tab-sql" aria-controls="pane-sql" aria-selected="false" tabindex="-1">Generated SQL</button>
+        <button class="tab" type="button" data-tab="validation" role="tab" id="tab-validation" aria-controls="pane-validation" aria-selected="false" tabindex="-1">Validation <span class="cnt" id="issueCnt" hidden></span></button>
+        <button class="tab" type="button" data-tab="log" role="tab" id="tab-log" aria-controls="pane-log" aria-selected="false" tabindex="-1">Run Log</button>
+        <button class="tab" type="button" data-tab="dq" role="tab" id="tab-dq" aria-controls="pane-dq" aria-selected="false" tabindex="-1">Data Quality</button>
+        <button class="tab" type="button" data-tab="lineage" role="tab" id="tab-lineage" aria-controls="pane-lineage" aria-selected="false" tabindex="-1">Lineage</button>
+        <button class="tab" type="button" data-tab="profile" role="tab" id="tab-profile" aria-controls="pane-profile" aria-selected="false" tabindex="-1">Profile</button>
+        <button class="tab" type="button" data-tab="tests" role="tab" id="tab-tests" aria-controls="pane-tests" aria-selected="false" tabindex="-1">Tests <span class="cnt" id="testCnt" hidden></span></button>
+      </div>
+      <button class="icon-btn" type="button" id="btnDrawer" title="Collapse or expand panel" aria-label="Collapse panel" aria-expanded="true" aria-controls="drawer" data-icon="chevron"></button>
     </div>
-    <div class="pane" id="pane-preview"></div>
-    <div class="pane" id="pane-sql"></div>
-    <div class="pane" id="pane-validation"></div>
-    <div class="pane" id="pane-log"></div>
-    <div class="pane" id="pane-dq"></div>
-    <div class="pane" id="pane-lineage"></div>
-    <div class="pane" id="pane-profile"></div>
-    <div class="pane" id="pane-tests"></div>
+    <div class="pane" id="pane-preview" role="tabpanel" aria-labelledby="tab-preview" tabindex="0"></div>
+    <div class="pane" id="pane-sql" role="tabpanel" aria-labelledby="tab-sql" tabindex="0"></div>
+    <div class="pane" id="pane-validation" role="tabpanel" aria-labelledby="tab-validation" tabindex="0"></div>
+    <div class="pane" id="pane-log" role="tabpanel" aria-labelledby="tab-log" tabindex="0"></div>
+    <div class="pane" id="pane-dq" role="tabpanel" aria-labelledby="tab-dq" tabindex="0"></div>
+    <div class="pane" id="pane-lineage" role="tabpanel" aria-labelledby="tab-lineage" tabindex="0"></div>
+    <div class="pane" id="pane-profile" role="tabpanel" aria-labelledby="tab-profile" tabindex="0"></div>
+    <div class="pane" id="pane-tests" role="tabpanel" aria-labelledby="tab-tests" tabindex="0"></div>
   </section>
 
   <footer class="statusbar">
@@ -623,8 +627,8 @@ td.masked{color:var(--muted);letter-spacing:.04em}
   </footer>
   <div id="panelScrim"></div>
   <div id="readonlyBar" hidden><b id="readonlyBarText"></b><button id="btnVersionClose" class="btn">Return to current</button></div>
-  <section id="monitorStage" class="monitor-stage" hidden></section>
-  <section id="welcomeStage" class="welcome-stage" hidden></section>
+  <section id="monitorStage" class="monitor-stage" aria-label="Run monitor" hidden></section>
+  <section id="welcomeStage" class="welcome-stage" aria-label="Welcome" hidden></section>
 </div>
 <div id="toasts" aria-live="polite"></div>
 <div id="uploadBanner" class="upload-banner" hidden><div id="uploadBannerText"></div><div class="upload-track"><div id="uploadBar"></div></div></div>
@@ -653,7 +657,7 @@ td.masked{color:var(--muted);letter-spacing:.04em}
       <aside class="codegen-sidebar" id="codegenOptions"></aside>
       <div class="codegen-main">
         <div class="codegen-filebar" id="codegenFilebar"></div>
-        <div class="codegen-files"><div class="codegen-tree" id="codegenTree" hidden></div><div class="codegen-code" id="codegenCode"></div></div>
+        <div class="codegen-files"><div class="codegen-tree" id="codegenTree" hidden></div><div class="codegen-code" id="codegenCode" tabindex="0" role="region" aria-label="Generated code"></div></div>
         <div class="codegen-warnings" id="codegenWarnings"></div>
       </div>
     </div>
@@ -1138,18 +1142,18 @@ const Params = {
     const defs = this.definitions();
     host.replaceChildren(...Object.entries(defs).map(([name, def]) => {
       const nm = h('input', { class: 'inp mono', value: name, 'aria-label': 'Parameter name' });
-      const kind = h('select', { class: 'inp' }, [['parameter', 'Parameter'], ['variable', 'Variable']].map(([v, l]) => h('option', { value: v, text: l })));
+      const kind = h('select', { class: 'inp', 'aria-label': `${name} kind` }, [['parameter', 'Parameter'], ['variable', 'Variable']].map(([v, l]) => h('option', { value: v, text: l })));
       kind.value = def.kind;
-      const type = h('select', { class: 'inp' }, this.types.map((t) => h('option', { value: t, text: t })));
+      const type = h('select', { class: 'inp', 'aria-label': `${name} data type` }, this.types.map((t) => h('option', { value: t, text: t })));
       type.value = def.type;
       const val = h('input', { class: 'inp mono', value: def.value ?? '', 'aria-label': `${name} value` });
-      const agg = h('select', { class: 'inp' }, this.aggregations.map((t) => h('option', { value: t, text: t })));
+      const agg = h('select', { class: 'inp', 'aria-label': `${name} aggregation` }, this.aggregations.map((t) => h('option', { value: t, text: t })));
       agg.value = def.aggregation || 'max'; agg.hidden = def.kind !== 'variable';
       const apply = () => (changeFn || ((a, b, c) => { if (a !== b) delete defs[a]; defs[b] = c; History.commit(); UI.renderProps(true); }))(name, nm.value, { ...def, kind: kind.value, type: type.value, value: val.value, aggregation: agg.value });
       for (const el of [nm, kind, type, val, agg]) el.addEventListener('change', apply);
       kind.addEventListener('change', () => { agg.hidden = kind.value !== 'variable'; });
       return h('div', { class: 'frow param-row' },
-        h('div', { class: 'frow-top' }, nm, h('button', { class: 'icon-btn', type: 'button', title: 'Delete', html: svgIcon('x', 14), onclick: () => { delete defs[name]; History.commit(); UI.renderProps(true); } })),
+        h('div', { class: 'frow-top' }, nm, h('button', { class: 'icon-btn', type: 'button', title: 'Delete', 'aria-label': `Delete ${name}`, html: svgIcon('x', 14), onclick: () => { delete defs[name]; History.commit(); UI.renderProps(true); } })),
         h('div', { class: 'row2' }, kind, type),
         P.field('Value', val), agg.hidden ? null : P.field('Aggregation', agg));
     }));
@@ -1509,7 +1513,7 @@ function highlightSQL(sql) {
    Property panel building blocks (used by registry entries)
    ============================================================ */
 const P = {
-  section(title, ...kids) { return h('section', { class: 'p-sec' }, h('h4', null, title), ...kids); },
+  section(title, ...kids) { return h('section', { class: 'p-sec' }, h('h3', null, title), ...kids); },
   field(label, control, hint) { return h('label', { class: 'fld' }, h('span', { class: 'fld-l', text: label }), control, hint ? h('span', { class: 'fld-h', text: hint }) : null); },
   input(obj, key, opts = {}) {
     const el = opts.multiline
@@ -5265,7 +5269,7 @@ const UI = {
   renderPalette() {
     if (typeof Studio !== 'undefined' && Studio.mode !== 'mapping') { Studio.palette();return; }
     const repository = $('#repoNav'), project = $('#projectNav');
-    els.palette.replaceChildren(...CATEGORIES.map(([cat, title]) => h('div', { class: 'pal-group' }, h('h3', { text: title }),
+    els.palette.replaceChildren(...CATEGORIES.map(([cat, title]) => h('div', { class: 'pal-group' }, h('h2', { text: title }),
       Registry.list().filter((d) => d.category === cat).map((d) => {
         const item = h('div', { class: `pal-item cat-${cat}`, draggable: 'true', tabindex: '0', title: `Drag onto the canvas, or double-click to add a ${d.label}` },
           h('span', { class: 'pal-ic', html: svgIcon(d.icon, 17) }), h('span', { text: d.label }));
@@ -5334,7 +5338,7 @@ const UI = {
   renderHistory() { if (!els.btnUndo) return; els.btnUndo.disabled = History.index <= 0; els.btnRedo.disabled = History.index >= History.stack.length - 1; },
   portsBlock(node) {
     const groupLabel = (p, side) => p.group ? (side === 'in' ? Graph.inputDefs(node) : Graph.outputGroups(node)).find((g) => g.key === p.group)?.label || p.group : '';
-    const col = (title, ports, empty) => h('div', null, h('h5', { text: `${title} (${ports.length})` }),
+    const col = (title, ports, empty) => h('div', null, h('h4', { text: `${title} (${ports.length})` }),
       ports.length ? ports.map((p) => h('div', { class: 'port' }, h('span', { text: (groupLabel(p, title.toLowerCase()) ? '[' + groupLabel(p, title.toLowerCase()) + '] ' : '') + p.name, title: p.name }), h('span', { text: p.type }))) : P.hint(empty));
     const def = Registry.get(node.type);
     return h('div', { class: 'ports', id: 'propPorts' },
@@ -5496,7 +5500,8 @@ const UI = {
   showTab(tab) {
     state.tab = tab;
     els.app.classList.remove('drawer-min');
-    document.querySelectorAll('.tab').forEach((t) => { const on = t.dataset.tab === tab; t.classList.toggle('active', on); t.setAttribute('aria-selected', on); });
+    els.app.querySelectorAll('#drawer .tab').forEach((t) => { const on = t.dataset.tab === tab; t.classList.toggle('active', on); t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; });
+    this.syncDrawerToggle();
     Object.entries(els.panes).forEach(([k, p]) => p.classList.toggle('active', k === tab));
     if (tab === 'sql') this.renderSQL();
     if (tab === 'lineage') LineageUI.render();
@@ -5504,6 +5509,7 @@ const UI = {
     if (tab === 'profile') Profile.render();
     if (tab === 'tests') MappingTests.render();
   },
+  syncDrawerToggle() { const min = els.app.classList.contains('drawer-min'), b = $('#btnDrawer'); b.setAttribute('aria-expanded', !min); b.setAttribute('aria-label', min ? 'Expand panel' : 'Collapse panel'); },
   setBusy(on) { els.btnRun.disabled = on; els.btnValidate.disabled = on; els.btnRun.querySelector('span').textContent = on ? 'Running' : 'Run'; },
   live() { this.renderNodes(); if (state.tab === 'sql') this.renderSQL(); },
   afterPorts() { this.renderNodes(); this.renderProps(false); this.renderSQL(); if (state.tab === 'lineage') LineageUI.render(); },
@@ -5844,7 +5850,7 @@ const App = {
     on('btnZoomIn', () => View.zoomCenter(1.2));
     on('btnZoomOut', () => View.zoomCenter(1 / 1.2));
     on('btnFit', () => View.fit());
-    on('btnDrawer', () => els.app.classList.toggle('drawer-min'));
+    on('btnDrawer', () => { els.app.classList.toggle('drawer-min'); UI.syncDrawerToggle(); });
     const retryEngine = () => { if (Engine.status === 'error') Engine.retry(); };
     els.enginePill.addEventListener('click', retryEngine);
     els.enginePill.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); retryEngine(); } });
@@ -5856,9 +5862,17 @@ const App = {
     els.openInput.addEventListener('change', () => { const f = els.openInput.files[0]; els.openInput.value = ''; if (f) Actions.open(f); });
     els.mapName.addEventListener('input', () => { if(Studio.mode === 'mapping') state.doc.mapping.name = els.mapName.value; });
     els.mapName.addEventListener('change', () => { if(Studio.mode !== 'mapping')return; if (!els.mapName.value.trim()) { state.doc.mapping.name = 'Untitled mapping'; els.mapName.value = state.doc.mapping.name; } History.commit(); });
-    document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => UI.showTab(t.dataset.tab)));
+    document.querySelectorAll('#drawer .tab').forEach((t) => t.addEventListener('click', () => UI.showTab(t.dataset.tab)));
+    // Arrow keys, Home and End move between the visible drawer tabs (WAI-ARIA tabs pattern).
+    $('#drawer .tab-list').addEventListener('keydown', (e) => {
+      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+      const tabs = [...e.currentTarget.querySelectorAll('.tab')].filter((t) => t.offsetParent), i = tabs.indexOf(document.activeElement);
+      if (!tabs.length) return;
+      const next = e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : (i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+      e.preventDefault(); e.stopPropagation(); UI.showTab(tabs[next].dataset.tab); tabs[next].focus();
+    });
     let grip = null;
-    $('#drawerGrip').addEventListener('pointerdown', (e) => { grip = { y: e.clientY, h: $('#drawer').getBoundingClientRect().height }; els.app.classList.remove('drawer-min'); e.preventDefault(); });
+    $('#drawerGrip').addEventListener('pointerdown', (e) => { grip = { y: e.clientY, h: $('#drawer').getBoundingClientRect().height }; els.app.classList.remove('drawer-min'); UI.syncDrawerToggle(); e.preventDefault(); });
     window.addEventListener('pointermove', (e) => { if (grip) document.documentElement.style.setProperty('--drawer-h', Math.max(90, Math.min(window.innerHeight - 220, grip.h + grip.y - e.clientY)) + 'px'); });
     window.addEventListener('pointerup', () => { grip = null; });
     document.addEventListener('pointerdown', (e) => { if (!e.target.closest('#ctxMenu')) UI.hideContext(); if (!e.target.closest('#samplePicker')) { $('#sampleMenu').hidden = true; $('#btnSampleMenu').setAttribute('aria-expanded', 'false'); } });
@@ -6727,8 +6741,8 @@ const Repo = {
     const draw=()=>rows.replaceChildren(...Object.entries(ps.values).map(([key,val])=>h('div',{class:'repo-set-row'},
       h('input',{class:'inp mono',value:key,'aria-label':'Parameter name',onchange:e=>{const next=e.target.value.trim();if(!/^\$\$[A-Za-z_]\w*$/.test(next)){toast('Parameter names must start with $$.','warn');draw();return;}delete ps.values[key];ps.values[next]=val;this.save();draw();}}),
       h('input',{class:'inp',value:String(val??''),'aria-label':'Parameter value',onchange:e=>{ps.values[key]=e.target.value;this.save();}}),
-      h('button',{class:'icon-btn',html:svgIcon('x'),onclick:()=>{delete ps.values[key];this.save();draw();}}))));
-    draw();host.replaceChildren(h('div',{class:'repo-editor-head'},h('b',{text:ps.name}),h('button',{class:'icon-btn',html:svgIcon('x'),onclick:()=>host.hidden=true})),
+      h('button',{class:'icon-btn',type:'button',title:'Remove','aria-label':`Remove ${key}`,html:svgIcon('x'),onclick:()=>{delete ps.values[key];this.save();draw();}}))));
+    draw();host.replaceChildren(h('div',{class:'repo-editor-head'},h('b',{text:ps.name}),h('button',{class:'icon-btn',type:'button',title:'Close','aria-label':'Close',html:svgIcon('x'),onclick:()=>host.hidden=true})),
       P.field('Set name',h('input',{class:'inp',value:ps.name,onchange:e=>{ps.name=e.target.value;this.save();this.render();}})),rows,
       h('div',{class:'btn-row'},h('button',{class:'btn',text:'Add value',onclick:()=>{let n=1;while(ps.values['$$PARAM_'+n]!==undefined)n++;ps.values['$$PARAM_'+n]='';this.save();draw();}})));
   },
@@ -7159,7 +7173,7 @@ const Versions = {
   open(id) {
     const m=Repo.project.mappings.find(x=>x.mapping.id===id);if(!m)return;
     const versions=Repo.project.versions[id]||[],host=$('#versionPanel');host.hidden=false;this.viewing=id;
-    host.replaceChildren(h('div',{class:'repo-editor-head'},h('strong',{text:'Versions · '+m.mapping.name}),h('button',{class:'icon-btn',html:svgIcon('x'),onclick:()=>host.hidden=true})),
+    host.replaceChildren(h('div',{class:'repo-editor-head'},h('strong',{text:'Versions · '+m.mapping.name}),h('button',{class:'icon-btn',type:'button',title:'Close','aria-label':'Close',html:svgIcon('x'),onclick:()=>host.hidden=true})),
       h('div',{class:'small-muted',text:'Restoring adds a new version; earlier versions remain intact.'}),
       ...versions.slice().reverse().map((v,i)=>h('div',{class:'version-row'},
         h('span',{text:`v${v.versionNo} · ${v.label||'Untitled'} · ${new Date(v.savedAt).toLocaleString()}`}),
@@ -7311,8 +7325,8 @@ const Workflow = {
   select(ids=[],link=null){this.sel=new Set(ids);this.selLink=link;this.renderNodes();this.renderLinks();this.renderProps();},
   ensureLayer(){if(this.layer)return;this.layer=h('div',{id:'wfCanvas',class:'wf-canvas'});this.linkSvg=document.createElementNS(SVG_NS,'svg');this.linkSvg.setAttribute('class','wf-links');this.linkSvg.setAttribute('aria-hidden','true');this.linkLayer=document.createElementNS(SVG_NS,'g');this.linkSvg.append(this.linkLayer);
     this.world=h('div',{class:'world wf-world'});const tools=h('div',{class:'canvas-tools wf-tools'},
-      h('button',{class:'icon-btn',title:'Undo',html:svgIcon('undo'),onclick:()=>this.undo(-1)}),h('button',{class:'icon-btn',title:'Redo',html:svgIcon('redo'),onclick:()=>this.undo(1)}),
-      h('button',{class:'icon-btn',html:svgIcon('minus'),onclick:()=>this.zoom(.82)}),h('span',{class:'zoom-val',id:'wfZoom',text:'100%'}),h('button',{class:'icon-btn',html:svgIcon('plus'),onclick:()=>this.zoom(1.2)}),h('button',{class:'icon-btn',html:svgIcon('fit'),onclick:()=>this.fit()}));
+      h('button',{class:'icon-btn',type:'button',title:'Undo','aria-label':'Undo',html:svgIcon('undo'),onclick:()=>this.undo(-1)}),h('button',{class:'icon-btn',type:'button',title:'Redo','aria-label':'Redo',html:svgIcon('redo'),onclick:()=>this.undo(1)}),
+      h('button',{class:'icon-btn',type:'button',title:'Zoom out','aria-label':'Zoom out',html:svgIcon('minus'),onclick:()=>this.zoom(.82)}),h('span',{class:'zoom-val',id:'wfZoom',text:'100%'}),h('button',{class:'icon-btn',type:'button',title:'Zoom in','aria-label':'Zoom in',html:svgIcon('plus'),onclick:()=>this.zoom(1.2)}),h('button',{class:'icon-btn',type:'button',title:'Fit to view','aria-label':'Fit to view',html:svgIcon('fit'),onclick:()=>this.fit()}));
     this.layer.append(this.linkSvg,this.world,tools);els.canvas.append(this.layer);this.bind();
   },
   render(){if(!this.active||Studio.mode!=='workflow')return;this.ensureLayer();this.layer.hidden=false;this.renderNodes();this.renderLinks();this.renderProps();this.applyView();els.mapName.value=this.active.name;els.statCounts.textContent=`${this.active.nodes.length} tasks · ${this.active.links.length} links`;},
@@ -7559,16 +7573,16 @@ const Monitor = {
     return(!this.query||text.includes(this.query.toLowerCase()))&&(this.status==='all'||r.status===this.status)&&(this.object==='all'||r.objectId===this.object)&&(!this.dateStart||String(r.started).slice(0,10)>=this.dateStart)&&(!this.dateEnd||String(r.started).slice(0,10)<=this.dateEnd);
   });const k=this.sort.key,d=this.sort.dir;runs=runs.slice().sort((a,b)=>{const x=a[k],y=b[k];return d*(typeof x==='number'?x-y:String(x??'').localeCompare(String(y??'')));});return runs;},
   render(){const host=$('#monitorStage');if(!host||host.hidden)return;const runs=this.filtered();
-    const search=h('input',{class:'inp',placeholder:'Search run history',value:this.query,oninput:e=>{this.query=e.target.value;this.render();}});
-    const status=h('select',{class:'inp'},[['all','All statuses'],['SUCCEEDED','Succeeded'],['FAILED','Failed'],['ABORTED','Aborted']].map(([v,l])=>h('option',{value:v,text:l})));status.value=this.status;status.onchange=()=>{this.status=status.value;this.render();};
-    const objects=[['all','All objects'],...new Map(Repo.runs.map(r=>[r.objectId,[r.objectId,r.objectName]])).values()];const object=h('select',{class:'inp'},objects.map(([v,t])=>h('option',{value:v,text:t})));object.value=this.object;object.onchange=()=>{this.object=object.value;this.render();};
-    const start=h('input',{type:'date',class:'inp',value:this.dateStart,onchange:e=>{this.dateStart=e.target.value;this.render();}}),end=h('input',{type:'date',class:'inp',value:this.dateEnd,onchange:e=>{this.dateEnd=e.target.value;this.render();}});
+    const search=h('input',{class:'inp',type:'search',placeholder:'Search run history','aria-label':'Search run history',value:this.query,oninput:e=>{this.query=e.target.value;this.render();}});
+    const status=h('select',{class:'inp','aria-label':'Filter by status'},[['all','All statuses'],['SUCCEEDED','Succeeded'],['FAILED','Failed'],['ABORTED','Aborted']].map(([v,l])=>h('option',{value:v,text:l})));status.value=this.status;status.onchange=()=>{this.status=status.value;this.render();};
+    const objects=[['all','All objects'],...new Map(Repo.runs.map(r=>[r.objectId,[r.objectId,r.objectName]])).values()];const object=h('select',{class:'inp','aria-label':'Filter by mapping or workflow'},objects.map(([v,t])=>h('option',{value:v,text:t})));object.value=this.object;object.onchange=()=>{this.object=object.value;this.render();};
+    const start=h('input',{type:'date',class:'inp','aria-label':'Started on or after',title:'Started on or after',value:this.dateStart,onchange:e=>{this.dateStart=e.target.value;this.render();}}),end=h('input',{type:'date',class:'inp','aria-label':'Started on or before',title:'Started on or before',value:this.dateEnd,onchange:e=>{this.dateEnd=e.target.value;this.render();}});
     const sortHeading=(text,key)=>h('button',{class:'monitor-sort',text:text+(this.sort.key===key?(this.sort.dir===-1?' ↓':' ↑'):''),onclick:()=>{this.sort={key,dir:this.sort.key===key?-this.sort.dir:-1};this.render();}});
     const table=h('table',{class:'monitor-table'},h('thead',null,h('tr',null,...[['Started','started'],['Object','objectName'],['Type','type'],['Status','status'],['Duration','durationMs'],['Rows written','rows'],['Rejected','rejected']].map(([label,key])=>h('th',null,sortHeading(label,key))),h('th',{text:'Compare'}))),
       h('tbody',null,...runs.map(r=>h('tr',{class:r.id===this.selected?'chosen':'',onclick:()=>{this.selected=r.id;this.render();}},
         h('td',{text:new Date(r.started).toLocaleString()}),h('td',{text:r.objectName}),h('td',{text:r.type}),h('td',{class:'monitor-'+r.status.toLowerCase(),text:r.status}),
         h('td',{class:'mono',text:fmtMs(r.durationMs)+' ms'}),h('td',{class:'mono',text:fmtNum(r.rows)}),h('td',{class:'mono',text:fmtNum(r.rejected)}),
-        h('td',null,h('input',{type:'checkbox',checked:this.compare.includes(r.id),title:'Compare this run',onclick:e=>e.stopPropagation(),onchange:e=>{if(e.target.checked){if(this.compare.length>=2)this.compare.shift();this.compare.push(r.id);}else this.compare=this.compare.filter(x=>x!==r.id);this.render();}}))))));
+        h('td',null,h('input',{type:'checkbox',checked:this.compare.includes(r.id),title:'Compare this run','aria-label':`Compare run ${r.objectName} ${new Date(r.started).toLocaleString()}`,onclick:e=>e.stopPropagation(),onchange:e=>{if(e.target.checked){if(this.compare.length>=2)this.compare.shift();this.compare.push(r.id);}else this.compare=this.compare.filter(x=>x!==r.id);this.render();}}))))));
     const controls=h('div',{class:'monitor-toolbar'},h('strong',{text:'Run Monitor'}),search,status,object,start,end,h('button',{class:'btn',text:'Compare runs',disabled:this.compare.length!==2,onclick:()=>this.showCompare()}));
     const current=Repo.runs.find(r=>r.id===this.selected)||runs[0]||null;if(current)this.selected=current.id;
     host.replaceChildren(controls,h('div',{class:'monitor-grid'},h('section',{class:'monitor-history'},h('div',{class:'pane-bar',text:`Newest ${Repo.runs.length} runs · ${runs.length} shown`}),table),
@@ -7580,13 +7594,13 @@ const Monitor = {
     const headers=['Node / task','Type','Status','Rows in','Rows out','Applied','Rejected','Rows/sec','Duration ms','% of time'];
     const makeTable=list=>h('table',{class:'monitor-table'},h('thead',null,h('tr',null,headers.map(x=>h('th',{text:x})))),h('tbody',null,...list.map(s=>{
       const ms=s.ms||0;return h('tr',{onclick:()=>this.sessionDetails(run,s)},h('td',{text:s.name}),h('td',{text:s.type}),h('td',{class:'monitor-'+String(s.status||'').toLowerCase(),text:s.status}),h('td',{text:fmtNum(s.rowsIn)}),h('td',{text:fmtNum(s.rowsOut)}),h('td',{text:fmtNum(s.applied??s.rowsOut)}),h('td',{text:fmtNum(s.rejected)}),h('td',{text:fmtNum(s.throughput??(ms?s.rowsOut/ms*1000:0))}),h('td',{text:fmtMs(ms)}),h('td',{text:(s.pctTime??(100*ms/total)).toFixed(1)+'%'}));})));
-    return h('div',{class:'monitor-section'},h('h3',{text:'Session Statistics'}),makeTable(steps),
-      h('h4',{text:'Source statistics'}),makeTable(run.sourceStats||steps.filter(s=>Registry.get(s.type)?.category==='source')),
-      h('h4',{text:'Target statistics'}),makeTable(run.targetStats||steps.filter(s=>Registry.get(s.type)?.category==='target')));
+    return h('div',{class:'monitor-section'},h('h2',{text:'Session Statistics'}),makeTable(steps),
+      h('h3',{text:'Source statistics'}),makeTable(run.sourceStats||steps.filter(s=>Registry.get(s.type)?.category==='source')),
+      h('h3',{text:'Target statistics'}),makeTable(run.targetStats||steps.filter(s=>Registry.get(s.type)?.category==='target')));
   },
   gantt(run){const tasks=(run.steps||[]).filter(s=>s.started);if(!tasks.length)return null;
     const t0=Math.min(...tasks.map(s=>Date.parse(s.started))),t1=Math.max(...tasks.map(s=>Date.parse(s.ended||run.ended))),span=Math.max(1,t1-t0);
-    return h('div',{class:'monitor-section'},h('h3',{text:'Workflow Timeline'}),h('div',{class:'gantt'},...tasks.map(t=>h('div',{class:'gantt-row'},h('span',{class:'gantt-label',text:t.name}),h('div',{class:'gantt-track'},h('button',{class:'gantt-bar status-'+String(t.status).toLowerCase(),style:`left:${(Date.parse(t.started)-t0)/span*100}%;width:${Math.max(1,Math.min(100,(Number(t.ms)||1)/span*100))}%`,title:`${t.name} · ${t.status} · ${fmtMs(t.ms)} ms`,onclick:()=>this.sessionDetails(run,t)}))))));},
+    return h('div',{class:'monitor-section'},h('h2',{text:'Workflow Timeline'}),h('div',{class:'gantt'},...tasks.map(t=>h('div',{class:'gantt-row'},h('span',{class:'gantt-label',text:t.name}),h('div',{class:'gantt-track'},h('button',{class:'gantt-bar status-'+String(t.status).toLowerCase(),style:`left:${(Date.parse(t.started)-t0)/span*100}%;width:${Math.max(1,Math.min(100,(Number(t.ms)||1)/span*100))}%`,title:`${t.name} · ${t.status} · ${fmtMs(t.ms)} ms`,onclick:()=>this.sessionDetails(run,t)}))))));},
   chart(title,items,key,suffix){const w=520,hg=148,pad=27,v=items.map(r=>Number(r[key])||0),max=Math.max(1,...v)*1.15,avg=v.reduce((a,n)=>a+n,0)/(v.length||1);
     const svg=document.createElementNS(SVG_NS,'svg');svg.setAttribute('viewBox',`0 0 ${w} ${hg}`);svg.setAttribute('class','trend-svg');
     const elt=(tag,attrs={})=>{const x=document.createElementNS(SVG_NS,tag);for(const [k,v]of Object.entries(attrs))x.setAttribute(k,v);svg.append(x);return x;};
@@ -7594,9 +7608,9 @@ const Monitor = {
     elt('line',{x1:pad,y1:hg-pad,x2:w-pad,y2:hg-pad,stroke:'var(--line-2)'});
     const ay=hg-pad-avg/max*(hg-2*pad);elt('line',{x1:pad,y1:ay,x2:w-pad,y2:ay,stroke:'var(--warn)','stroke-dasharray':'5 3'});
     if(v.length){elt('polyline',{points:v.map((_,i)=>pt(i).join(',')).join(' '),fill:'none',stroke:'var(--accent)','stroke-width':2});v.forEach((value,i)=>{const [x,y]=pt(i),circle=elt('circle',{cx:x,cy:y,r:3.5,fill:'var(--accent)'});const hint=document.createElementNS(SVG_NS,'title');hint.textContent=`${items[i].objectName} · ${value.toFixed(1)} ${suffix}`;circle.append(hint);});}
-    return h('div',{class:'trend-card'},h('h4',{text:title}),h('p',{class:'mono',text:`Average ${avg.toFixed(1)} ${suffix}`}),svg);
+    return h('div',{class:'trend-card'},h('h3',{text:title}),h('p',{class:'mono',text:`Average ${avg.toFixed(1)} ${suffix}`}),svg);
   },
-  trends(run){const list=Repo.runs.filter(x=>x.objectId===run.objectId).slice(0,20).reverse();return h('section',{class:'monitor-section'},h('h3',{text:'Run Trends'}),h('div',{class:'monitor-trends'},this.chart('Duration per run',list,'durationMs','ms'),this.chart('Rows written',list,'rows','rows')));},
+  trends(run){const list=Repo.runs.filter(x=>x.objectId===run.objectId).slice(0,20).reverse();return h('section',{class:'monitor-section'},h('h2',{text:'Run Trends'}),h('div',{class:'monitor-trends'},this.chart('Duration per run',list,'durationMs','ms'),this.chart('Rows written',list,'rows','rows')));},
   showCompare(){const [a,b]=this.compare.map(id=>Repo.runs.find(r=>r.id===id));if(!a||!b)return;
     const by=new Map((a.steps||[]).map(x=>[x.id||x.name,x]));const bBy=new Map((b.steps||[]).map(x=>[x.id||x.name,x]));const ids=new Set([...by.keys(),...bBy.keys()]);
     const delta=(x,y)=>{if(x==null||y==null)return '—';if(!x)return y?'new':'0%';const n=(y-x)/x*100;return (n>0?'+':'')+n.toFixed(1)+'%';};
@@ -7810,7 +7824,7 @@ const Studio = {
   updateToolbar(){const mode=this.mode;$('#btnNew').title=mode==='workflow'?'New workflow':'New mapping';$('#btnSave').title=mode==='workflow'?'Export workflow with its mappings as .dfproj.json (Ctrl+S)':'Save mapping as JSON (Ctrl+S)';$('#btnValidate').title=mode==='workflow'?'Validate workflow':'Validate mapping';},
   palette(){const palette=els.palette,repo=$('#repoNav'),project=$('#projectNav');
     if(this.mode==='workflow'){
-      palette.replaceChildren(...TaskRegistry.list().map(d=>h('div',{class:'pal-group'},h('h3',{text:d.label}),
+      palette.replaceChildren(...TaskRegistry.list().map(d=>h('div',{class:'pal-group'},h('h2',{text:d.label}),
         h('div',{class:'pal-item cat-'+(d.category==='source'?'source':d.category==='target'?'target':'transformation'),draggable:d.type!=='start',title:`Drag ${d.label} to workflow canvas · double-click to add`,ondragstart:e=>{e.dataTransfer.setData('application/x-dataforge-workflow',d.type);},ondblclick:()=>{if(Panels.small())return;const r=Workflow.layer.getBoundingClientRect(),p=Workflow.toWorld(r.left+r.width/2,r.top+r.height/2);Workflow.add(d.type,p.x-100,p.y-30);},onclick:()=>{if(!Panels.small()||d.type==='start')return;const r=Workflow.layer.getBoundingClientRect(),p=Workflow.toWorld(r.left+r.width/2,r.top+r.height/2);Workflow.add(d.type,p.x-100,p.y-30);Panels.close();}},h('span',{class:'pal-ic',html:svgIcon(d.icon)}),h('span',{text:d.label})))));
     } else if(this.mode==='monitor')palette.replaceChildren(h('div',{class:'pal-note',text:'Search and open repository objects below.'}));
     else return;

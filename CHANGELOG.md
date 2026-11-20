@@ -4,6 +4,8 @@
 
 ### Fixed
 - **Readable text in both themes.** Hints, captions, code comments and the light theme's orange accent now meet the WCAG AA contrast ratio of 4.5:1 (some were as low as 2.5:1). The muted and faint greys stay distinct, and exported diagrams use the same colors.
+- **Screen readers and keyboard.** The results drawer is a proper tab list: the selected tab is announced, arrow keys, Home and End move between tabs, and every panel can be scrolled from the keyboard. Every button, select and date field has a name (workflow zoom buttons, parameter kind and type, Monitor filters and compare boxes), headings follow one outline under a page heading, and the drawer, Monitor and welcome screen are named regions. An automated accessibility check (axe-core) reports no violations in the mapping, workflow, monitor, export and phone views, in either theme.
+- Switching drawer tabs no longer clears the selected dialect in an open Export Code dialog.
 
 ## 1.4.0
 
