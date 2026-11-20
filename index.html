@@ -702,6 +702,8 @@ const qstr = (s) => "'" + String(s).replace(/'/g, "''") + "'";
 const slug = (s) => { const t = String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, ''); return /^[a-z]/.test(t) ? t : 'n_' + t; };
 const indent = (s, pad = '  ') => String(s).split('\n').map((l) => pad + l).join('\n');
 const fmtNum = (n) => (n == null ? '—' : Number(n).toLocaleString('en-US'));
+// "1 row", "2 rows", "1,204 rows"
+const countOf = (n, one, many = one + 's') => `${fmtNum(n)} ${Number(n) === 1 ? one : many}`;
 const fmtMs = (ms) => (ms == null ? '—' : ms < 10 ? ms.toFixed(1) : Math.round(ms).toLocaleString('en-US'));
 const fmtBytes = (b) => (b < 1024 ? b + ' B' : b < 1048576 ? (b / 1024).toFixed(1) + ' KB' : (b / 1048576).toFixed(1) + ' MB');
 const firstLines = (msg, n = 3) => String(msg || 'Unknown error').split('\n').filter((l) => l.trim()).slice(0, n).join('\n');
@@ -2858,7 +2860,7 @@ function downloadSection(node) {
   return P.section('Last run output', o
     ? h('a', { class: 'btn', href: o.url, download: o.fileName, html: svgIcon('download', 14) + `Download ${o.fileName.replace(/[<>&]/g, '')}` })
     : P.hint('Run the mapping to produce this file.'),
-    o ? P.hint(`${fmtNum(o.rows)} rows · ${fmtBytes(o.size)}`) : null);
+    o ? P.hint(`${countOf(o.rows, 'row')} · ${fmtBytes(o.size)}`) : null);
 }
 function fileTargetEntry(kind) {
   const isCsv = kind === 'csv';
@@ -3417,7 +3419,7 @@ const Runner = {
     if (ok && state.preview && state.doc.nodes.some((n) => n.type === 'preview_target')) UI.showTab('preview');
     const record = RunStore.fromMapping({ok,rows:totalRows,rejected:totalRejected,ms,runId:runNo,started:runStarted,parameters:runParams});
     if (Repo.project) await Repo.recordRun(record);
-    toast(ok ? `Run succeeded: ${fmtNum(totalRows)} rows written · ${fmtNum(totalRejected)} rejected · ${fmtMs(ms)} ms` : 'Run failed. See the Run Log for details.', ok ? 'success' : 'error');
+    toast(ok ? `Run succeeded: ${countOf(totalRows, 'row')} written · ${fmtNum(totalRejected)} rejected · ${fmtMs(ms)} ms` : 'Run failed. See the Run Log for details.', ok ? 'success' : 'error');
     return record;
   }
 };
@@ -4810,7 +4812,7 @@ const Lineage = {
       lines.push('','## Last run statistics','');
       for(const e of state.log) {
         if(e.kind==='step') lines.push(`- ${e.name} (${e.type}): ${e.status}, rows in ${e.rowsIn??'—'}, out ${e.rowsOut??'—'}, ${fmtMs(e.ms)} ms${e.rejected?' · rejected '+e.rejected:''}`);
-        if(e.kind==='summary') lines.push(`- **Summary:** ${e.ok?'Succeeded':'Failed'}, ${e.done} steps, ${e.rows} rows written, ${fmtMs(e.ms)} ms, ${e.rejected||0} rejected.`);
+        if(e.kind==='summary') lines.push(`- **Summary:** ${e.ok?'Succeeded':'Failed'}, ${countOf(e.done,'step')}, ${countOf(e.rows,'row')} written, ${fmtMs(e.ms)} ms, ${fmtNum(e.rejected||0)} rejected.`);
       }
     }
     return lines.join('\n')+'\n';
@@ -6000,7 +6002,7 @@ const Profile = {
     const hide = Governance.settings().maskPreview;
     const fmt = (v, c) => { if (v == null || v === '') return '—'; if (c && hide && c.pii) return Governance.mask(v); const n = Number(v); return Number.isFinite(n) && /^-?[\d.]+(e[+-]?\d+)?$/i.test(v) && !Number.isInteger(n) ? n.toLocaleString(undefined, { maximumFractionDigits: 3 }) : String(v).length > 40 ? String(v).slice(0, 39) + '…' : String(v); };
     const bar = h('div', { class: 'pane-bar' },
-      h('span', null, h('b', { text: `Profile of ${r.node}${r.group ? ' · ' + r.group : ''}` }), ` · ${fmtNum(r.rows)} rows · ${r.columns.length} columns`),
+      h('span', null, h('b', { text: `Profile of ${r.node}${r.group ? ' · ' + r.group : ''}` }), ` · ${countOf(r.rows, 'row')} · ${countOf(r.columns.length, 'column')}`),
       h('span', { class: 'btn-row', style: 'margin:0' }, again,
         h('button', { class: 'btn', type: 'button', html: svgIcon('download', 13) + 'Export CSV', onclick: () => downloadBlob(new Blob([this.csv()], { type: 'text/csv' }), slug(r.node).replace(/^n_/, '') + '_profile.csv') })));
     const table = h('table', { class: 'dq-report profile-table' },
@@ -6151,7 +6153,7 @@ const MappingTests = {
         h('div', null, h('div', { class: 'sub-l', text: 'Input rows' }), ...this.sources().map((s) => area(test.inputs ||= {}, s.id, s.name))),
         h('div', null, h('div', { class: 'sub-l', text: 'Expected output' }), ...this.targets().map((t) => area(test.expected ||= {}, t.id, t.name)))));
     const results = res ? h('div', { class: 'test-results' }, ...res.details.map((d) => h('div', { class: 'test-detail ' + d.status },
-      h('b', { text: (d.target ? d.target + ': ' : '') + (d.status === 'pass' ? `passed (${fmtNum(d.actualRows)} rows match)` : d.status === 'fail' && d.message ? d.message : d.status === 'fail' ? `${fmtNum(d.missingRows)} expected row${d.missingRows === 1 ? '' : 's'} missing, ${fmtNum(d.extraRows)} unexpected row${d.extraRows === 1 ? '' : 's'}` : d.message) }),
+      h('b', { text: (d.target ? d.target + ': ' : '') + (d.status === 'pass' ? `passed (${countOf(d.actualRows, 'row')} ${d.actualRows === 1 ? 'matches' : 'match'})` : d.status === 'fail' && d.message ? d.message : d.status === 'fail' ? `${fmtNum(d.missingRows)} expected row${d.missingRows === 1 ? '' : 's'} missing, ${fmtNum(d.extraRows)} unexpected row${d.extraRows === 1 ? '' : 's'}` : d.message) }),
       d.missingSample?.length ? h('div', null, h('div', { class: 'sub-l', text: 'Expected but not produced' }), this.sampleTable(d.missingSample)) : null,
       d.extraSample?.length ? h('div', null, h('div', { class: 'sub-l', text: 'Produced but not expected' }), this.sampleTable(d.extraSample)) : null))) : null;
     return h('div', { class: 'test-card', 'data-status': status },
@@ -7429,7 +7431,7 @@ const Workflow = {
     } catch(e){summary.Status=ctx.cancelled&&!ctx.failed?'ABORTED':'FAILED';summary.error=firstLines(e.message,2);summary.routeSuccess=false;ctx.log.push({time:new Date().toISOString(),level:'ERROR',text:`${n.name}: ${summary.error}`});}
     summary.DurationMs=Date.now()-start;summary.EndTime=new Date().toISOString();summary.name=n.name;summary.id=n.id;
     taskState.status=summary.Status;taskState.ended=summary.EndTime;taskState.ms=summary.DurationMs;ctx.results[n.id]=summary;
-    ctx.log.push({time:summary.EndTime,level:summary.Status,text:`${n.name}: ${summary.Status}${summary.TgtSuccessRows?' · '+summary.TgtSuccessRows+' rows':''}`});this.renderNodes();this.renderLog();
+    ctx.log.push({time:summary.EndTime,level:summary.Status,text:`${n.name}: ${summary.Status}${summary.TgtSuccessRows?' · '+countOf(summary.TgtSuccessRows,'row'):''}`});this.renderNodes();this.renderLog();
     return summary;
   },
   enqueueSession(mappingId,overrides,ctx){const execute=()=>this.executeSession(mappingId,overrides,ctx);const promise=this.sessionGate.then(execute);this.sessionGate=promise.catch(()=>{});return promise;},
