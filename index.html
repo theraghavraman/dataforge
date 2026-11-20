@@ -283,7 +283,7 @@ table.log a{color:var(--accent)}
 /* overlays */
 /* Toasts sit at the bottom of the canvas, just above the results drawer, so they never cover the canvas tools. */
 #toasts{position:fixed;bottom:calc(var(--drawer-h) + 38px);left:50%;transform:translateX(-50%);z-index:50;display:flex;flex-direction:column;align-items:center;gap:7px;pointer-events:none}
-.toast{pointer-events:auto;max-width:520px;padding:8px 13px;border-radius:4px;background:var(--panel-3);border:1px solid var(--line-2);border-left:4px solid var(--info);box-shadow:var(--shadow);animation:tin .16s ease-out}
+.toast{pointer-events:auto;cursor:pointer;max-width:520px;padding:8px 13px;border-radius:4px;background:var(--panel-3);border:1px solid var(--line-2);border-left:4px solid var(--info);box-shadow:var(--shadow);animation:tin .16s ease-out}
 .toast.success{border-left-color:var(--ok)} .toast.warn{border-left-color:var(--warn)} .toast.error{border-left-color:var(--err)}
 .toast.out{opacity:0;transition:opacity .25s}
 @keyframes tin{from{opacity:0;transform:translateY(-6px)}}
@@ -800,10 +800,16 @@ const ICONS = {
 };
 const svgIcon = (name, size = 16) => `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
 
+// Toasts fade on their own; hovering keeps one open while it is read, and a click dismisses it.
 function toast(message, type = 'info', ms = 0) {
-  const el = h('div', { class: 'toast ' + type, text: message, role: type === 'error' ? 'alert' : 'status' });
-  $('#toasts').append(el);
-  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 280); }, ms || (type === 'error' ? 6000 : 3200));
+  const el = h('div', { class: 'toast ' + type, text: message, role: type === 'error' ? 'alert' : 'status', title: 'Click to dismiss' });
+  let left = ms || (type === 'error' ? 6000 : 3200), started = 0, timer = null;
+  const close = () => { clearTimeout(timer); if (el.classList.contains('out')) return; el.classList.add('out'); setTimeout(() => el.remove(), 280); };
+  const arm = () => { started = Date.now(); timer = setTimeout(close, left); };
+  el.addEventListener('pointerenter', () => { clearTimeout(timer); left -= Date.now() - started; });
+  el.addEventListener('pointerleave', () => { left = Math.max(left, 1500); arm(); });
+  el.addEventListener('click', close);
+  $('#toasts').append(el); arm();
 }
 function insertAtCursor(el, text) {
   const s = el.selectionStart ?? el.value.length, e = el.selectionEnd ?? s;
