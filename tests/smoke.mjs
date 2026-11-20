@@ -463,6 +463,28 @@ await check('Airflow export: DAG, trigger rules, one job per mapping, chained-fi
   await page.evaluate(() => DataForge.Repo.openMapping(DataForge.Repo.project.mappings.find((m) => m.mapping.name === 'Unremembered upload').mapping.id)); await page.waitForTimeout(500);
   return r.files.length + ' files';
 });
+await check('generated code: names, parameter values and messages stay data (no code injection)', async () => {
+  const r = await page.evaluate(() => {
+    const D = DataForge, doc = D.state.doc, saved = JSON.stringify({ names: doc.nodes.map((n) => n.name), parameters: doc.parameters, name: doc.mapping.name });
+    const PAY = 'x\nimport os; os.system("echo PWNED")\r\nDROP TABLE t; --\u2028y';
+    doc.nodes.forEach((n) => { n.name += PAY; });
+    doc.parameters = { ...doc.parameters, $$EVIL: { kind: 'parameter', type: 'VARCHAR', value: "x\\'; DROP TABLE t; --" } };
+    const files = {};
+    for (const d of ['snowflake', 'pyspark', 'dbt', 'duckdb']) { const g = D.CodeGen.generate(d); Object.assign(files, g.files ? Object.fromEntries(Object.entries(g.files).map(([k, v]) => [d + ':' + k, v])) : { [d]: g.text }); }
+    const back = JSON.parse(saved); doc.nodes.forEach((n, i) => { n.name = back.names[i]; }); doc.parameters = back.parameters; doc.mapping.name = back.name;
+    const w = D.Workflow.normalize({ name: 'Inject\nme', nodes: [{ id: 't1', type: 'start', name: 'Start', position: { x: 0, y: 0 }, config: {} }, { id: 't2', type: 'notification', name: 'Alert\nimport os', position: { x: 200, y: 0 }, config: { message: "done $(touch /tmp/pwned) `id` {{ var }} {% if 1 %}x{% endif %} it's" } }], links: [{ id: 'wl1', from: 't1', to: 't2', condition: 'always', expression: '' }] });
+    const dag = Object.entries(D.AirflowExport.build(w).files).find(([k]) => k.startsWith('dags/'))[1];
+    return { files, dag, taskName: w.nodes[1].name };
+  });
+  // A payload line may only appear inside a comment; the code that would run must never start with it.
+  const leaked = Object.entries(r.files).flatMap(([f, text]) => text.split(/\r\n|\r|\n|\u2028/).filter((l) => /^\s*(import os|DROP TABLE)/.test(l)).map((l) => f + ': ' + l.trim()));
+  expect(!leaked.length, 'payload escaped a comment: ' + leaked.slice(0, 3).join(' | '));
+  const set = r.files.snowflake.split('\n').find((l) => l.startsWith('SET evil'));
+  expect(set === "SET evil = 'x\\\\''; DROP TABLE t; --';", 'Snowflake SET does not escape backslashes: ' + set);
+  const bash = /bash_command="echo '([^\n]*)'"/.exec(r.dag)?.[1] || '';
+  expect(bash.includes('$(touch /tmp/pwned)') && !/\{\{|\{%/.test(bash) && /it'\\\\''s/.test(bash), 'Airflow notification is not a single quoted shell word: ' + bash);
+  expect(!/\n/.test(r.taskName), 'imported task names keep line breaks');
+});
 // JSON sources and targets need DuckDB's JSON extension, which the engine downloads from extensions.duckdb.org on first use.
 // An offline run (DATAFORGE_TEST_MIRROR) cannot reach that host, so these checks only run online.
 const jsonMapping = (fileName, text, sourceFormat, targetFormat) => page.evaluate(async ([fileName, text, sourceFormat, targetFormat]) => {

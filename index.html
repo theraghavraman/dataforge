@@ -700,6 +700,9 @@ const $ = (sel, root = document) => root.querySelector(sel);
 const clone = (o) => JSON.parse(JSON.stringify(o));
 const qid = (s) => '"' + String(s).replace(/"/g, '""') + '"';
 const qstr = (s) => "'" + String(s).replace(/'/g, "''") + "'";
+// User text (names, descriptions, parameter values) written into a line comment of generated code. A line break would end
+// the comment and turn the rest of the text into code, so every kind of line break becomes a space.
+const oneLine = (s) => String(s ?? '').replace(/[\r\n\v\f\x85\u2028\u2029]+/g, ' ');
 const slug = (s) => { const t = String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, ''); return /^[a-z]/.test(t) ? t : 'n_' + t; };
 const indent = (s, pad = '  ') => String(s).split('\n').map((l) => pad + l).join('\n');
 const fmtNum = (n) => (n == null ? '—' : Number(n).toLocaleString('en-US'));
@@ -1006,6 +1009,7 @@ function normalizeDoc(raw) {
   if (String(raw.version) !== APP.formatVersion) throw new Error(`Unsupported mapping version: ${raw.version}. This editor supports ${APP.formatVersion}.`);
   const base = newDoc();
   const doc = { version: APP.formatVersion, mapping: Object.assign(base.mapping, raw.mapping || {}), nodes: [], links: [], parameters: raw.parameters && typeof raw.parameters === 'object' ? raw.parameters : {} };
+  doc.mapping.name = oneLine(doc.mapping.name).trim() || base.mapping.name;
   const skipped = [];
   for (const n of raw.nodes) {
     const def = Registry.get(n && n.type);
@@ -1014,7 +1018,7 @@ function normalizeDoc(raw) {
     if ((n.type === 'csv_source' || n.type === 'csv_target') && config.delimiter === '\\t')
       config.delimiter = '\t';
     doc.nodes.push({
-      id: String(n.id), type: n.type, name: String(n.name || def.label),
+      id: String(n.id), type: n.type, name: oneLine(n.name || def.label),
       position: { x: Number(n.position && n.position.x) || 0, y: Number(n.position && n.position.y) || 0 },
       config,
       ports: { in: Array.isArray(n.ports && n.ports.in) ? n.ports.in : [], out: Array.isArray(n.ports && n.ports.out) ? n.ports.out : [] }
@@ -3818,14 +3822,15 @@ const CodeGen = {
   snowflake(nodes) {
     const lines = [], name = state.doc.mapping.name;
     if (this.options.comments) {
-      lines.push(`-- DataForge · Snowflake SQL`, `-- Mapping: ${name.replace(/\n/g,' ')}`, `-- Description: ${String(state.doc.mapping.description || '').replace(/\n/g,' ')}`,
+      lines.push(`-- DataForge · Snowflake SQL`, `-- Mapping: ${oneLine(name)}`, `-- Description: ${oneLine(state.doc.mapping.description)}`,
         `-- Generated: ${new Date().toISOString()}`, `-- Parameters: ${Object.keys(Params.definitions()).join(', ') || '(none)'}`, '');
     }
     const paramSystem = Params.systemValues();
     const params = { ...Params.definitions(), ...paramSystem };
     for (const [key, p] of Object.entries(params)) {
       const varName = this.safeName(key.slice(2)).toLowerCase();
-      const value = key === '$$SESSSTARTTIME' ? 'CURRENT_TIMESTAMP()' : Params.literal(p.type, p.value);
+      // Snowflake reads a backslash in a string as an escape: double it, or a value ending in \ could close the string early.
+      const value = key === '$$SESSSTARTTIME' ? 'CURRENT_TIMESTAMP()' : Params.literal(p.type, p.value).replace(/\\/g, '\\\\');
       lines.push(`SET ${varName} = ${value};`);
     }
     if (Object.keys(params).length) lines.push('');
@@ -3835,7 +3840,7 @@ const CodeGen = {
       try {
         const output = gen(node, { dialect: 'snowflake', codegen: this, inputs: Object.fromEntries(Graph.inputDefs(node).map((slot) => [slot.key,
           this.in(node, Graph.outputGroups(node)[0]?.key, (n, g) => qid(this.symbol(n,g))).inputs[slot.key]])) });
-        if (this.options.comments) lines.push(`-- ${node.name} · ${def.label}`);
+        if (this.options.comments) lines.push(`-- ${oneLine(node.name)} · ${def.label}`);
         const statements = Array.isArray(output) ? output : output?.statements || [];
         for (const s of statements) if (String(s).trim()) lines.push(String(s).trim());
         if (statements.length) lines.push('');
@@ -4336,7 +4341,7 @@ CodeGen.pyspark = function(nodes) {
     if(!gen) { this.warn(node,'','Not supported for PySpark.');continue; }
     try {
       const statements = gen(node,{codegen:this});
-      if(this.options.comments) lines.push('',`# ${node.name} · ${Registry.get(node.type).label}`);
+      if(this.options.comments) lines.push('',`# ${oneLine(node.name)} · ${Registry.get(node.type).label}`);
       lines.push(...statements);
     } catch(e) { this.warn(node,'',`Generation failed: ${e.message}`); }
   }
@@ -4462,15 +4467,15 @@ CodeGen.dbt = function(nodes) {
   }
   if(schema.length>2) files['models/schema.yml']=schema.join('\n')+'\n';
   if(dbtUtils) files['packages.yml'] = ['packages:', '  - package: dbt-labs/dbt_utils','    version: [">=1.1.0", "<2.0.0"]',''].join('\n');
-  const edges = nodes.flatMap((n)=>Graph.incoming(n.id).filter((l)=>currentNodes.has(l.from)).map((l)=>`- ${Graph.node(l.from).name} [${Graph.outKey(l)}] → ${n.name} [${Graph.inKey(l)}]`));
-  readme.push(`# ${state.doc.mapping.name}`, '', state.doc.mapping.description || 'ETL mapping generated by DataForge.',
+  const edges = nodes.flatMap((n)=>Graph.incoming(n.id).filter((l)=>currentNodes.has(l.from)).map((l)=>`- ${oneLine(Graph.node(l.from).name)} [${Graph.outKey(l)}] → ${oneLine(n.name)} [${Graph.inKey(l)}]`));
+  readme.push(`# ${oneLine(state.doc.mapping.name)}`, '', state.doc.mapping.description || 'ETL mapping generated by DataForge.',
     '', '## Run', '', 'This project targets dbt-snowflake. Load the source files into the RAW schema under the table names in models/sources.yml.',
     'Column names are upper-case throughout (the Snowflake default), so load the source tables with unquoted or upper-case column names.',
     'Configure a Snowflake profile named `dataforge` in `profiles.yml`.', '', '```sh', 'dbt deps', 'dbt build',
     ...(snapshots.length?['dbt snapshot']:[]), '```', '',
-    '## Models', '',...sources.map((s)=>`- staging: \`${s.model}\` ← ${s.node.config.fileName||s.node.name}`),
-    ...intermediates.map((s)=>`- intermediate: \`${s.model}\` (${s.node.name}: ${s.group.label})`),
-    ...marts.map((s)=>`- mart: \`${s.model}\` (${s.node.name})`),
+    '## Models', '',...sources.map((s)=>`- staging: \`${s.model}\` ← ${oneLine(s.node.config.fileName||s.node.name)}`),
+    ...intermediates.map((s)=>`- intermediate: \`${s.model}\` (${oneLine(s.node.name)}: ${s.group.label})`),
+    ...marts.map((s)=>`- mart: \`${s.model}\` (${oneLine(s.node.name)})`),
     ...snapshots.map((s)=>`- snapshot: \`${s}\``),'',
     '## Lineage','',...(edges.length?edges:['(No connected links)']),'',
     '## Parameters','', 'Supply dbt variables with `--vars` to override project defaults.', '',
@@ -4514,7 +4519,7 @@ CodeGen.duckdb = function(nodes) {
   const emit = (node, group) => {
     try {
       const sql = inline(Compiler.sql(node.id, { resolved: false, ...(group ? {group} : {}) }));
-      return `${this.options.comments ? '-- ' + node.name + (group ? ' · ' + group : '') + '\n' : ''}${sql.trim()};`;
+      return `${this.options.comments ? '-- ' + oneLine(node.name + (group ? ' · ' + group : '')) + '\n' : ''}${sql.trim()};`;
     } catch(e) {
       this.warn(node, group || 'SQL', e.message);
       return '';
@@ -4531,7 +4536,7 @@ CodeGen.duckdb = function(nodes) {
       if (code) scripts.push(code);
     }
   }
-  const header = used.size && this.options.comments ? '-- Parameters are inlined with their current values. Edit them here before running:\n' + [...used].map(([name, literal]) => `--   ${name} = ${literal}`).join('\n') + '\n\n' : '';
+  const header = used.size && this.options.comments ? '-- Parameters are inlined with their current values. Edit them here before running:\n' + [...used].map(([name, literal]) => `--   ${name} = ${oneLine(literal)}`).join('\n') + '\n\n' : '';
   const ext = scripts.length && nodes.some((n) => n.type === 'excel_source') ? "-- Excel sources are read with DuckDB's excel extension.\nINSTALL excel;\nLOAD excel;\n\n" : '';
   return {text:ext + (scripts.length ? header : '') + scripts.join('\n\n') + (scripts.length ? '\n' : ''),files:null};
 };
@@ -4811,13 +4816,13 @@ const Lineage = {
     for(const [key,v] of Object.entries(Params.definitions())) lines.push(`| ${clean(key)} | ${clean(v.kind)} | ${clean(v.type)} | ${clean(v.value)} | ${clean(v.aggregation||'')} |`);
     lines.push('','## Sources','');
     for(const n of state.doc.nodes.filter((n)=>Registry.get(n.type).category==='source')) {
-      lines.push(`### ${n.name} — ${Registry.get(n.type).label}`,'',this.description(n),'','| Column | Type |','| --- | --- |');
+      lines.push(`### ${oneLine(n.name)} — ${Registry.get(n.type).label}`,'',this.description(n),'','| Column | Type |','| --- | --- |');
       for(const p of CodeGen.schema(n)) lines.push(`| ${clean(p.name)} | ${clean(p.type)} |`);
       lines.push('');
     }
     lines.push('## Transformations','');
     for(const n of this.order.filter((n)=>Registry.get(n.type).category==='transformation')) {
-      lines.push(`### ${n.name} — ${Registry.get(n.type).label}`,'',this.description(n),'');
+      lines.push(`### ${oneLine(n.name)} — ${Registry.get(n.type).label}`,'',this.description(n),'');
       if(n.type==='data_quality') for(const rule of n.config.rules||[]) lines.push(`- DQ: **${clean(rule.name)}** — ${clean(rule.type)} on ${clean(rule.column)}; severity ${clean(rule.severity)}, action ${clean(rule.action)}, parameters ${clean(JSON.stringify(rule.params||{}))}`);
       if(n.type==='scd1'||n.type==='scd2') lines.push(`- Outputs: ${Graph.outputGroups(n).map((g)=>g.label).join(', ')}`);
       lines.push('');
@@ -6628,6 +6633,10 @@ const Contracts = {
    ============================================================ */
 const AirflowExport = {
   py(s) { return JSON.stringify(String(s)); },
+  // One single-quoted shell word: nothing inside is expanded ($(...), backticks, $VAR all stay literal text).
+  shellWord(s) { return "'" + String(s).replace(/'/g, "'\\''") + "'"; },
+  // Airflow renders bash_command with Jinja; remove template delimiters so a message cannot run template code.
+  noJinja(s) { return oneLine(s).replace(/\{\{|\}\}|\{%|%\}|\{#|#\}/g, ''); },
   id(s, used) { let base = slug(s).replace(/^n_/, '').slice(0, 60) || 'task', id = base, i = 2; while (used.has(id)) id = `${base}_${i++}`; used.add(id); return id; },
   // PySpark job for one mapping, generated the same way as Export Code does for the open mapping.
   sparkJob(doc, warnings) {
@@ -6685,7 +6694,7 @@ const AirflowExport = {
           task = `BashOperator(task_id=${this.py(id)}, bash_command=f"python {HOME}/jobs/${jobs.get(m.mapping.id)} --input-dir {INPUT_DIR} --output-dir {OUTPUT_DIR}"${extra})`;
         }
       } else if (n.type === 'timer') task = `BashOperator(task_id=${this.py(id)}, bash_command=${this.py('sleep ' + Math.max(0, Number(n.config.seconds) || 0))}${extra})`;
-      else if (n.type === 'notification') task = `BashOperator(task_id=${this.py(id)}, bash_command=${this.py('echo ' + JSON.stringify(String(n.config.message || n.name).replace(/\{\{|\}\}/g, '')))}${extra})  # replace with your alerting (email, Slack …)`;
+      else if (n.type === 'notification') task = `BashOperator(task_id=${this.py(id)}, bash_command=${this.py('echo ' + this.shellWord(this.noJinja(n.config.message || n.name)))}${extra})  # replace with your alerting (email, Slack …)`;
       else if (n.type === 'control') task = n.config.action === 'fail' ? `BashOperator(task_id=${this.py(id)}, bash_command=${this.py('echo "Stopped by workflow control"; exit 1')}${extra})` : `EmptyOperator(task_id=${this.py(id)}${extra})`;
       else { warnings.push(`${n.name}: ${TaskRegistry.get(n.type)?.label || n.type} tasks have no Airflow equivalent and become a placeholder.`); task = `EmptyOperator(task_id=${this.py(id)}${extra})  # ${TaskRegistry.get(n.type)?.label || n.type}: review by hand`; }
       lines.push(`    ${id} = ${task}`);
@@ -6699,7 +6708,7 @@ const AirflowExport = {
     if (w.links.length) lines.push('');
     for (const l of w.links) if (ids.has(l.from) && ids.has(l.to)) lines.push(`    ${ids.get(l.from)} >> ${ids.get(l.to)}`);
     files[`dags/${dag}.py`] = lines.join('\n') + '\n';
-    files['README.md'] = [`# ${w.name} for Apache Airflow`, '', `Generated by DataForge ${APP.version}.`, '',
+    files['README.md'] = [`# ${oneLine(w.name)} for Apache Airflow`, '', `Generated by DataForge ${APP.version}.`, '',
       '1. Copy `dags/` into your Airflow DAGs folder and `jobs/` to the folder named by the `dataforge_home` Airflow Variable.',
       '2. Set the Variables `dataforge_input_dir` (the source files) and `dataforge_output_dir`.',
       '3. The jobs need PySpark on the workers (`pip install pyspark`); Excel sources and targets also need `pandas` and `openpyxl`.', '',
@@ -7405,7 +7414,7 @@ const Workflow = {
     w.links=[l('t1','t2'),l('t2','t3','success'),l('t2','t7','failure'),l('t3','t4','success'),l('t3','t5','success'),l('t3','t7','failure'),l('t4','t6'),l('t5','t6'),l('t7','t8')];
     Repo.project.workflows.push(w);Repo.save();this.open(w.id);return w;
   },
-  normalize(d) { if(!d||!Array.isArray(d.nodes)||!Array.isArray(d.links))throw new Error('Invalid workflow.');const w={...this.newDoc(),...clone(d)};w.nodes=w.nodes.filter(n=>!!TaskRegistry.get(n.type)).map(n=>({...n,position:{x:Number(n.position?.x)||0,y:Number(n.position?.y)||0},config:{...TaskRegistry.get(n.type).defaultConfig(),...n.config}}));if(!w.nodes.some(n=>n.type==='start'))w.nodes.unshift({id:nextId('t',w.nodes),type:'start',name:'Start',position:{x:40,y:150},config:{}});w.variables=w.variables||{};return w;},
+  normalize(d) { if(!d||!Array.isArray(d.nodes)||!Array.isArray(d.links))throw new Error('Invalid workflow.');const w={...this.newDoc(),...clone(d)};w.name=oneLine(w.name).trim()||'New workflow';w.nodes=w.nodes.filter(n=>!!TaskRegistry.get(n.type)).map(n=>({...n,name:oneLine(n.name||TaskRegistry.get(n.type).label),position:{x:Number(n.position?.x)||0,y:Number(n.position?.y)||0},config:{...TaskRegistry.get(n.type).defaultConfig(),...n.config}}));if(!w.nodes.some(n=>n.type==='start'))w.nodes.unshift({id:nextId('t',w.nodes),type:'start',name:'Start',position:{x:40,y:150},config:{}});w.variables=w.variables||{};return w;},
   open(id) {
     if(this.runState&&this.active?.id!==id&&this.busy())return;
     if(Studio.mode==='mapping')Repo.track();
