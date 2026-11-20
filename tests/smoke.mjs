@@ -515,6 +515,29 @@ await check('share link opens in another tab; the first tab is warned about the 
   expect((await bad.$$eval('#toasts .toast', (t) => t.map((e) => e.textContent))).some((t) => /Invalid shared mapping link/.test(t)), 'bad link not reported');
   await bad.close();
 });
+await check('keyboard: build a mapping without a mouse (focus, move, Connect to, edit, delete)', async () => {
+  await page.selectOption('#studioMode', 'mapping');
+  const previous = await page.evaluate(() => DataForge.state.doc.mapping.id);
+  await page.click('#btnNew'); await page.waitForTimeout(300);
+  await page.evaluate(() => { const A = DataForge.Actions; A.addNode('csv_source', 60, 100); A.addNode('filter', 340, 100); DataForge.History.commit(); });
+  await page.focus('.node >> nth=0');
+  expect(await page.evaluate(() => DataForge.state.sel.has('n1')), 'focusing a node does not select it');
+  const x0 = await page.evaluate(() => DataForge.state.doc.nodes[0].position.x);
+  await page.keyboard.press('ArrowRight');
+  expect(await page.evaluate((x) => DataForge.state.doc.nodes[0].position.x === x + 10 && document.activeElement?.dataset.id === 'n1', x0), 'arrow key did not move the node or focus was lost');
+  await page.keyboard.press('Shift+F10'); await page.waitForSelector('#ctxMenu:not([hidden])');
+  const items = await page.$$eval('#ctxMenu button', (b) => b.map((x) => x.textContent));
+  const i = items.findIndex((t) => t.startsWith('Connect to'));
+  expect(i >= 0, 'no Connect to item: ' + items.join(' | '));
+  for (let k = 0; k < i; k++) await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter'); await page.waitForTimeout(150);
+  expect(await page.evaluate(() => DataForge.state.doc.links.some((l) => l.from === 'n1' && l.to === 'n2')), 'Connect to did not link the nodes');
+  await page.focus('.node >> nth=1'); await page.keyboard.press('Enter');
+  expect(await page.evaluate(() => !!document.activeElement?.closest('#props')), 'Enter did not move focus to the properties');
+  await page.focus('.node >> nth=1'); await page.keyboard.press('Delete'); await page.waitForTimeout(100);
+  expect(await page.evaluate(() => DataForge.state.doc.nodes.length === 1 && document.activeElement?.dataset.id === 'n1'), 'Delete did not remove the node and focus the next one');
+  await page.evaluate((id) => DataForge.Repo.openMapping(id), previous); await page.waitForTimeout(300);
+});
 const axeSource = readFileSync(join(root, 'node_modules/axe-core/axe.min.js'), 'utf8');
 async function axeViolations(p, where) {
   if (!(await p.evaluate(() => !!window.axe))) await p.evaluate(axeSource);

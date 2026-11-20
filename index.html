@@ -580,7 +580,7 @@ td.masked{color:var(--muted);letter-spacing:.04em}
 
   <aside class="palette" id="palette" aria-label="Transformation palette"></aside>
 
-  <main class="canvas" id="canvas" aria-label="Mapping canvas">
+  <main class="canvas" id="canvas" aria-label="Mapping canvas" tabindex="-1">
     <svg class="linksvg" id="linkSvg" aria-hidden="true">
       <defs>
         <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="arrow-fill"/></marker>
@@ -590,6 +590,7 @@ td.masked{color:var(--muted);letter-spacing:.04em}
       <g id="linkRoot"><g id="linkLayer"></g><path id="tempLink" hidden></path></g>
     </svg>
     <div class="world" id="world"></div>
+    <p id="canvasKeys" class="sr-only">Arrow keys move the selected nodes, Shift with an arrow moves further. Enter edits the node. The Menu key or Shift+F10 opens its actions, including Connect to. Delete removes it.</p>
     <div class="canvas-empty" id="canvasEmpty"><div><h2>Start a mapping</h2><p>Drag a source from the palette onto the canvas, then connect it to transformations and a target. Load Sample opens a working retail orders mapping.</p></div></div>
     <div class="canvas-tools">
       <button class="icon-btn" id="btnUndo" title="Undo (Ctrl+Z)" data-icon="undo"></button>
@@ -5307,6 +5308,7 @@ const UI = {
   },
   renderNodes() {
     const labels = { none: 'Not validated', valid: 'Valid', error: 'Error', ran: 'Ran successfully' };
+    const focused = document.activeElement?.classList?.contains('node') && els.world.contains(document.activeElement) ? document.activeElement.dataset.id : null;
     els.world.replaceChildren(...state.doc.nodes.map((node) => {
       const def = Registry.get(node.type), st = state.status[node.id] || 'none', meta = this.nodeMeta(node, def);
       const inputHandles = nodeInputHandles(node), outputGroups = Graph.outputGroups(node);
@@ -5322,6 +5324,8 @@ const UI = {
         }))
       ];
       return h('div', { class: `node cat-${def.category}` + (state.sel.has(node.id) ? ' selected' : ''), 'data-id': node.id,
+        tabindex: 0, role: 'button', 'aria-pressed': state.sel.has(node.id) ? 'true' : 'false', 'aria-describedby': 'canvasKeys',
+        'aria-label': `${def.label}: ${node.name}. ${meta.text}. ${labels[st]}.`,
         style: `left:${node.position.x}px;top:${node.position.y}px;height:${nodeHeight(node)}px` },
         ...handles,
         h('span', { class: 'node-ic', html: svgIcon(def.icon, 18) }),
@@ -5329,6 +5333,7 @@ const UI = {
         h('span', { class: 'st-dot ' + st, title: labels[st] }));
     }));
     els.canvasEmpty.hidden = state.doc.nodes.length > 0;
+    if (focused) els.world.querySelector(`.node[data-id="${CSS.escape(focused)}"]`)?.focus({ preventScroll: true });
   },
   renderLinks() {
     const frag = [];
@@ -5526,15 +5531,25 @@ const UI = {
   setBusy(on) { els.btnRun.disabled = on; els.btnValidate.disabled = on; els.btnRun.querySelector('span').textContent = on ? 'Running' : 'Run'; },
   live() { this.renderNodes(); if (state.tab === 'sql') this.renderSQL(); },
   afterPorts() { this.renderNodes(); this.renderProps(false); this.renderSQL(); if (state.tab === 'lineage') LineageUI.render(); },
-  showContext(x, y, items) {
+  showContext(x, y, items, { keyboard = false, opener = null } = {}) {
     const menu = els.ctx;
-    menu.replaceChildren(...items.map((it) => it === '-' ? h('hr') : h('button', { type: 'button', onclick: () => { this.hideContext(); it.run(); } }, h('span', { text: it.label }), it.key ? h('small', { text: it.key }) : null)));
+    this.ctxOpener = opener || document.activeElement;
+    menu.setAttribute('role', 'menu');
+    menu.replaceChildren(...items.map((it) => it === '-' ? h('hr', { role: 'separator' }) : h('button', { type: 'button', role: 'menuitem', tabindex: -1, onclick: () => { this.hideContext(false); it.run(); } }, h('span', { text: it.label }), it.key ? h('small', { text: it.key }) : null)));
     menu.hidden = false;
     const r = menu.getBoundingClientRect();
     menu.style.left = Math.max(4, Math.min(x, window.innerWidth - r.width - 6)) + 'px';
     menu.style.top = Math.max(4, Math.min(y, window.innerHeight - r.height - 6)) + 'px';
+    if (keyboard) menu.querySelector('button')?.focus();
   },
-  hideContext() { if (els.ctx) els.ctx.hidden = true; }
+  // Closing with Escape (or by moving away) returns focus to whatever opened the menu.
+  hideContext(restoreFocus = true) {
+    if (!els.ctx || els.ctx.hidden) return;
+    const hadFocus = els.ctx.contains(document.activeElement);
+    els.ctx.hidden = true;
+    const opener = this.ctxOpener; this.ctxOpener = null;
+    if (restoreFocus && hadFocus && opener && document.contains(opener)) opener.focus({ preventScroll: true });
+  }
 };
 
 /* ============================================================
@@ -5557,6 +5572,20 @@ const Actions = {
     nodes.push(node);
     state.sel = new Set([node.id]); state.selLink = null;
     History.commit(); UI.renderProps(true);
+  },
+  // The links Actions.link would accept from this node, for the keyboard "Connect to" menu: nearest nodes first.
+  connectChoices(from, limit = 10) {
+    const a = Graph.node(from), da = a && Registry.get(a.type);
+    if (!a || !da || da.maxOutputs === 0 || Versions.readonly) return [];
+    const outputs = Graph.outputGroups(a), out = [];
+    const others = state.doc.nodes.filter((b) => b.id !== from && Registry.get(b.type)?.maxInputs !== 0 && !Graph.reaches(b.id, from))
+      .sort((p, q) => Math.hypot(p.position.x - a.position.x, p.position.y - a.position.y) - Math.hypot(q.position.x - a.position.x, q.position.y - a.position.y));
+    for (const g of outputs) for (const b of others) {
+      const free = Graph.inputDefs(b).some((d) => d.multiple || !Graph.inputLinks(b, d.key).length);
+      const dup = state.doc.links.some((l) => l.from === from && l.to === b.id && Graph.outKey(l) === g.key);
+      if (free && !dup) out.push({ to: b.id, fromPort: g.key, label: outputs.length > 1 ? `Connect ${g.label} to ${b.name}` : `Connect to ${b.name}` });
+    }
+    return out.slice(0, limit);
   },
   link(from, to, fromPort = null, toPort = null) {
     if (Versions.readonly) { toast('Historical version is read-only.','warn'); return; }
@@ -5820,22 +5849,67 @@ const App = {
       const w = View.toWorld(e.clientX, e.clientY);
       Actions.addNode(type, w.x - NODE_W / 2, w.y - NODE_H / 2);
     });
+    const nodeMenu = (id, x, y, keyboard) => {
+      if (!state.sel.has(id)) Actions.select([id]);
+      const connect = Actions.connectChoices(id).map((c) => ({ label: c.label, run: () => { Actions.link(id, c.to, c.fromPort); toast(`Connected ${Graph.node(id)?.name} to ${Graph.node(c.to)?.name}.`, 'success'); } }));
+      UI.showContext(x, y, [
+        { label: 'Preview data here', run: () => Preview.node(id) },
+        { label: 'Profile data', run: () => Profile.run(id) },
+        ...Graph.outputGroups(Graph.node(id)).slice(1).map((g) => ({ label: `Preview: ${g.label}`, run: () => Preview.node(id, g.key) })),
+        { label: 'Rename', run: () => Actions.rename(id) },
+        ...(connect.length ? ['-', ...connect] : []), '-',
+        { label: 'Duplicate', key: 'Ctrl+D', run: () => Actions.duplicate() },
+        { label: state.sel.size > 1 ? `Save ${state.sel.size} nodes as component` : 'Save as component', run: () => Components.save() },
+        { label: 'Delete', key: 'Del', run: () => Actions.remove() }], { keyboard, opener: els.world.querySelector(`.node[data-id="${CSS.escape(id)}"]`) });
+    };
     canvas.addEventListener('contextmenu', (e) => {
       const nodeEl = e.target.closest('.node');
       if (!nodeEl) return;
       e.preventDefault();
-      const id = nodeEl.dataset.id;
-      if (!state.sel.has(id)) Actions.select([id]);
-      UI.showContext(e.clientX, e.clientY, [
-        { label: 'Preview data here', run: () => Preview.node(id) },
-        { label: 'Profile data', run: () => Profile.run(id) },
-        ...Graph.outputGroups(Graph.node(id)).slice(1).map((g) => ({ label: `Preview: ${g.label}`, run: () => Preview.node(id, g.key) })),
-        { label: 'Rename', run: () => Actions.rename(id) }, '-',
-        { label: 'Duplicate', key: 'Ctrl+D', run: () => Actions.duplicate() },
-        { label: state.sel.size > 1 ? `Save ${state.sel.size} nodes as component` : 'Save as component', run: () => Components.save() },
-        { label: 'Delete', key: 'Del', run: () => Actions.remove() }]);
+      nodeMenu(nodeEl.dataset.id, e.clientX, e.clientY, false);
     });
     canvas.addEventListener('dblclick', (e) => { const nodeEl = e.target.closest('.node'); if (nodeEl) Actions.rename(nodeEl.dataset.id); });
+    // Keyboard: Tab reaches each node; arrows move the selection; Enter edits; Menu or Shift+F10 opens the node menu.
+    canvas.addEventListener('scroll', () => { canvas.scrollLeft = 0; canvas.scrollTop = 0; });
+    canvas.addEventListener('focusin', (e) => {
+      const el = e.target.classList?.contains('node') ? e.target : null;
+      if (!el) return;
+      View.reveal(el.dataset.id);
+      if (!state.sel.has(el.dataset.id)) Actions.select([el.dataset.id]);
+    });
+    let nudgeTimer = null;
+    canvas.addEventListener('keydown', (e) => {
+      const el = e.target.classList?.contains('node') ? e.target : null;
+      if (!el || e.ctrlKey || e.metaKey || e.altKey) return;
+      const id = el.dataset.id, arrows = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+      if (arrows[e.key]) {
+        e.preventDefault();
+        if (Versions.readonly) return;
+        const step = GRID * (e.shiftKey ? 5 : 1), [dx, dy] = arrows[e.key];
+        for (const nid of state.sel) { const n = Graph.node(nid); if (n) { n.position.x += dx * step; n.position.y += dy * step; } }
+        UI.renderNodes(); UI.renderLinks(); View.reveal(id);
+        clearTimeout(nudgeTimer); nudgeTimer = setTimeout(() => History.commit(), 400);
+      } else if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault(); Actions.select([id]);
+        if (Panels.small()) Panels.set('right', true);
+        $('#props').querySelector('input:not([type=checkbox]):not([type=file]),select,textarea')?.focus();
+      } else if (e.key === 'ContextMenu' || (e.shiftKey && e.key === 'F10')) {
+        e.preventDefault(); const r = el.getBoundingClientRect(); nodeMenu(id, r.left + 24, r.bottom - 8, true);
+      } else if (e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault(); e.stopPropagation();
+        const order = [...els.world.querySelectorAll('.node')].map((n) => n.dataset.id), i = order.indexOf(id);
+        Actions.remove();
+        const next = order.slice(i + 1).concat(order.slice(0, i).reverse()).find((nid) => Graph.node(nid));
+        if (next) els.world.querySelector(`.node[data-id="${CSS.escape(next)}"]`)?.focus(); else els.canvas.focus();
+      }
+    });
+    els.ctx.addEventListener('keydown', (e) => {
+      const items = [...els.ctx.querySelectorAll('button')], i = items.indexOf(document.activeElement);
+      const go = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: items.length - 1 }[e.key];
+      if (go !== undefined && items.length) { e.preventDefault(); items[(go + items.length) % items.length].focus(); }
+      else if (e.key === 'Tab') { e.preventDefault(); UI.hideContext(); }
+      else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); UI.hideContext(); }
+    });
   },
   bindChrome() {
     const on = (id, fn) => $('#' + id).addEventListener('click', fn);
