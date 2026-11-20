@@ -160,6 +160,11 @@ await check('workflow export and project import (cancel / merge / replace with b
 await check('monitor, XML import, diagram export, command palette', async () => {
   await page.selectOption('#studioMode', 'monitor'); await page.waitForTimeout(300);
   expect((await page.locator('.monitor-table tbody tr').count()) > 0, 'monitor shows no runs');
+  await page.click('.monitor-toolbar input[type=search]'); await page.keyboard.type('zzz');
+  expect(await page.inputValue('.monitor-toolbar input[type=search]') === 'zzz', 'monitor search loses focus while typing');
+  await page.fill('.monitor-toolbar input[type=search]', '');
+  await page.locator('.monitor-table tbody tr[data-fk^="run-"]').last().focus(); await page.keyboard.press('Enter');
+  expect(await page.evaluate(() => document.activeElement?.matches('tr.chosen')), 'a run cannot be chosen from the keyboard');
   await page.evaluate(() => DataForge.XmlImport.demo()); await page.waitForTimeout(600);
   expect(await page.evaluate(() => DataForge.Studio.mode === 'mapping' && DataForge.state.doc.nodes.length === 5), 'XML import did not open a 5-node mapping');
   await page.keyboard.press('Escape');
