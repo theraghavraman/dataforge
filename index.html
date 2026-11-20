@@ -3324,6 +3324,7 @@ const Log = {
 };
 const Runner = {
   async run(overrides = {}) {
+    if (Repo.hydrating) await Repo.hydrating;   // files of a mapping that is still opening
     if (state.running) return;
     blurActive();
     if (!state.doc.nodes.length) { toast('Nothing to run yet. Add nodes or use Load Sample.', 'warn'); return; }
@@ -6885,7 +6886,14 @@ const Repo = {
     this.dataChanged=true;
   },
   sessionFile(mappingId,nodeId,fileName) {return this.sessionFiles.get([mappingId,nodeId,fileName].join('|'))||null;},
-  async hydrateFiles(doc) {
+  // Opening a mapping shows it at once and re-attaches its stored files in the background. A run started in between
+  // waits for that (Runner.run awaits Repo.hydrating) instead of failing with "needs its file uploaded".
+  hydrateFiles(doc) {
+    const job = this.loadFiles(doc);
+    this.hydrating = job; job.finally(() => { if (this.hydrating === job) this.hydrating = null; });
+    return job;
+  },
+  async loadFiles(doc) {
     try {const files=this.db?await this.all('files'):[...this.memoryFiles.values()];for(const n of doc.nodes)if(n.config.fileName){const remembered=n.config?.rememberFile&&files.find(f=>f.mappingId===doc.mapping.id&&f.nodeId===n.id&&f.fileName===n.config.fileName);const f=remembered||this.sessionFile(doc.mapping.id,n.id,n.config.fileName);if(f)Files.set(n.id,f.fileName,new Uint8Array(f.bytes));}if(state.doc.mapping.id===doc.mapping.id)Share.attachSample(doc,{render:false});UI.renderNodes();UI.renderProps(false);Ports.schedule();}
     catch(e){toast('Stored files could not be loaded.','warn');}
   },

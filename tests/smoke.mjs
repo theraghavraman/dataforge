@@ -198,6 +198,11 @@ await check('uploaded CSV: run, remember on this device, reload, run again', asy
   let s = await summary(page); expect(s?.ok && s.rows === 2, 'first run ' + JSON.stringify(s));
   await page.waitForTimeout(400); await page.close(); page = await open();
   await run(page); s = await summary(page); expect(s?.ok && s.rows === 2, 'run after reload ' + JSON.stringify(s));
+  // Run straight after opening the mapping: the run waits for its stored file instead of failing.
+  const uploadId = await page.evaluate(() => DataForge.state.doc.mapping.id), otherId = await page.evaluate((u) => DataForge.Repo.project.mappings.find((m) => m.mapping.id !== u).mapping.id, uploadId);
+  await page.evaluate((o) => DataForge.Repo.openMapping(o), otherId); await page.waitForTimeout(300);
+  await page.evaluate((u) => { DataForge.Repo.openMapping(u); DataForge.Runner.run(); }, uploadId); await page.waitForTimeout(300); await idle(page);
+  s = await summary(page); expect(s?.ok && s.rows === 2, 'run started while the mapping was opening ' + JSON.stringify(s));
 });
 let projectFile, projectSnapshot;
 await check('project section: rename, upload without "remember", switch mappings, save .dfproj', async () => {
