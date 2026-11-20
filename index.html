@@ -694,7 +694,7 @@ td.masked{color:var(--muted);letter-spacing:.04em}
 /* ============================================================
    Constants & small utilities
    ============================================================ */
-const APP = { version: '1.4.0', repoUrl: 'https://github.com/theraghavraman/dataforge', formatVersion: '1.0', duckdb: '1.32.0', storageKey: 'dataforge.mapping.v1', themeKey: 'dataforge.theme', activeKey: 'dataforge.active.v1', runKey: 'dataforge.run_id.v1' };
+const APP = { version: '1.5.0', repoUrl: 'https://github.com/theraghavraman/dataforge', formatVersion: '1.0', duckdb: '1.32.0', storageKey: 'dataforge.mapping.v1', themeKey: 'dataforge.theme', activeKey: 'dataforge.active.v1', runKey: 'dataforge.run_id.v1' };
 function dfUuid(){const b=new Uint8Array(16);if(self.crypto?.getRandomValues)self.crypto.getRandomValues(b);else for(let i=0;i<16;i++)b[i]=Math.floor(Math.random()*256);b[6]=(b[6]&15)|64;b[8]=(b[8]&63)|128;const x=Array.from(b,n=>n.toString(16).padStart(2,'0')).join('');return x.slice(0,8)+'-'+x.slice(8,12)+'-'+x.slice(12,16)+'-'+x.slice(16,20)+'-'+x.slice(20);}
 const NODE_W = 200, NODE_H = 64, GRID = 10;
 const REJECT_COLUMNS = [{ name: 'reject_reason', type: 'VARCHAR' }, { name: 'reject_node', type: 'VARCHAR' }];
