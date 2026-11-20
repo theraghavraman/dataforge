@@ -85,7 +85,7 @@ npx playwright install chromium
 npm test
 ```
 
-`npm test` drives the real app in headless Chromium: it runs the three samples and the sample workflow on DuckDB-WASM, runs JSON sources and targets (array and newline-delimited), exports every dialect, and checks persistence across reloads, saving a `.dfproj` project file and opening it in a fresh browser context, project import/export, share links, the dialogs and the phone layout.
+`npm test` drives the real app in headless Chromium: it runs the three samples and the sample workflow on DuckDB-WASM, runs JSON sources and targets (array and newline-delimited), exports every dialect, and checks persistence across reloads, saving a `.dfproj` project file and opening it in a fresh browser context, project import/export, share links, the dialogs and the phone layout, and runs an axe-core accessibility check over the main views in both themes.
 
 ### Generated code is executed, not just generated
 

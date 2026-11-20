@@ -12,6 +12,9 @@
 - A long mapping name in the top bar ends in an ellipsis instead of being cut mid-word, and hovering it shows the whole name.
 - **About dialog** lists what DataForge does today (Parquet and Excel, profiling, tests, contracts, lineage, privacy, Airflow), shows the shortcuts as a readable key table with a note for ⌘ on a Mac, uses the same logo as the top bar, and its GitHub link follows the theme.
 
+### Added
+- **Accessibility check in the smoke test.** `npm test` (and GitHub Actions) runs axe-core over the mapping, results tabs, export dialog, workflow and monitor views and the light theme, and fails on any violation. It also checks keyboard movement between the results tabs, Monitor search, and that Run and the drawer toggles are on screen at phone width.
+
 ## 1.4.0
 
 ### Added

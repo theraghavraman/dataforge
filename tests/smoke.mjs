@@ -515,6 +515,30 @@ await check('share link opens in another tab; the first tab is warned about the 
   expect((await bad.$$eval('#toasts .toast', (t) => t.map((e) => e.textContent))).some((t) => /Invalid shared mapping link/.test(t)), 'bad link not reported');
   await bad.close();
 });
+const axeSource = readFileSync(join(root, 'node_modules/axe-core/axe.min.js'), 'utf8');
+async function axeViolations(p, where) {
+  if (!(await p.evaluate(() => !!window.axe))) await p.evaluate(axeSource);
+  const found = await p.evaluate(async () => (await window.axe.run(document, { resultTypes: ['violations'], preload: false })).violations
+    .map((v) => `${v.id} (${v.impact}, ${v.nodes.length}): ${v.nodes.slice(0, 3).map((n) => n.target.join(' ')).join(' | ')}`));
+  return found.map((f) => where + ': ' + f);
+}
+await check('accessibility (axe-core): mapping, results tabs, export, workflow, monitor, light theme', async () => {
+  const found = [];
+  await page.selectOption('#studioMode', 'mapping'); await page.waitForTimeout(300);
+  await page.evaluate(() => DataForge.Actions.select([DataForge.state.doc.nodes[0].id])); await page.waitForTimeout(200);
+  found.push(...await axeViolations(page, 'mapping'));
+  for (const t of ['sql', 'validation', 'log', 'dq', 'lineage', 'profile', 'tests']) { await page.click(`.tab[data-tab="${t}"]`); await page.waitForTimeout(150); }
+  found.push(...await axeViolations(page, 'tests tab'));
+  await page.click('.tab[data-tab="preview"]'); await page.keyboard.press('ArrowRight');
+  expect(await page.evaluate(() => document.activeElement?.dataset.tab === 'sql' && DataForge.state.tab === 'sql'), 'arrow keys do not move between drawer tabs');
+  await page.click('#btnExportCode'); await page.waitForTimeout(250); found.push(...await axeViolations(page, 'export dialog')); await page.click('#codegenClose');
+  await page.selectOption('#studioMode', 'workflow'); await page.waitForTimeout(300); found.push(...await axeViolations(page, 'workflow'));
+  await page.selectOption('#studioMode', 'monitor'); await page.waitForTimeout(300); found.push(...await axeViolations(page, 'monitor'));
+  await page.selectOption('#studioMode', 'mapping'); await page.waitForTimeout(300);
+  await page.click('#btnTheme'); await page.waitForTimeout(200); found.push(...await axeViolations(page, 'light theme')); await page.click('#btnTheme');
+  expect(!found.length, found.join('\n       '));
+  return 'no violations in 6 views';
+});
 await check('phone layout: drawers, tap to add, run', async () => {
   await page.setViewportSize({ width: 390, height: 800 }); await page.waitForTimeout(200);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= 390), 'page overflows horizontally');
