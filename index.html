@@ -811,6 +811,25 @@ async function copyToClipboard(text) {
   let ok = false; try { ok = document.execCommand('copy'); } catch (_) { ok = false; }
   ta.remove(); return ok;
 }
+// Inflates untrusted compressed bytes (project files, Excel parts) with a ceiling, so a small crafted file cannot
+// expand until the tab runs out of memory: 64 MB, or 300 times the compressed size, and never more than 512 MB.
+async function inflateText(bytes, format, what) {
+  const limit = Math.min(512 * 2 ** 20, Math.max(64 * 2 ** 20, bytes.length * 300));
+  const reader = new Blob([bytes]).stream().pipeThrough(new DecompressionStream(format)).getReader(), chunks = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.length;
+    if (size > limit) {
+      reader.cancel().catch(() => {});
+      const e = new Error(`${what} expands to more than ${fmtBytes(limit)}, so it was not opened. It may be damaged, or made to exhaust memory.`);
+      e.tooLarge = true; throw e;
+    }
+    chunks.push(value);
+  }
+  return new Blob(chunks).text();
+}
 function blurActive() { const a = document.activeElement; if (a && a !== document.body && typeof a.blur === 'function') a.blur(); }
 function downloadBlob(blob, fileName) {
   const url = URL.createObjectURL(blob);
@@ -1602,7 +1621,7 @@ const XLSX = {
         if (e.method === 0) return dec.decode(raw);
         if (e.method !== 8) throw new Error('The Excel file uses an unsupported compression method.');
         if (typeof DecompressionStream === 'undefined') throw new Error('This browser cannot read Excel files. Use a current version of Chrome, Edge, Firefox or Safari.');
-        return new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();
+        return inflateText(raw, 'deflate-raw', `The Excel part ${name}`);
       }
     };
   },
@@ -7155,8 +7174,8 @@ const ProjectFile = {
     let text;
     if (bytes[0] === 0x1f && bytes[1] === 0x8b) {
       if (typeof DecompressionStream === 'undefined') throw new Error('This browser cannot read compressed project files. Use a current version of Chrome, Edge, Firefox or Safari.');
-      try { text = await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text(); }
-      catch (_) { throw new Error(`"${name}" is damaged or incomplete and could not be decompressed.`); }
+      try { text = await inflateText(bytes, 'gzip', `"${name}"`); }
+      catch (e) { if (e.tooLarge) throw e; throw new Error(`"${name}" is damaged or incomplete and could not be decompressed.`); }
     } else text = new TextDecoder().decode(bytes);
     try { return JSON.parse(text); } catch (_) { throw new Error(`"${name}" is not a DataForge project, workflow or mapping file.`); }
   },
