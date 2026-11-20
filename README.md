@@ -119,6 +119,22 @@ Both test suites run in GitHub Actions on every push. See [CHANGELOG.md](CHANGEL
 | Ctrl+Z / Ctrl+Y | Undo / redo |
 | Ctrl+D, Delete | Duplicate / delete the selection |
 
+On a Mac, use ⌘ in place of Ctrl.
+
+### Without a mouse
+
+Every mapping node and workflow task can be reached with Tab.
+
+| Key (on a focused node) | Action |
+| --- | --- |
+| Arrow keys | Move the selection (Shift moves further) |
+| Enter | Edit the node in the Properties panel |
+| Menu key or Shift+F10 | Open the node menu: preview, profile, rename, **Connect to …** another node, duplicate, delete |
+| Delete | Remove the node and move to the next one |
+| Escape | Clear the selection, or close a menu |
+
+In the results drawer, the arrow keys, Home and End move between tabs.
+
 ## Author
 
 Raghav Raman, Senior Software Engineer (data engineering)
