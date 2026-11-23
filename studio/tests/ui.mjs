@@ -90,7 +90,7 @@ try {
     await page.locator('#commandInput').fill('Toggle theme');
     assert(!(await page.locator('#commandEmpty').isVisible()), 'Empty state did not clear');
     await page.keyboard.press('Enter');
-    assert(await page.evaluate(() => document.documentElement.dataset.theme) === 'light', 'Command did not execute');
+    assert(await page.evaluate(() => document.documentElement.dataset.theme) === 'dark', 'Command did not execute');
   });
   await check('Manual About dialog still opens and closes', async () => {
     await page.locator('#btnAbout').click();
@@ -192,6 +192,7 @@ try {
     assert(await page.evaluate(() => DataForge.Repo.project.mappings.length) === before+1, 'Existing mapping overwritten');
   });
   await check('Light-theme desktop layout has no document overflow', async () => {
+    if (await page.evaluate(() => document.documentElement.dataset.theme) !== 'light') await page.locator('#btnTheme').click();
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Desktop overflows');
     await page.screenshot({ path: join(artifacts,'desktop-light.png') });
     await page.locator('#btnTheme').click();

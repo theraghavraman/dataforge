@@ -67,9 +67,9 @@ await check('engine starts', async () => {
   expect(state === 'ready', 'engine state is ' + state + ': ' + await page.textContent('#enginePill'));
   return (await page.textContent('#engineMsg')).trim();
 });
-await check('opens in the dark theme', async () => {
+await check('opens in the light theme', async () => {
   const theme = await page.evaluate(() => document.documentElement.dataset.theme);
-  expect(theme === 'dark', 'theme is ' + theme);
+  expect(theme === 'light', 'theme is ' + theme);
 });
 await check('first run: welcome screen without an interrupting dialog', async () => {
   expect(await page.isVisible('#welcomeStage'), 'welcome screen missing');
@@ -612,7 +612,7 @@ async function axeViolations(p, where) {
     .map((v) => `${v.id} (${v.impact}, ${v.nodes.length}): ${v.nodes.slice(0, 3).map((n) => n.target.join(' ')).join(' | ')}`));
   return found.map((f) => where + ': ' + f);
 }
-await check('accessibility (axe-core): mapping, results tabs, export, workflow, monitor, light theme', async () => {
+await check('accessibility (axe-core): mapping, results tabs, export, workflow, monitor, dark theme', async () => {
   const found = [];
   await page.selectOption('#studioMode', 'mapping'); await page.waitForTimeout(300);
   await page.evaluate(() => DataForge.Actions.select([DataForge.state.doc.nodes[0].id])); await page.waitForTimeout(200);
@@ -625,7 +625,7 @@ await check('accessibility (axe-core): mapping, results tabs, export, workflow, 
   await page.selectOption('#studioMode', 'workflow'); await page.waitForTimeout(300); found.push(...await axeViolations(page, 'workflow'));
   await page.selectOption('#studioMode', 'monitor'); await page.waitForTimeout(300); found.push(...await axeViolations(page, 'monitor'));
   await page.selectOption('#studioMode', 'mapping'); await page.waitForTimeout(300);
-  await page.click('#btnTheme'); await page.waitForTimeout(200); found.push(...await axeViolations(page, 'light theme')); await page.click('#btnTheme');
+  await page.click('#btnTheme'); await page.waitForTimeout(200); found.push(...await axeViolations(page, 'dark theme')); await page.click('#btnTheme');
   // The properties panel of every node type, with a row added to list editors so their controls exist.
   const previous = await page.evaluate(() => DataForge.state.doc.mapping.id);
   const types = await page.evaluate(() => DataForge.Registry.list().map((d) => d.type));
