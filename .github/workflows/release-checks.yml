@@ -1,0 +1,58 @@
+name: Release checks
+
+# Repo-level workflow (not part of the release manifest). GitHub only runs
+# workflows from the repository root, so studio/.github/workflows/ci.yml is
+# shipped as-is but never runs; this one runs the DataForge Team checks.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false   # this job never pushes
+
+      # Before anything else runs: check_all.py rewrites logs under evidence/.
+      - name: Verify release checksums
+        run: sha256sum -c --quiet SHA256SUMS.release && echo "All $(wc -l < SHA256SUMS.release) files OK"
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"   # release QA baseline (CPython 3.12.3)
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22         # release QA baseline (Node 22.23.5)
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip check
+          python -m playwright install --with-deps chromium
+
+      - name: Backend tests (expect 178 passed)
+        env:
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
+        run: python -m pytest -q tests
+
+      - name: Full release suite with browser-origin gate
+        run: python scripts/check_all.py --origin
+
+      - name: Show suite logs
+        if: always()
+        run: |
+          cat evidence/verification-run.json 2>/dev/null || true
+          for f in evidence/*.log evidence/*.tap; do
+            [ -f "$f" ] || continue
+            echo "::group::$f"; tail -n 60 "$f"; echo "::endgroup::"
+          done
