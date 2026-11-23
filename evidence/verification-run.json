@@ -1,0 +1,96 @@
+{
+  "origin_gate_requested": true,
+  "suites": [
+    {
+      "suite": "python-compile",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 0.17,
+      "log": "python-compile.log"
+    },
+    {
+      "suite": "team-js-syntax",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 0.06,
+      "log": "team-js-syntax.log"
+    },
+    {
+      "suite": "bridge-js-syntax",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 0.03,
+      "log": "bridge-js-syntax.log"
+    },
+    {
+      "suite": "backend",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 52.4,
+      "log": "backend-tests.log"
+    },
+    {
+      "suite": "http",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 2.28,
+      "log": "http-tests.log"
+    },
+    {
+      "suite": "team-ui",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 4.6,
+      "log": "ui-tests.log"
+    },
+    {
+      "suite": "business-ui",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 4.69,
+      "log": "business-ui-tests.log"
+    },
+    {
+      "suite": "bounded-concurrency",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 3.69,
+      "log": "load-tests.log"
+    },
+    {
+      "suite": "package-launcher",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 3.74,
+      "log": "package-tests.log"
+    },
+    {
+      "suite": "designer-bridge",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 1.97,
+      "log": "designer-tests.log"
+    },
+    {
+      "suite": "inherited-syntax",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 0.11,
+      "log": "legacy-syntax.log"
+    },
+    {
+      "suite": "inherited-tests",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 1.12,
+      "log": "legacy-node-tests.tap"
+    },
+    {
+      "suite": "actual-browser-origin",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 3.28,
+      "log": "origin-smoke.log"
+    }
+  ]
+}

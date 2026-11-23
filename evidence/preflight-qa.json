@@ -1,0 +1,65 @@
+{
+  "ready": false,
+  "checks": [
+    {
+      "check": "patched_fastapi",
+      "passed": true,
+      "detail": "Installed 0.165.0; require >=0.163.2 (GHSA-f56c-v883-vx8r)."
+    },
+    {
+      "check": "https",
+      "passed": false,
+      "detail": "Production requires an HTTPS origin and Secure session cookies."
+    },
+    {
+      "check": "mfa_policy",
+      "passed": false,
+      "detail": "Set DATAFORGE_REQUIRE_MFA=true."
+    },
+    {
+      "check": "client_addresses",
+      "passed": false,
+      "detail": "TLS terminates at the reverse proxy: set DATAFORGE_TRUSTED_PROXIES to its exact address so per-client sign-in throttles do not collapse into one shared bucket."
+    },
+    {
+      "check": "single_host_platform",
+      "passed": true,
+      "detail": "Deployment templates and process limits target Linux."
+    },
+    {
+      "check": "sqlite_version",
+      "passed": true,
+      "detail": "SQLite >=3.39 is required for RIGHT/FULL joins."
+    },
+    {
+      "check": "application_key",
+      "passed": false,
+      "detail": "Place the 32-byte application key outside the data directory with mode 0600."
+    },
+    {
+      "check": "backup_key",
+      "passed": false,
+      "detail": "Provision a separate valid backup key outside the data directory."
+    },
+    {
+      "check": "backup_destination",
+      "passed": false,
+      "detail": "Configure an encrypted backup destination; independently verify its off-host replication."
+    },
+    {
+      "check": "alerts",
+      "passed": false,
+      "detail": "Configure an HTTPS webhook or SMTP alert recipients."
+    },
+    {
+      "check": "smtp_tls",
+      "passed": true,
+      "detail": "SMTP must use certificate-verified TLS."
+    },
+    {
+      "check": "deployment_qualification",
+      "passed": false,
+      "detail": "Provide signed-off evidence references for browser, dependencies, recovery, security, acceptance, capacity, off-host backup, alerts and storage encryption."
+    }
+  ]
+}

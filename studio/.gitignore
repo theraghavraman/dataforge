@@ -1,0 +1,13 @@
+node_modules/
+test-results/
+codegen-out/
+.DS_Store
+*.log
+
+ui-test-artifacts/
+
+business-test-artifacts/
+persistence-test-artifacts/
+
+# Release evidence logs are part of the checksummed release; keep them tracked.
+!evidence/*.log

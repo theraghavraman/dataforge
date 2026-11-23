@@ -1,0 +1,2 @@
+/opt/pyvenv/bin/python: No module named pip_audit
+audit_exit=1

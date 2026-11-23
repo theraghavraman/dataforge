@@ -1,0 +1,9 @@
+PASS Designer bootstraps the server project in session-only mode
+PASS Existing six-node sample mapping is usable without replacing its format
+PASS Publishing stores actual original-format mapping on the server
+PASS Uploaded source store is not included in project revision payload
+PASS Independent API editor can create the competing revision
+PASS Stale designer publish is blocked with recovery actions
+PASS Conflicting browser edits remain available for recovery
+PASS Server keeps the winning revision
+PASS No uncaught JavaScript errors in tested bridge flow

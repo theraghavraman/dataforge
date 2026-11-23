@@ -1,0 +1,77 @@
+{
+  "method": "Chromium set_content + real FastAPI TestClient bridge; not network-origin E2E",
+  "results": [
+    {
+      "name": "Login view renders without horizontal overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid credentials produce an inline generic error",
+      "status": "PASS"
+    },
+    {
+      "name": "Valid login loads real server workspace data",
+      "status": "PASS"
+    },
+    {
+      "name": "Dashboard displays executed sample jobs",
+      "status": "PASS"
+    },
+    {
+      "name": "Project creation form commits to the authenticated API",
+      "status": "PASS"
+    },
+    {
+      "name": "Revision history dialog opens",
+      "status": "PASS"
+    },
+    {
+      "name": "CSV upload is validated and persisted through the UI",
+      "status": "PASS"
+    },
+    {
+      "name": "Job form creates a durable queue entry",
+      "status": "PASS"
+    },
+    {
+      "name": "Job details display actual worker output",
+      "status": "PASS"
+    },
+    {
+      "name": "Schedule status is explicitly paused",
+      "status": "PASS"
+    },
+    {
+      "name": "Role management lists provisioned users",
+      "status": "PASS"
+    },
+    {
+      "name": "Audit view displays real server events",
+      "status": "PASS"
+    },
+    {
+      "name": "Operations verifies the real audit chain",
+      "status": "PASS"
+    },
+    {
+      "name": "Mobile overview fits a 390-pixel viewport",
+      "status": "PASS"
+    },
+    {
+      "name": "Sign out clears rendered workspace data",
+      "status": "PASS"
+    },
+    {
+      "name": "Viewer navigation hides administrative actions",
+      "status": "PASS"
+    },
+    {
+      "name": "Viewer cannot open a job-submission form",
+      "status": "PASS"
+    },
+    {
+      "name": "No uncaught JavaScript errors in tested team flows",
+      "status": "PASS"
+    }
+  ]
+}

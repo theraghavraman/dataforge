@@ -1,0 +1,5 @@
+region,amount,status
+North,100,accepted
+South,40,accepted
+North,30,accepted
+North,9,rejected

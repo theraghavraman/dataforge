@@ -1,0 +1,37 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.5, pytest-9.0.2, pluggy-1.6.0 -- /opt/pyvenv/bin/python
+cachedir: .pytest_cache
+metadata: {'Python': '3.13.5', 'Platform': 'Linux-6.18.57-x86_64-with-glibc2.41', 'Packages': {'pytest': '9.0.2', 'pluggy': '1.6.0'}, 'Plugins': {'anyio': '4.13.0', 'ddtrace': '4.4.0', 'Faker': '40.1.2', 'asyncio': '1.3.0', 'cov': '7.0.0', 'json-report': '1.5.0', 'metadata': '3.1.1'}, 'PLATFORM': 'linux/amd64', 'CI': 'true'}
+rootdir: /mnt/data/dataforge-team
+plugins: anyio-4.13.0, ddtrace-4.4.0, Faker-40.1.2, asyncio-1.3.0, cov-7.0.0, json-report-1.5.0, metadata-3.1.1
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 44 items / 29 deselected / 15 selected
+
+tests/test_projects_jobs.py::test_invalid_csv_rejected[a,a\n1,2-duplicate.csv] PASSED [  6%]
+tests/test_projects_jobs.py::test_dml_on_input_is_rejected PASSED        [ 13%]
+tests/test_projects_jobs.py::test_recursive_work_is_bounded_and_next_job_succeeds PASSED [ 20%]
+tests/test_projects_jobs.py::test_output_limit_is_error_not_silent_truncation PASSED [ 26%]
+tests/test_projects_jobs.py::test_cancel_queued_and_claimed_jobs PASSED  [ 33%]
+tests/test_projects_jobs.py::test_two_workers_cannot_claim_same_job PASSED [ 40%]
+tests/test_projects_jobs.py::test_stale_lease_recovery_and_fencing PASSED [ 46%]
+tests/test_projects_jobs.py::test_lease_recovery_stops_after_three_attempts PASSED [ 53%]
+tests/test_projects_jobs.py::test_queued_job_rechecks_membership PASSED  [ 60%]
+tests/test_projects_jobs.py::test_source_references_protect_pending_jobs PASSED [ 66%]
+tests/test_projects_jobs.py::test_output_csv_formula_defense_and_retention PASSED [ 73%]
+tests/test_projects_jobs.py::test_schedule_paused_defaults_and_deduplicated_dispatch PASSED [ 80%]
+tests/test_projects_jobs.py::test_schedules_cannot_run_with_revoked_permissions PASSED [ 86%]
+tests/test_projects_jobs.py::test_duplicate_or_reserved_source_alias_rejected PASSED [ 93%]
+tests/test_projects_jobs.py::test_actual_sqlite_engine_and_health_report PASSED [100%]
+
+============================= slowest 10 durations =============================
+3.24s call     tests/test_projects_jobs.py::test_dml_on_input_is_rejected
+1.81s call     tests/test_projects_jobs.py::test_recursive_work_is_bounded_and_next_job_succeeds
+1.01s call     tests/test_projects_jobs.py::test_stale_lease_recovery_and_fencing
+0.80s call     tests/test_projects_jobs.py::test_output_limit_is_error_not_silent_truncation
+0.80s call     tests/test_projects_jobs.py::test_output_csv_formula_defense_and_retention
+0.39s setup    tests/test_projects_jobs.py::test_invalid_csv_rejected[a,a\n1,2-duplicate.csv]
+0.39s setup    tests/test_projects_jobs.py::test_actual_sqlite_engine_and_health_report
+0.36s setup    tests/test_projects_jobs.py::test_stale_lease_recovery_and_fencing
+0.32s setup    tests/test_projects_jobs.py::test_schedules_cannot_run_with_revoked_permissions
+0.30s setup    tests/test_projects_jobs.py::test_output_csv_formula_defense_and_retention
+====================== 15 passed, 29 deselected in 12.47s ======================

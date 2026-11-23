@@ -1,0 +1,12 @@
+.git
+.venv
+var
+__pycache__
+**/__pycache__
+**/.pytest_cache
+*.key
+*.dfbackup
+*.sqlite3*
+.env
+qualification-output
+evidence

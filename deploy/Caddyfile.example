@@ -1,0 +1,21 @@
+# Systemd/host deployment, not container addressing.
+# Set DATAFORGE_DOMAIN for the Caddy service to your real DNS hostname.
+# This example has not been run against a real certificate authority here.
+{$DATAFORGE_DOMAIN} {
+    encode gzip zstd
+    request_body {
+        max_size 8MB
+    }
+    reverse_proxy 127.0.0.1:8080 {
+        # Caddy (>=2.5) discards client-supplied X-Forwarded-For unless trusted_proxies is
+        # configured and sends the real client address. The API trusts that header only from
+        # DATAFORGE_TRUSTED_PROXIES; stripping it would make all users share one throttle bucket.
+        header_up -X-Real-IP
+        transport http {
+            dial_timeout 5s
+            response_header_timeout 45s
+        }
+    }
+    # Access logging is deliberately not enabled: OIDC callbacks contain short-lived
+    # authorization codes. Configure a reviewed redaction policy before enabling logs.
+}

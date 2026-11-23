@@ -1,0 +1,3 @@
+-r requirements.txt
+# Optional: needed only for scheduled uploads to Amazon S3.
+boto3>=1.43.18,<2

@@ -1,0 +1,32 @@
+[Unit]
+Description=DataForge worker (qualified single-host deployment)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=dataforge
+Group=dataforge
+WorkingDirectory=/opt/dataforge-team
+EnvironmentFile=/etc/dataforge/dataforge.env
+ExecStart=/opt/dataforge-team/.venv/bin/python -m app.cli worker
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=45
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/dataforge
+RestrictSUIDSGID=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+LockPersonality=true
+LimitNOFILE=1024
+TasksMax=128
+
+[Install]
+WantedBy=multi-user.target

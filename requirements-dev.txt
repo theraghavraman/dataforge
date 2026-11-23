@@ -1,0 +1,5 @@
+-r requirements-s3.txt
+pytest>=9.0.2,<10
+playwright>=1.57.0,<2
+pip-audit>=2.9,<3
+PyYAML>=6.0.3,<7

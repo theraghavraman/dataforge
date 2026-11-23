@@ -1,0 +1,157 @@
+{
+  "suite": "Offline UI regression",
+  "scope": "DOM rendering, interactions, generated code text; external requests blocked. No DuckDB query execution, real-origin IndexedDB persistence or complete existing smoke suite.",
+  "passed": 37,
+  "failed": 0,
+  "results": [
+    {
+      "name": "Welcome opens without a blocking About dialog",
+      "status": "PASS"
+    },
+    {
+      "name": "Import XML opens the actual file picker",
+      "status": "PASS"
+    },
+    {
+      "name": "Sample card loads a real six-node mapping",
+      "status": "PASS"
+    },
+    {
+      "name": "Palette contains all 24 registered node types",
+      "status": "PASS"
+    },
+    {
+      "name": "Palette search filters by name",
+      "status": "PASS"
+    },
+    {
+      "name": "Palette search supports meaningful aliases",
+      "status": "PASS"
+    },
+    {
+      "name": "Empty palette search gives feedback and can be cleared",
+      "status": "PASS"
+    },
+    {
+      "name": "Keyboard Enter adds a transformation",
+      "status": "PASS"
+    },
+    {
+      "name": "Keyboard Space adds a transformation without scrolling",
+      "status": "PASS"
+    },
+    {
+      "name": "Repository jump reaches and focuses repository search",
+      "status": "PASS"
+    },
+    {
+      "name": "Command search has an accessible no-results state",
+      "status": "PASS"
+    },
+    {
+      "name": "Command palette recovers after a no-match search",
+      "status": "PASS"
+    },
+    {
+      "name": "Manual About dialog still opens and closes",
+      "status": "PASS"
+    },
+    {
+      "name": "Preview defaults to 100 rows, not every loaded row",
+      "status": "PASS"
+    },
+    {
+      "name": "Preview pagination preserves row numbering",
+      "status": "PASS"
+    },
+    {
+      "name": "Preview page-size control resets to page 1",
+      "status": "PASS"
+    },
+    {
+      "name": "Preview search keeps input focus while typing",
+      "status": "PASS"
+    },
+    {
+      "name": "Preview search explicitly handles zero matches",
+      "status": "PASS"
+    },
+    {
+      "name": "Sensitive values cannot be discovered through search",
+      "status": "PASS"
+    },
+    {
+      "name": "Column sorting is keyboard-accessible and numeric",
+      "status": "PASS"
+    },
+    {
+      "name": "Preview safely renders HTML-like cell values as text",
+      "status": "PASS"
+    },
+    {
+      "name": "Empty preview handles an empty result set",
+      "status": "PASS"
+    },
+    {
+      "name": "Workflow palette is searchable and keyboard-focusable",
+      "status": "PASS"
+    },
+    {
+      "name": "Palette query persists independently for mapping mode",
+      "status": "PASS"
+    },
+    {
+      "name": "Monitor stays below the resized header",
+      "status": "PASS"
+    },
+    {
+      "name": "Sample SQL generation still works for all seven dialects",
+      "status": "PASS"
+    },
+    {
+      "name": "Sample additions preserve existing mappings",
+      "status": "PASS"
+    },
+    {
+      "name": "Light-theme desktop layout has no document overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "Dark-theme desktop layout has no document overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "Reduced-motion preference disables transitions",
+      "status": "PASS"
+    },
+    {
+      "name": "Phone welcome has no horizontal overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "Phone template cards load mappings",
+      "status": "PASS"
+    },
+    {
+      "name": "Phone library drawer opens below the header",
+      "status": "PASS"
+    },
+    {
+      "name": "Phone properties drawer opens and closes with Escape",
+      "status": "PASS"
+    },
+    {
+      "name": "Phone engine status remains accessible for retry",
+      "status": "PASS"
+    },
+    {
+      "name": "320px viewport keeps primary header controls inside the screen",
+      "status": "PASS"
+    },
+    {
+      "name": "No uncaught browser JavaScript errors",
+      "status": "PASS"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10151d"><title>DataForge Team</title><link rel="stylesheet" href="/assets/app.css"><script src="/assets/app.js" defer></script></head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<section id="login" class="login-shell">
+ <div class="login-story"><div class="brand"><span class="mark">D</span> DataForge <span class="tag">TEAM</span></div><div><p class="eyebrow">YOUR DATA. A SHARED WORKSPACE.</p><h1>From scattered files<br>to accountable work.</h1><p>Keep projects, data, execution, and team access together. Build with clarity. Run with a record.</p><div class="login-features"><span>Versioned projects</span><span>Workspace permissions</span><span>Durable job history</span></div></div><small>Single-host release candidate &middot; 2.1.0-rc2</small></div>
+ <div class="login-form-wrap"><form id="loginForm" class="login-card"><p class="eyebrow">WELCOME BACK</p><h2>Sign in to your workspace</h2><p class="muted">Use the account provisioned by your administrator.</p><label>Email address<input id="email" type="email" autocomplete="username" required placeholder="you@company.com" maxlength="254"></label><label>Password<input id="password" type="password" autocomplete="current-password" required maxlength="128"></label><label>Authenticator or recovery code <small>(when enabled)</small><input id="otp" type="text" autocomplete="one-time-code" maxlength="128"></label><button class="primary wide" type="submit">Sign in <span aria-hidden="true">&rarr;</span></button><p id="loginError" role="alert"></p><div class="actions"><button id="forgotPassword" type="button" class="subtle">Forgot password?</button><a id="ssoLogin" href="/api/auth/oidc/start" hidden>Sign in with SSO</a></div><p class="fine">No public registration. Your session uses an HttpOnly cookie. Need access? Contact your workspace administrator.</p></form></div>
+</section>
+<div id="shell" class="shell" hidden>
+ <aside class="sidebar"><a href="/" class="brand"><span class="mark">D</span> DataForge <span class="tag">TEAM</span></a><p class="eyebrow nav-label">WORKSPACE</p><nav id="nav" aria-label="Main navigation"></nav><div class="sidebar-bottom"><span class="local-dot"></span> Self-hosted workspace<p>Single-host release candidate<br>Access is checked by the server.</p></div></aside>
+ <div class="content-shell"><header class="topbar"><label class="workspace-picker">Workspace<select id="workspace" aria-label="Current workspace"></select></label><div class="top-actions"><span id="roleBadge" class="badge"></span><button id="refresh" class="subtle">Refresh</button><span id="accountName"></span><button id="logout" class="subtle">Sign out</button></div></header>
+ <main id="main" tabindex="-1"><div id="notice" role="status" aria-live="polite" hidden></div><div id="view"></div></main><footer>DataForge Team <span>Server pipelines &middot; Access controls &middot; Recovery &middot; Delivery</span></footer></div>
+</div>
+<dialog id="modal" aria-labelledby="modalTitle"><div class="modal-head"><h2 id="modalTitle"></h2><button id="modalClose" class="subtle" aria-label="Close dialog">Close</button></div><div id="modalBody"></div></dialog>
+</body></html>

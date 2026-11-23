@@ -1,0 +1,10 @@
+PASS Unauthenticated TCP request is rejected
+PASS Actual HTTP session cookie is issued
+PASS TCP-submitted job is durably queued
+PASS Separate worker process exits successfully
+PASS CSV aggregation returns independently expected total
+PASS Output downloads over real HTTP
+PASS TCP cross-origin write is rejected
+PASS Designer delivered with same-origin-only CSP and bridge
+PASS Job output survives actual API process restart
+PASS TCP sign-out invalidates the session

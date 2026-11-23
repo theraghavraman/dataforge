@@ -1,144 +1,89 @@
-# DataForge — Browser ETL Studio
+# DataForge Team - business release candidate
 
-A visual ETL designer that runs entirely in the browser. You build mappings visually on a canvas, they compile to SQL, and DuckDB-WASM executes them locally. Nothing leaves your machine.
+**2.1.0-rc2 | 23 November 2026 | Single-host deployment**
 
-**Live demo:** https://theraghavraman.github.io/dataforge/
+A backend-enabled DataForge application with shared project storage, authenticated team workspaces, independently running jobs and schedules, a portable visual-pipeline compiler, MFA and optional OIDC sign-in, encrypted recovery tooling, and operational delivery services.
 
-## Features
+This is the completed locally implementable release from the supplied DataForge project. It is **not a production certification**. rc2 fixes defects found when rc1 was re-qualified on a clean install with the patched FastAPI, a dependency audit and a working browser-origin gate; see `CHANGELOG.md`. Production startup is deliberately blocked until documented deployment gates are satisfied. `TEST_REPORT.md` distinguishes actual execution, mocked integrations, and checks that only your deployment can perform.
 
-- **Mapping Designer.** Drag-and-drop canvas with CSV, JSON, Parquet and Excel sources and targets, SQL, Filter, Expression, Sorter, Joiner, Lookup, Aggregator, Router, Union, Rank, Sequence Generator, SCD Type 1, SCD Type 2, Data Quality and Target transformations.
-- **In-browser execution.** Every mapping compiles to a DuckDB SQL CTE chain and runs on CSV/JSON files through DuckDB-WASM, with data preview at any node.
-- **Warehouse patterns.** SCD1/SCD2 with hash-based change detection, surrogate keys, reject handling, and data quality rules (reject, flag or warn).
-- **Parameters and variables.** `$$PARAM` syntax, with persistent mapping variables for incremental loads.
-- **Code generation.** Export any mapping as Snowflake SQL (MERGE-based SCD), a runnable PySpark script, or a complete dbt project (models, snapshots, schema tests).
-- **Column-level lineage.** Impact analysis, plus Source-to-Target Mapping (STTM) export and Markdown mapping specifications.
-- **Workflow Designer.** Sessions, decisions, assignments, timers, notifications and conditional links, with concurrent branches.
-- **Monitor.** Run history, Gantt timeline, session statistics, trend charts and run comparison.
-- **Mapping XML import.** Best-effort conversion of repository mapping XML exports, with an import report.
-- **Testing and quality.** Mapping tests with fixed input and expected rows, data profiling at any node, and data contracts that check outputs before they are written.
-- **Governance.** Personal-data detection and classification, masking in previews, a data inventory, and project-wide lineage and impact analysis across chained mappings.
-- **Reuse and orchestration.** Reusable components, and Airflow DAG export of workflows.
-- **Projects.** A Project section at the top of the left panel shows the open project, lets you rename it, and tells you whether your project file is up to date. **Save** writes the whole project to one `.dfproj` file; **Open** brings it back in any browser, including a fresh session (see [Project files](#project-files)).
-- **Project repository.** Stored in IndexedDB, with mapping versions and compare, project merge or replace, workflow export, shareable links, and SVG/PNG diagram export.
+## Start a local evaluation
 
-## Try it
+Use Linux and Python 3.12 or 3.13 with SQLite >=3.39. The actual QA environment and versions are recorded in `evidence/qa-environment.json`. Use synthetic data until your deployment is qualified.
 
-Open the live demo. The Load Sample menu has three ready-to-run mappings (retail orders, sales by region, customer dimension SCD2), and the Workflow Designer has a sample "Daily retail load" workflow. Choose **Run**.
-
-## Tech
-
-A single self-contained `index.html` in vanilla JavaScript. It uses DuckDB-WASM, IndexedDB and inline SVG, with no build step and no backend. Projects, run history and (optionally) source files are stored in your browser only.
-
-It works on phones and tablets too: below 900px the side panels become drawers, palette items are added with a tap, and the canvas supports pinch zoom.
-
-## Project files
-
-Your work is saved automatically in the browser you are using. To move it to another browser, another computer or a fresh session, choose **Save** in the Project section. It downloads one `.dfproj` file that holds everything needed to carry on where you stopped:
-
-| Included | Details |
-| --- | --- |
-| Mappings | Every node, link, expression, condition, port and setting, plus parameters and the current values of persistent variables. |
-| Workflows | Tasks, links, conditions, schedules and workflow variables. |
-| Parameter sets | All sets and values. |
-| Versions | Every saved mapping version, so compare and restore still work. |
-| Source data | The CSV and JSON file loaded into each source, in every mapping, whether or not "Remember source file on this device" is ticked. Built-in sample data is not stored; it is re-attached automatically. |
-| Run history | The runs shown in the Monitor. |
-| Session | The mapping or workflow that was open, the designer mode and the run counter. |
-| Tests, components, governance | Mapping tests, reusable components and column classifications. |
-
-Open the file with **Open** in the Project section, the toolbar Open button, or by dropping it onto the page. In an empty session it opens straight away; otherwise you choose Merge (add it next to your work) or Replace (a backup `.dfproj` of the current project is downloaded first). Restored data files are remembered on the new device, so they also survive a reload there.
-
-A project file can be **password-protected** (project menu ⋯ → Protect with a password). It is then encrypted with AES-256-GCM; without the password it cannot be opened or read, and a forgotten password cannot be recovered.
-
-The project menu (⋯) also has **New project**, **Save without source data** (logic only, for large data) and **Export logic only**, which writes the readable, diff-friendly `.dfproj.json` used by earlier versions. Both formats can be opened.
-
-A `.dfproj` file is gzip-compressed JSON (`{ format: "dataforge-project", formatVersion, project, files, runs, session }`, with source files base64-encoded), so it can be inspected with standard tools, for example `gunzip -c my_project.dfproj | jq .project`. It contains your source data: share it only with people who may see that data.
-
-## Running it yourself
-
-Serve the folder with any static web server (`npm run serve`, `python3 -m http.server`, GitHub Pages, ...). Opening `index.html` directly from disk also works in most browsers.
-
-### Network access
-
-| Host | Why | Avoidable? |
-| --- | --- | --- |
-| `cdn.jsdelivr.net` | DuckDB-WASM engine (pinned release) | Yes, by self-hosting (below) |
-| `extensions.duckdb.org` | DuckDB's JSON and Parquet extensions, downloaded the first time a JSON or Parquet source or target runs | No |
-| `fonts.googleapis.com`, `fonts.gstatic.com` | UI fonts; system fonts are used if blocked | Optional |
-
-Your data never leaves the browser. A Content-Security-Policy in `index.html` limits the page to these hosts.
-
-### Self-hosting DuckDB-WASM
-
-```sh
-node scripts/vendor-duckdb.mjs        # downloads the pinned release into vendor/duckdb/ and updates index.html
-node scripts/vendor-duckdb.mjs --cdn  # switch back to the CDN
+```bash
+cd dataforge-team
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+export DATAFORGE_DATA_DIR="$PWD/var"
+export DATAFORGE_ORIGIN="http://127.0.0.1:8080"
+python -m app.cli init
+python -m app.cli create-admin --email admin@your-company.example --name "Workspace Administrator"
+python scripts/run_local.py
 ```
 
-Commit `vendor/duckdb/` (about 72 MB) and make sure your server sends `.wasm` as `application/wasm`. The CDN remains the fallback if the local copy cannot be loaded. To upgrade DuckDB, change `APP.duckdb` in `index.html` and run the script again.
+Open `http://127.0.0.1:8080`. The local launcher starts the API, worker and maintenance processes together and stops all three on Ctrl+C. The administrator command prompts for a password; there are **no default credentials**. The launcher does not create accounts or bypass permissions. Use port 8081 consistently when 8080 is already occupied: change `DATAFORGE_ORIGIN` and supply `--port 8081`.
 
-## Development
+`requirements.txt` is a deployment dependency policy, not a verified lockfile. Dependency installation requires an approved package index. It requires FastAPI >=0.163.2 (GHSA-f56c-v883-vx8r) and cryptography >=50.0.0 (several 2026 advisories). Upgrade `pip` itself first. Install, audit, freeze and retest on the intended deployment build host; do not use the old installed-version snapshots as deployment requirements.
 
-```sh
-npm install
-npx playwright install chromium
-npm test
+Provision accounts in **Accounts**, create workspaces, and assign **owner/editor/viewer** roles in **Team access**. Enable MFA in **Account security**. Owners can grant membership to provisioned accounts; administrator status alone does not confer access to every workspace.
+
+## Run the included visual example
+
+With the local services running, load only synthetic example data through the real API:
+
+```bash
+python scripts/load_example.py --email admin@your-company.example --create-workspace "Synthetic evaluation"
 ```
 
-`npm test` drives the real app in headless Chromium: it runs the three samples and the sample workflow on DuckDB-WASM, runs JSON sources and targets (array and newline-delimited), exports every dialect, and checks persistence across reloads, saving a `.dfproj` project file and opening it in a fresh browser context, project import/export, share links, the dialogs and the phone layout, and runs an axe-core accessibility check over the main views in both themes.
+The helper prompts for the password and optional factor and signs out after import. It does not store credentials. Open **Projects > Run pipeline**, verify the `orders.csv` source binding, select **Compile and review**, review the SQLite query, check the confirmation, then queue it. The expected output is **North = 130.0, South = 40.0**. The results are downloadable as CSV or JSON. A schedule interval creates a paused schedule; enable it only after reviewing its stored revision.
 
-### Generated code is executed, not just generated
+## What is implemented
 
-```sh
-pip install -r tests/codegen/requirements.txt   # DuckDB, PySpark (needs Java 17+), dbt, sqlglot
-npm run test:codegen
+| Area | Implementation |
+| --- | --- |
+| Identity | Argon2id passwords, hashed cookie sessions, CSRF checks, expiry/revocation, TOTP MFA, ten hashed single-use recovery codes, reset links delivered through an encrypted durable outbox |
+| Optional SSO | OIDC authorization code + PKCE S256, RS256 signature validation, issuer/audience/nonce/state checks, explicit issuer/subject account links, local MFA preserved |
+| Shared work | Workspace-scoped projects and CSV files, optimistic revision checks, 20 retained revisions, restoration as a new revision, source checksums |
+| Execution | Restricted read-only SQLite subprocesses, queue idempotency, bounded crash recovery, cancellation, permission and approval rechecks, interval schedules independent of the browser |
+| Visual server pipeline | Explicit CSV bindings, strict typed imports, 13 supported node types, SQL review, exact-revision lineage and optional second-owner approval |
+| Recovery | AES-GCM database backups, independent application/backup keys, safe restoration to a new directory, restored sessions/tokens revoked, schedules paused |
+| Operations | Separate maintenance service, bounded notification retries, SMTP with verified TLS, HTTPS webhooks, optional checksummed S3 backup upload, retention and readiness views |
+| Deployment | Production preflight gates, systemd/Caddy/Docker templates, qualification helper, API schema, migration and incident runbooks |
+
+## Execution boundary
+
+**Server:** read-only SQLite over uploaded CSV files. The portable compiler supports CSV source, filter, expression, sorter, aggregator, joiner, union, rank, router, CSV/JSON/preview/reject targets. It rejects unsupported nodes on the selected path. Targets are stored job results, not arbitrary server filesystem writes. See `docs/PIPELINES.md` for data types, semantics and limits.
+
+**Retained designer:** the original canvas and DuckDB-WASM engine remain under `studio/`. The canvas can edit and publish project logic. Browser DuckDB execution still needs reviewed same-origin runtime binaries; those binaries are not bundled, and that engine was not executed here. A portable mapping can run on the new server without DuckDB. **This compiler is not full DuckDB compatibility**: SCD, sequence generation, lookup, Excel/Parquet, general SQL-transform nodes, arbitrary workflow tasks and DuckDB-specific expressions are not converted.
+
+## Verify and qualify
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m playwright install chromium
+python scripts/check_all.py
+python scripts/check_all.py --origin
+python scripts/qualify.py
 ```
 
-This exports the code for the three samples and compares every target with the file the app itself produced:
+`--origin` requires real Chromium navigation and cookie behavior; a blocked gate exits nonzero. The UI bridge tests are explicitly labeled and cannot substitute for that gate. The qualification helper runs `pip check`, a vulnerability audit and the full suite with the origin gate; it never approves human acceptance/security gates automatically.
 
-| Export | How it is checked |
+## Operating and deployment documents
+
+| File | Purpose |
 | --- | --- |
-| DuckDB SQL | Executed in native DuckDB. |
-| PySpark | Executed on a local Spark session. |
-| Snowflake SQL | Parsed as Snowflake SQL, every column resolved under Snowflake's identifier rules, and the logic executed on DuckDB through a sqlglot translation. |
-| dbt | `dbt compile`, then the same three Snowflake checks on the compiled models. |
+| `TEST_REPORT.md` | Final check counts, methods, evidence and blocked gates |
+| `BUSINESS_READINESS.md` | Implemented scope versus deployment responsibilities |
+| `SECURITY.md` | Threat boundaries, credential handling and non-guarantees |
+| `docs/IDENTITY.md` | MFA, password recovery, explicit OIDC linking and break-glass recovery |
+| `docs/PIPELINES.md` | Compiler contract, source schemas, approvals and semantics |
+| `docs/OPERATIONS.md` | Backups, restore drills, alerts, maintenance, retention and incidents |
+| `docs/MIGRATION.md` | Upgrade from the prior team build or browser-only designer |
+| `docs/DEPENDENCIES.md` | Patched dependency requirement and reproducible qualification |
+| `deploy/README.md` | Single-host systemd, reverse proxy and container templates, including the required `DATAFORGE_TRUSTED_PROXIES` setting |
+| `CHANGELOG.md` | Defects fixed in rc2 and how each was verified |
+| `docs/openapi.json` | API schema generated from this release |
 
-No Snowflake account is involved, so the Snowflake and dbt checks cover logic and name resolution, not warehouse-specific runtime behaviour: review those two exports before running them in production. Generated Snowflake and dbt SQL uses upper-case column and table names, the Snowflake default.
-
-Both test suites run in GitHub Actions on every push. See [CHANGELOG.md](CHANGELOG.md) for release notes.
-
-## Keyboard shortcuts
-
-| Shortcut | Action |
-| --- | --- |
-| Ctrl+Enter | Run the mapping or workflow |
-| Ctrl+S | Save the mapping as JSON, or export the workflow (use **Save** in the Project section for the whole project) |
-| Ctrl+Shift+S | Save a version of the mapping |
-| Ctrl+Shift+V | Validate |
-| Ctrl+K | Command palette |
-| Ctrl+Z / Ctrl+Y | Undo / redo |
-| Ctrl+D, Delete | Duplicate / delete the selection |
-
-On a Mac, use ⌘ in place of Ctrl.
-
-### Without a mouse
-
-Every mapping node and workflow task can be reached with Tab.
-
-| Key (on a focused node) | Action |
-| --- | --- |
-| Arrow keys | Move the selection (Shift moves further) |
-| Enter | Edit the node in the Properties panel |
-| Menu key or Shift+F10 | Open the node menu: preview, profile, rename, **Connect to …** another node, duplicate, delete |
-| Delete | Remove the node and move to the next one |
-| Escape | Clear the selection, or close a menu |
-
-In the results drawer, the arrow keys, Home and End move between tabs.
-
-## Author
-
-Raghav Raman, Senior Software Engineer (data engineering)
-
-## License
-
-[MIT](LICENSE)
+No runtime database, configured account, live integration credential, private TLS key, application encryption key or backup key is included. Prior documentation/evidence inside `studio/` describes historical browser-only builds; this root documentation governs the team release.

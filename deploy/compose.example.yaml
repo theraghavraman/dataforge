@@ -1,0 +1,37 @@
+# Single-host deployment template; validated as YAML only, not built here.
+# Run from the project root: docker compose -f deploy/compose.example.yaml --env-file /etc/dataforge/compose.env config
+# Bind-mounted directories and keys must already be owned by UID 10001, mode 0700/0600.
+x-common: &common
+  image: dataforge-team:2.1.0-rc2
+  build:
+    context: ..
+    dockerfile: deploy/Dockerfile
+  env_file:
+    - /etc/dataforge/dataforge.env
+  user: "10001:10001"
+  restart: unless-stopped
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  pids_limit: 128
+  stop_grace_period: 45s
+  tmpfs:
+    - /tmp:size=96m,mode=1777
+  volumes:
+    - /var/lib/dataforge:/var/lib/dataforge
+    - /var/backups/dataforge:/var/backups/dataforge
+    - /etc/dataforge/application.key:/etc/dataforge/application.key:ro
+    - /etc/dataforge/backup.key:/etc/dataforge/backup.key:ro
+    - /etc/dataforge/qualification.json:/etc/dataforge/qualification.json:ro
+services:
+  api:
+    <<: *common
+    command: [python, -m, app.cli, serve, --host, 0.0.0.0, --port, "8080"]
+    ports:
+      - "127.0.0.1:8080:8080"
+  worker:
+    <<: *common
+    command: [python, -m, app.cli, worker]
+  maintenance:
+    <<: *common
+    command: [python, -m, app.cli, maintenance]

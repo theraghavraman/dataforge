@@ -1,0 +1,39 @@
+PASS Welcome opens without a blocking About dialog
+PASS Import XML opens the actual file picker
+PASS Sample card loads a real six-node mapping
+PASS Palette contains all 24 registered node types
+PASS Palette search filters by name
+PASS Palette search supports meaningful aliases
+PASS Empty palette search gives feedback and can be cleared
+PASS Keyboard Enter adds a transformation
+PASS Keyboard Space adds a transformation without scrolling
+PASS Repository jump reaches and focuses repository search
+PASS Command search has an accessible no-results state
+PASS Command palette recovers after a no-match search
+PASS Manual About dialog still opens and closes
+PASS Preview defaults to 100 rows, not every loaded row
+PASS Preview pagination preserves row numbering
+PASS Preview page-size control resets to page 1
+PASS Preview search keeps input focus while typing
+PASS Preview search explicitly handles zero matches
+PASS Sensitive values cannot be discovered through search
+PASS Column sorting is keyboard-accessible and numeric
+PASS Preview safely renders HTML-like cell values as text
+PASS Empty preview handles an empty result set
+PASS Workflow palette is searchable and keyboard-focusable
+PASS Palette query persists independently for mapping mode
+PASS Monitor stays below the resized header
+PASS Sample SQL generation still works for all seven dialects
+PASS Sample additions preserve existing mappings
+PASS Light-theme desktop layout has no document overflow
+PASS Dark-theme desktop layout has no document overflow
+PASS Reduced-motion preference disables transitions
+PASS Phone welcome has no horizontal overflow
+PASS Phone template cards load mappings
+PASS Phone library drawer opens below the header
+PASS Phone properties drawer opens and closes with Escape
+PASS Phone engine status remains accessible for retry
+PASS 320px viewport keeps primary header controls inside the screen
+PASS No uncaught browser JavaScript errors
+
+37 passed; 0 failed

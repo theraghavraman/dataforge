@@ -1,0 +1,35 @@
+PASS Business pilot masks sensitive preview columns by default
+PASS Browser schedules are paused by default
+PASS Unavailable browser persistence is clearly visible
+PASS Business control center opens without changing the project
+PASS Business center distinguishes local storage from encrypted exports
+PASS Business center identifies missing multi-user capabilities
+PASS Keyboard arrows navigate the control center tabs
+PASS Recovery excludes source uploads and run history explicitly
+PASS Checkpoint creation is disabled without durable storage
+PASS Automatic recovery requires explicit opt-in
+PASS Activity text does not claim a compliance audit trail
+PASS Production gates call out backend work and execution qualification
+PASS New sample mappings still pass strict structural validation
+PASS Invalid project format versions are rejected
+PASS Duplicate node IDs are rejected instead of silently normalized
+PASS Dangling graph links are rejected
+PASS Unknown node types are rejected
+PASS Reserved object keys are rejected before normalization
+PASS Unreasonably expensive encryption envelopes are rejected before key derivation
+PASS Oversized project files are rejected before reading their bytes
+PASS Bundled source byte counts must match the encoded data
+PASS Project import prompts for trust even in an empty workspace
+PASS Accepted project import creates a mapping without arming schedules
+PASS Sanitized diagnostics exclude user names, parameter values, and paths
+PASS Activity events are allow-listed and capped at 200
+PASS Runtime errors no longer promise that unsaved work is safe
+PASS Conflict state displays recovery and reload actions
+PASS Default masking and project logic survive a compressed codec round trip
+PASS Control center has no horizontal overflow in the light theme
+PASS Business controls remain reachable on a phone
+PASS Phone recovery controls remain inside the modal
+PASS Business tabs expose selected state and labeled panels
+PASS No uncaught JavaScript errors in business UI checks
+
+33 passed; 0 failed

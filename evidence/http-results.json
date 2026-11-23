@@ -1,0 +1,45 @@
+{
+  "method": "Real loopback HTTP and separate Python worker subprocess",
+  "results": [
+    {
+      "name": "Unauthenticated TCP request is rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Actual HTTP session cookie is issued",
+      "status": "PASS"
+    },
+    {
+      "name": "TCP-submitted job is durably queued",
+      "status": "PASS"
+    },
+    {
+      "name": "Separate worker process exits successfully",
+      "status": "PASS"
+    },
+    {
+      "name": "CSV aggregation returns independently expected total",
+      "status": "PASS"
+    },
+    {
+      "name": "Output downloads over real HTTP",
+      "status": "PASS"
+    },
+    {
+      "name": "TCP cross-origin write is rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Designer delivered with same-origin-only CSP and bridge",
+      "status": "PASS"
+    },
+    {
+      "name": "Job output survives actual API process restart",
+      "status": "PASS"
+    },
+    {
+      "name": "TCP sign-out invalidates the session",
+      "status": "PASS"
+    }
+  ]
+}

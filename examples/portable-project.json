@@ -1,0 +1,142 @@
+{
+  "projectVersion": "1.0",
+  "project": {
+    "id": "portable-example",
+    "name": "Accepted revenue by region"
+  },
+  "mappings": [
+    {
+      "mapping": {
+        "id": "mapping-example",
+        "name": "Accepted revenue by region"
+      },
+      "nodes": [
+        {
+          "id": "source",
+          "type": "csv_source",
+          "name": "source",
+          "position": {
+            "x": 80,
+            "y": 180
+          },
+          "config": {
+            "fileName": "orders.csv",
+            "header": true,
+            "delimiter": ","
+          },
+          "ports": {
+            "in": [],
+            "out": [
+              {
+                "name": "region",
+                "type": "VARCHAR"
+              },
+              {
+                "name": "amount",
+                "type": "DOUBLE"
+              },
+              {
+                "name": "status",
+                "type": "VARCHAR"
+              }
+            ]
+          }
+        },
+        {
+          "id": "accepted",
+          "type": "filter",
+          "name": "accepted",
+          "position": {
+            "x": 330,
+            "y": 180
+          },
+          "config": {
+            "condition": "status = 'accepted'"
+          },
+          "ports": {
+            "in": [],
+            "out": []
+          }
+        },
+        {
+          "id": "totals",
+          "type": "aggregator",
+          "name": "totals",
+          "position": {
+            "x": 580,
+            "y": 180
+          },
+          "config": {
+            "groupBy": [
+              "region"
+            ],
+            "fields": [
+              {
+                "name": "total",
+                "expression": "SUM(amount)"
+              }
+            ]
+          },
+          "ports": {
+            "in": [],
+            "out": []
+          }
+        },
+        {
+          "id": "sort",
+          "type": "sorter",
+          "name": "sort",
+          "position": {
+            "x": 830,
+            "y": 180
+          },
+          "config": {
+            "keys": [
+              {
+                "column": "region",
+                "direction": "ASC"
+              }
+            ]
+          },
+          "ports": {
+            "in": [],
+            "out": []
+          }
+        },
+        {
+          "id": "output",
+          "type": "csv_target",
+          "name": "output",
+          "position": {
+            "x": 1080,
+            "y": 180
+          },
+          "config": {},
+          "ports": {
+            "in": [],
+            "out": []
+          }
+        }
+      ],
+      "links": [
+        {
+          "from": "source",
+          "to": "accepted"
+        },
+        {
+          "from": "accepted",
+          "to": "totals"
+        },
+        {
+          "from": "totals",
+          "to": "sort"
+        },
+        {
+          "from": "sort",
+          "to": "output"
+        }
+      ]
+    }
+  ],
+  "workflows": []
+}

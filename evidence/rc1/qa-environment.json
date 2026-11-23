@@ -1,0 +1,22 @@
+{
+  "purpose": "Actual QA execution environment, not a deployment lock or security approval",
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "sqlite": "3.46.1",
+  "packages": {
+    "fastapi": "0.128.2",
+    "starlette": "0.50.0",
+    "uvicorn": "0.48.0",
+    "argon2-cffi": "25.1.0",
+    "cryptography": "46.0.4",
+    "httpx": "0.28.1",
+    "PyJWT": "2.13.0",
+    "packaging": "25.0",
+    "boto3": "1.43.18",
+    "botocore": "1.43.18",
+    "pydantic": "2.13.5",
+    "pytest": "9.0.2",
+    "playwright": "1.57.0"
+  },
+  "fastapi_known_advisory": "GHSA-f56c-v883-vx8r; production requires >=0.163.2"
+}

@@ -1,0 +1,32 @@
+{
+  "product": "DataForge Team",
+  "version": "2.1.0-rc2",
+  "prepared_date": "2026-11-23",
+  "supersedes": "2.1.0-rc1",
+  "classification": "locally tested single-host business release candidate",
+  "passed_checks": 287,
+  "failed_checks": 0,
+  "blocked_checks": 0,
+  "production_approved": false,
+  "browser_origin_gate": "PASSED on a loopback HTTP origin with real Chromium navigation; repeat at the deployed HTTPS origin",
+  "dependency_qualification": "Clean install from PyPI (FastAPI 0.165.0, cryptography 50.0.2); pip check and pip-audit clean on 2026-11-23; no hash lockfile shipped",
+  "rc2_fixes": [
+    "cryptography bound forced vulnerable 47.x",
+    "successful sign-ins consumed brute-force budget",
+    "organization-wide sign-in lockout behind reverse proxy (DATAFORGE_TRUSTED_PROXIES added, preflight gate)",
+    "preflight crashed on malformed qualification file",
+    "unclear sandbox resource-limit error",
+    "designer test hard-coded browser path"
+  ],
+  "upgrade_action_required": "Set DATAFORGE_TRUSTED_PROXIES; remove 'header_up -X-Forwarded-For' from Caddyfile; install new requirements",
+  "server_execution": "13-node portable visual compiler; restricted SQLite over CSV",
+  "duckdb_native_execution": "Not provisioned or verified",
+  "live_oidc_s3_external_delivery": "Not qualified with production providers",
+  "known_limitations": [
+    "Approval-policy changes are single-owner (audited, documented in docs/PIPELINES.md)",
+    "Editor SQL jobs are independent of pipeline approval (by design, documented in SECURITY.md)"
+  ],
+  "qa_runtime": "CPython 3.12.3, SQLite 3.45.1, Linux x86-64 (rc1: CPython 3.13.5)",
+  "integrity_manifest": "SHA256SUMS.release",
+  "account_and_secret_policy": "No runtime database, configured accounts, production credentials or private keys included"
+}

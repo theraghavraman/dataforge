@@ -1,0 +1,57 @@
+{
+  "notice": "Replace each pending state only after the named approver has reviewed real deployment evidence. This file is not a certification or a bypass switch.",
+  "browser_origin": {
+    "status": "pending",
+    "evidence": "",
+    "approved_by": "",
+    "approved_at": ""
+  },
+  "dependency_audit": {
+    "status": "pending",
+    "evidence": "",
+    "approved_by": "",
+    "approved_at": ""
+  },
+  "restore_drill": {
+    "status": "pending",
+    "evidence": "",
+    "approved_by": "",
+    "approved_at": ""
+  },
+  "security_review": {
+    "status": "pending",
+    "evidence": "",
+    "approved_by": "",
+    "approved_at": ""
+  },
+  "business_acceptance": {
+    "status": "pending",
+    "evidence": "",
+    "approved_by": "",
+    "approved_at": ""
+  },
+  "capacity_test": {
+    "status": "pending",
+    "evidence": "",
+    "approved_by": "",
+    "approved_at": ""
+  },
+  "offhost_backup": {
+    "status": "pending",
+    "evidence": "",
+    "approved_by": "",
+    "approved_at": ""
+  },
+  "alert_delivery": {
+    "status": "pending",
+    "evidence": "",
+    "approved_by": "",
+    "approved_at": ""
+  },
+  "storage_encryption": {
+    "status": "pending",
+    "evidence": "",
+    "approved_by": "",
+    "approved_at": ""
+  }
+}

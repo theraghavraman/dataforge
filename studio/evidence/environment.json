@@ -1,0 +1,18 @@
+{
+  "build": "1.7.0-business.1",
+  "node": "22.16.0",
+  "chromium": "144.0.7559.96",
+  "browserTestDriver": "playwright-core 1.57.0-beta-1764944708000",
+  "appSha256": "abaddf29573c879b66fa77f121ba8698ef1ef8f5ee9e59c7a06928634b0da514",
+  "verifiedNamedChecks": {
+    "offlineUi": 37,
+    "offlineBusinessUi": 33,
+    "httpServer": 15,
+    "codecAndTransactionModel": 25
+  },
+  "realOriginPersistenceVerified": false,
+  "duckdbExecutionVerified": false,
+  "npmCiVerified": false,
+  "ciExecuted": false,
+  "transactionModelIsNativeIndexedDB": false
+}

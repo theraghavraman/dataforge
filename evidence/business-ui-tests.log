@@ -1,0 +1,20 @@
+/home/claude/work/qvenv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+PASS Optional second-factor input appears at login
+PASS SSO is hidden when no provider is configured
+PASS Account security lists the authenticated session
+PASS MFA enrollment displays ten single-use recovery codes
+PASS Rendered enrollment does not store the setup key as plaintext
+PASS Password alone is rejected after enabling MFA
+PASS Recovery-code login consumes exactly one code
+PASS A different owner approves the exact project revision
+PASS Pipeline queue action stays disabled until review
+PASS Actual compiler output is displayed for review
+PASS Reviewed UI pipeline produces independently expected results
+PASS UI submission preserves project revision lineage
+PASS Pipeline schedules are created paused through the UI
+PASS Scheduled payload retains an immutable compiled snapshot
+PASS Unqualified deployment is clearly marked as blocked
+PASS Readiness screen fits a phone viewport
+PASS Security screen fits a phone viewport
+PASS No uncaught JavaScript errors in added flows

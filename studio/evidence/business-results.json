@@ -1,0 +1,138 @@
+{
+  "environment": "offline setContent; no real-origin persistence or DuckDB execution",
+  "results": [
+    {
+      "name": "Business pilot masks sensitive preview columns by default",
+      "status": "PASS"
+    },
+    {
+      "name": "Browser schedules are paused by default",
+      "status": "PASS"
+    },
+    {
+      "name": "Unavailable browser persistence is clearly visible",
+      "status": "PASS"
+    },
+    {
+      "name": "Business control center opens without changing the project",
+      "status": "PASS"
+    },
+    {
+      "name": "Business center distinguishes local storage from encrypted exports",
+      "status": "PASS"
+    },
+    {
+      "name": "Business center identifies missing multi-user capabilities",
+      "status": "PASS"
+    },
+    {
+      "name": "Keyboard arrows navigate the control center tabs",
+      "status": "PASS"
+    },
+    {
+      "name": "Recovery excludes source uploads and run history explicitly",
+      "status": "PASS"
+    },
+    {
+      "name": "Checkpoint creation is disabled without durable storage",
+      "status": "PASS"
+    },
+    {
+      "name": "Automatic recovery requires explicit opt-in",
+      "status": "PASS"
+    },
+    {
+      "name": "Activity text does not claim a compliance audit trail",
+      "status": "PASS"
+    },
+    {
+      "name": "Production gates call out backend work and execution qualification",
+      "status": "PASS"
+    },
+    {
+      "name": "New sample mappings still pass strict structural validation",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid project format versions are rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Duplicate node IDs are rejected instead of silently normalized",
+      "status": "PASS"
+    },
+    {
+      "name": "Dangling graph links are rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Unknown node types are rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Reserved object keys are rejected before normalization",
+      "status": "PASS"
+    },
+    {
+      "name": "Unreasonably expensive encryption envelopes are rejected before key derivation",
+      "status": "PASS"
+    },
+    {
+      "name": "Oversized project files are rejected before reading their bytes",
+      "status": "PASS"
+    },
+    {
+      "name": "Bundled source byte counts must match the encoded data",
+      "status": "PASS"
+    },
+    {
+      "name": "Project import prompts for trust even in an empty workspace",
+      "status": "PASS"
+    },
+    {
+      "name": "Accepted project import creates a mapping without arming schedules",
+      "status": "PASS"
+    },
+    {
+      "name": "Sanitized diagnostics exclude user names, parameter values, and paths",
+      "status": "PASS"
+    },
+    {
+      "name": "Activity events are allow-listed and capped at 200",
+      "status": "PASS"
+    },
+    {
+      "name": "Runtime errors no longer promise that unsaved work is safe",
+      "status": "PASS"
+    },
+    {
+      "name": "Conflict state displays recovery and reload actions",
+      "status": "PASS"
+    },
+    {
+      "name": "Default masking and project logic survive a compressed codec round trip",
+      "status": "PASS"
+    },
+    {
+      "name": "Control center has no horizontal overflow in the light theme",
+      "status": "PASS"
+    },
+    {
+      "name": "Business controls remain reachable on a phone",
+      "status": "PASS"
+    },
+    {
+      "name": "Phone recovery controls remain inside the modal",
+      "status": "PASS"
+    },
+    {
+      "name": "Business tabs expose selected state and labeled panels",
+      "status": "PASS"
+    },
+    {
+      "name": "No uncaught JavaScript errors in business UI checks",
+      "status": "PASS"
+    }
+  ],
+  "errors": []
+}

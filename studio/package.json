@@ -1,0 +1,29 @@
+{
+  "name": "dataforge",
+  "version": "1.7.0-business.1",
+  "private": true,
+  "description": "Browser ETL studio: visual mappings compiled to SQL and run locally with DuckDB-WASM.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/smoke.mjs",
+    "test:codegen": "node tests/codegen/export.mjs codegen-out && python3 tests/codegen/verify.py codegen-out",
+    "vendor:duckdb": "node scripts/vendor-duckdb.mjs",
+    "serve": "node scripts/serve.mjs",
+    "test:ui": "node tests/ui.mjs",
+    "build:business": "node scripts/build-business.mjs",
+    "test:business": "node tests/business.mjs",
+    "test:server": "node --test tests/server.test.mjs",
+    "check": "node scripts/check.mjs",
+    "test:unit": "node --test tests/unit.mjs",
+    "test:persistence": "node tests/persistence.mjs",
+    "test:local": "npm run check && npm run test:server && npm run test:unit && npm run test:ui && npm run test:business"
+  },
+  "devDependencies": {
+    "axe-core": "^4.10.2",
+    "playwright": "1.63.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

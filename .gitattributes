@@ -1,0 +1,4 @@
+# Keep LF line endings on every platform so SHA256SUMS.release verifies in any clone.
+* text=auto eol=lf
+*.png binary
+*.wasm binary

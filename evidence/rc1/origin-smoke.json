@@ -1,0 +1,6 @@
+{
+  "method": "Real Chromium navigation to a running HTTP application; no request bridging",
+  "results": [],
+  "status": "BLOCKED",
+  "error": "Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR at http://127.0.0.1:44601/\nCall log:\n  - navigating to \"http://127.0.0.1:44601/\", waiting until \"networkidle\"\n"
+}

@@ -1,0 +1,40 @@
+PASS 48 concurrent submissions return successful HTTP responses
+PASS Duplicate idempotency keys create exactly 24 jobs
+PASS Two independent workers finish all jobs without lost leases
+PASS Every 10000-row result matches independently computed totals
+PASS API remains ready after concurrent submissions and execution
+{
+  "scope": "Synthetic bounded loopback HTTP experiment on this disposable environment; not a production SLA or capacity limit. Shared operator session, 8 concurrent request threads, 2 worker processes.",
+  "checks": [
+    {
+      "name": "48 concurrent submissions return successful HTTP responses",
+      "status": "PASS"
+    },
+    {
+      "name": "Duplicate idempotency keys create exactly 24 jobs",
+      "status": "PASS"
+    },
+    {
+      "name": "Two independent workers finish all jobs without lost leases",
+      "status": "PASS"
+    },
+    {
+      "name": "Every 10000-row result matches independently computed totals",
+      "status": "PASS"
+    },
+    {
+      "name": "API remains ready after concurrent submissions and execution",
+      "status": "PASS"
+    }
+  ],
+  "requests": 48,
+  "unique_jobs": 24,
+  "csv_rows_per_job": 10000,
+  "expected_sum": 79974,
+  "submission_latency_ms": {
+    "median": 6.44,
+    "p95": 138.19,
+    "max": 243.83
+  },
+  "elapsed_seconds": 15.87
+}

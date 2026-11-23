@@ -1,0 +1,22 @@
+{
+  "method": "Real Chromium navigation to a running HTTP application; no request bridging",
+  "results": [
+    {
+      "name": "Application loads through the real browser origin",
+      "status": "PASS"
+    },
+    {
+      "name": "Real cookies and CSRF permit authenticated login",
+      "status": "PASS"
+    },
+    {
+      "name": "Authentication survives browser page reload",
+      "status": "PASS"
+    },
+    {
+      "name": "Browser sign-out returns to the unauthenticated view",
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS"
+}

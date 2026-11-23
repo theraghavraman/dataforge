@@ -1,0 +1,21 @@
+{
+  "release": "2.1.0-rc2",
+  "passed_checks": 287,
+  "groups": {
+    "Backend, crypto, permissions, pipelines, backup, local TLS/SMTP": 178,
+    "Actual HTTP API and separate worker/restart": 10,
+    "Existing team interface (DOM + API bridge)": 18,
+    "New security, approvals, pipeline and readiness interface": 18,
+    "Designer publishing and conflict bridge": 9,
+    "Inherited Node server/codec/encryption regression": 40,
+    "Bounded HTTP concurrency with two worker processes": 5,
+    "Shipped launcher and example-import integration": 5,
+    "Genuine browser origin": 4
+  },
+  "browser_origin": "PASS",
+  "production_approved": false,
+  "patched_runtime_installed": true,
+  "complete_vulnerability_audit": true,
+  "audit_date": "2026-11-23",
+  "runtime": "see qa-environment.json"
+}

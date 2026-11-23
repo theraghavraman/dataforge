@@ -1,0 +1,18 @@
+PASS Login view renders without horizontal overflow
+PASS Invalid credentials produce an inline generic error
+PASS Valid login loads real server workspace data
+PASS Dashboard displays executed sample jobs
+PASS Project creation form commits to the authenticated API
+PASS Revision history dialog opens
+PASS CSV upload is validated and persisted through the UI
+PASS Job form creates a durable queue entry
+PASS Job details display actual worker output
+PASS Schedule status is explicitly paused
+PASS Role management lists provisioned users
+PASS Audit view displays real server events
+PASS Operations verifies the real audit chain
+PASS Mobile overview fits a 390-pixel viewport
+PASS Sign out clears rendered workspace data
+PASS Viewer navigation hides administrative actions
+PASS Viewer cannot open a job-submission form
+PASS No uncaught JavaScript errors in tested team flows

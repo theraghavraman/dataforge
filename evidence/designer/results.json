@@ -1,0 +1,42 @@
+{
+  "method": "set_content + real API; injected location.search; unavailable DuckDB startup",
+  "status": "PASS",
+  "results": [
+    {
+      "name": "Designer bootstraps the server project in session-only mode",
+      "status": "PASS"
+    },
+    {
+      "name": "Existing six-node sample mapping is usable without replacing its format",
+      "status": "PASS"
+    },
+    {
+      "name": "Publishing stores actual original-format mapping on the server",
+      "status": "PASS"
+    },
+    {
+      "name": "Uploaded source store is not included in project revision payload",
+      "status": "PASS"
+    },
+    {
+      "name": "Independent API editor can create the competing revision",
+      "status": "PASS"
+    },
+    {
+      "name": "Stale designer publish is blocked with recovery actions",
+      "status": "PASS"
+    },
+    {
+      "name": "Conflicting browser edits remain available for recovery",
+      "status": "PASS"
+    },
+    {
+      "name": "Server keeps the winning revision",
+      "status": "PASS"
+    },
+    {
+      "name": "No uncaught JavaScript errors in tested bridge flow",
+      "status": "PASS"
+    }
+  ]
+}

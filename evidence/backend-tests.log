@@ -1,0 +1,21 @@
+........................................................................ [ 40%]
+........................................................................ [ 80%]
+..................................                                       [100%]
+=============================== warnings summary ===============================
+../qvenv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/claude/work/qvenv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+============================= slowest 10 durations =============================
+6.95s call     tests/test_rc2_fixes.py::test_real_server_uses_proxy_client_address_only_when_trusted
+0.67s teardown tests/test_transport_tls.py::test_smtp_certificate_verification_is_not_bypassed
+0.54s setup    tests/test_security.py::test_cross_workspace_isolation[projects]
+0.51s setup    tests/test_release_hardening.py::test_service_status_is_administrator_only
+0.47s call     tests/test_release_hardening.py::test_large_stdin_is_fully_transferred_after_poll_timeout
+0.46s teardown tests/test_transport_tls.py::test_real_smtp_tls_delivers_to_local_receiver
+0.45s setup    tests/test_projects_jobs.py::test_recursive_work_is_bounded_and_next_job_succeeds
+0.42s setup    tests/test_projects_jobs.py::test_invalid_csv_rejected[a\n\x00-nul.csv]
+0.42s call     tests/test_projects_jobs.py::test_recursive_work_is_bounded_and_next_job_succeeds
+0.39s call     tests/test_transport_tls.py::test_https_session_cookie_csrf_and_logout
+178 passed, 1 warning in 50.96s

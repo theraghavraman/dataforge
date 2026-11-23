@@ -1,0 +1,25 @@
+........................................................................ [ 43%]
+........................................................................ [ 87%]
+.....................                                                    [100%]
+=============================== warnings summary ===============================
+tests/test_transport_tls.py::test_https_requires_trusted_certificate
+  /opt/pyvenv/lib/python3.13/site-packages/websockets/legacy/__init__.py:6: DeprecationWarning: websockets.legacy is deprecated; see https://websockets.readthedocs.io/en/stable/howto/upgrade.html for upgrade instructions
+    warnings.warn(  # deprecated in 14.0 - 2024-11-09
+
+tests/test_transport_tls.py::test_https_requires_trusted_certificate
+  /opt/pyvenv/lib/python3.13/site-packages/uvicorn/protocols/websockets/websockets_impl.py:17: DeprecationWarning: websockets.server.WebSocketServerProtocol is deprecated
+    from websockets.server import WebSocketServerProtocol
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+============================= slowest 10 durations =============================
+3.79s call     tests/test_projects_jobs.py::test_dml_on_input_is_rejected
+2.44s call     tests/test_backup.py::test_encrypted_full_backup_restores_data_and_safe_state
+2.16s call     tests/test_projects_jobs.py::test_recursive_work_is_bounded_and_next_job_succeeds
+2.06s call     tests/test_projects_jobs.py::test_real_sql_aggregation_and_join
+1.34s call     tests/test_release_hardening.py::test_large_stdin_is_fully_transferred_after_poll_timeout
+1.19s call     tests/test_pipeline_v2.py::test_pipeline_schedule_paused_idempotent_and_uses_snapshot
+1.14s call     tests/test_pipeline_v2.py::test_typed_csv_rejects_bad_number_instead_of_coercing_to_zero
+1.13s call     tests/test_pipeline_v2.py::test_expression_exclusion_and_replacement
+1.12s call     tests/test_pipeline_v2.py::test_join_and_column_collision
+1.11s call     tests/test_pipeline_v2.py::test_visual_pipeline_reconciles_expected_totals
+165 passed, 2 warnings in 98.35s (0:01:38)

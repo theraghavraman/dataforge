@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "result": {
+    "engine": "sqlite",
+    "engine_version": "3.46.1",
+    "columns": [
+      "region",
+      "accepted_total"
+    ],
+    "rows": [
+      [
+        "North",
+        130.0
+      ],
+      [
+        "South",
+        40.0
+      ]
+    ],
+    "row_count": 2,
+    "elapsed_seconds": 0.0007,
+    "truncated": false
+  }
+}

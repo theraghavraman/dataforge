@@ -1,0 +1,77 @@
+{
+  "method": "Chromium DOM rendering + real API TestClient bridge; not browser-origin validation",
+  "results": [
+    {
+      "name": "Optional second-factor input appears at login",
+      "status": "PASS"
+    },
+    {
+      "name": "SSO is hidden when no provider is configured",
+      "status": "PASS"
+    },
+    {
+      "name": "Account security lists the authenticated session",
+      "status": "PASS"
+    },
+    {
+      "name": "MFA enrollment displays ten single-use recovery codes",
+      "status": "PASS"
+    },
+    {
+      "name": "Rendered enrollment does not store the setup key as plaintext",
+      "status": "PASS"
+    },
+    {
+      "name": "Password alone is rejected after enabling MFA",
+      "status": "PASS"
+    },
+    {
+      "name": "Recovery-code login consumes exactly one code",
+      "status": "PASS"
+    },
+    {
+      "name": "A different owner approves the exact project revision",
+      "status": "PASS"
+    },
+    {
+      "name": "Pipeline queue action stays disabled until review",
+      "status": "PASS"
+    },
+    {
+      "name": "Actual compiler output is displayed for review",
+      "status": "PASS"
+    },
+    {
+      "name": "Reviewed UI pipeline produces independently expected results",
+      "status": "PASS"
+    },
+    {
+      "name": "UI submission preserves project revision lineage",
+      "status": "PASS"
+    },
+    {
+      "name": "Pipeline schedules are created paused through the UI",
+      "status": "PASS"
+    },
+    {
+      "name": "Scheduled payload retains an immutable compiled snapshot",
+      "status": "PASS"
+    },
+    {
+      "name": "Unqualified deployment is clearly marked as blocked",
+      "status": "PASS"
+    },
+    {
+      "name": "Readiness screen fits a phone viewport",
+      "status": "PASS"
+    },
+    {
+      "name": "Security screen fits a phone viewport",
+      "status": "PASS"
+    },
+    {
+      "name": "No uncaught JavaScript errors in added flows",
+      "status": "PASS"
+    }
+  ]
+}

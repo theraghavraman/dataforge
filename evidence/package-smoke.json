@@ -1,0 +1,25 @@
+{
+  "method": "Shipped launcher and example importer against real local subprocess services; temporary credentials and data removed",
+  "checks": [
+    {
+      "name": "Local launcher starts a reachable API and independent worker",
+      "status": "PASS"
+    },
+    {
+      "name": "Local launcher also starts the maintenance service",
+      "status": "PASS"
+    },
+    {
+      "name": "Shipped example importer succeeds without saved credentials",
+      "status": "PASS"
+    },
+    {
+      "name": "Bundled visual example executes to North 130 and South 40",
+      "status": "PASS"
+    },
+    {
+      "name": "Launcher stops its supervised local services cleanly",
+      "status": "PASS"
+    }
+  ]
+}

@@ -1,0 +1,250 @@
+TAP version 13
+# Subtest: HTML responds with restrictive content type and no-store
+ok 1 - HTML responds with restrictive content type and no-store
+  ---
+  duration_ms: 28.744554
+  type: 'test'
+  ...
+# Subtest: Script hash matches the actual served inline script
+ok 2 - Script hash matches the actual served inline script
+  ---
+  duration_ms: 30.56635
+  type: 'test'
+  ...
+# Subtest: Framing and MIME sniffing protections are HTTP headers
+ok 3 - Framing and MIME sniffing protections are HTTP headers
+  ---
+  duration_ms: 24.124298
+  type: 'test'
+  ...
+# Subtest: Referrer and device-permission restrictions are present
+ok 4 - Referrer and device-permission restrictions are present
+  ---
+  duration_ms: 33.250884
+  type: 'test'
+  ...
+# Subtest: Health response distinguishes static serving from execution validation
+ok 5 - Health response distinguishes static serving from execution validation
+  ---
+  duration_ms: 23.458428
+  type: 'test'
+  ...
+# Subtest: HEAD exposes headers but no response body
+ok 6 - HEAD exposes headers but no response body
+  ---
+  duration_ms: 8.745186
+  type: 'test'
+  ...
+# Subtest: Write methods are refused
+ok 7 - Write methods are refused
+  ---
+  duration_ms: 12.547453
+  type: 'test'
+  ...
+# Subtest: Project files, source, tests and configuration are not publicly served
+ok 8 - Project files, source, tests and configuration are not publicly served
+  ---
+  duration_ms: 16.934095
+  type: 'test'
+  ...
+# Subtest: Encoded traversal and unknown routes are refused
+ok 9 - Encoded traversal and unknown routes are refused
+  ---
+  duration_ms: 24.620564
+  type: 'test'
+  ...
+# Subtest: Local-only CSP removes external script and connection hosts
+ok 10 - Local-only CSP removes external script and connection hosts
+  ---
+  duration_ms: 15.59179
+  type: 'test'
+  ...
+# Subtest: CDN mode permits only the configured runtime hosts in connect-src
+ok 11 - CDN mode permits only the configured runtime hosts in connect-src
+  ---
+  duration_ms: 9.963344
+  type: 'test'
+  ...
+# Subtest: No remote font stylesheet is requested by the HTML
+ok 12 - No remote font stylesheet is requested by the HTML
+  ---
+  duration_ms: 13.969859
+  type: 'test'
+  ...
+# Subtest: Runtime assets are served with correct MIME types and revalidation
+ok 13 - Runtime assets are served with correct MIME types and revalidation
+  ---
+  duration_ms: 11.048246
+  type: 'test'
+  ...
+# Subtest: Runtime symlinks cannot expose files outside the served root
+ok 14 - Runtime symlinks cannot expose files outside the served root
+  ---
+  duration_ms: 8.452429
+  type: 'test'
+  ...
+# Subtest: Invalid deployment network modes fail at startup
+ok 15 - Invalid deployment network modes fail at startup
+  ---
+  duration_ms: 0.406332
+  type: 'test'
+  ...
+# Subtest: Compressed project codec preserves the full bundle
+ok 16 - Compressed project codec preserves the full bundle
+  ---
+  duration_ms: 32.988004
+  type: 'test'
+  ...
+# Subtest: AES-GCM encrypted project round trip uses the actual codec
+ok 17 - AES-GCM encrypted project round trip uses the actual codec
+  ---
+  duration_ms: 163.462198
+  type: 'test'
+  ...
+# Subtest: Wrong project password is rejected
+ok 18 - Wrong project password is rejected
+  ---
+  duration_ms: 147.671739
+  type: 'test'
+  ...
+# Subtest: Tampered encrypted project is rejected
+ok 19 - Tampered encrypted project is rejected
+  ---
+  duration_ms: 146.67548
+  type: 'test'
+  ...
+# Subtest: Encrypted envelope rejects a different hash algorithm
+ok 20 - Encrypted envelope rejects a different hash algorithm
+  ---
+  duration_ms: 1.465139
+  type: 'test'
+  ...
+# Subtest: Encrypted envelope rejects a non-integer work factor
+ok 21 - Encrypted envelope rejects a non-integer work factor
+  ---
+  duration_ms: 2.452561
+  type: 'test'
+  ...
+# Subtest: Malformed compressed input fails without returning a partial project
+ok 22 - Malformed compressed input fails without returning a partial project
+  ---
+  duration_ms: 4.480791
+  type: 'test'
+  ...
+# Subtest: Base64 padding and alphabets are validated
+ok 23 - Base64 padding and alphabets are validated
+  ---
+  duration_ms: 1.003836
+  type: 'test'
+  ...
+# Subtest: Transaction model: committed saves advance the revision
+ok 24 - Transaction model: committed saves advance the revision
+  ---
+  duration_ms: 1.464532
+  type: 'test'
+  ...
+# Subtest: Transaction model: unchanged content does not rewrite the record
+ok 25 - Transaction model: unchanged content does not rewrite the record
+  ---
+  duration_ms: 0.91661
+  type: 'test'
+  ...
+# Subtest: Transaction model: concurrent first saves allow only one writer
+ok 26 - Transaction model: concurrent first saves allow only one writer
+  ---
+  duration_ms: 1.640641
+  type: 'test'
+  ...
+# Subtest: Transaction model: same-tab saves are serialized in order
+ok 27 - Transaction model: same-tab saves are serialized in order
+  ---
+  duration_ms: 0.874315
+  type: 'test'
+  ...
+# Subtest: Transaction model: lost-update protection works without BroadcastChannel
+ok 28 - Transaction model: lost-update protection works without BroadcastChannel
+  ---
+  duration_ms: 3.033338
+  type: 'test'
+  ...
+# Subtest: Transaction model: stale tabs cannot overwrite stored source files
+ok 29 - Transaction model: stale tabs cannot overwrite stored source files
+  ---
+  duration_ms: 1.80676
+  type: 'test'
+  ...
+# Subtest: Transaction model: stale tabs cannot delete stored source files
+ok 30 - Transaction model: stale tabs cannot delete stored source files
+  ---
+  duration_ms: 3.991468
+  type: 'test'
+  ...
+# Subtest: Transaction model: quota failure retains the previous committed project
+ok 31 - Transaction model: quota failure retains the previous committed project
+  ---
+  duration_ms: 0.826396
+  type: 'test'
+  ...
+# Subtest: Transaction model: aborted writes reject instead of hanging
+ok 32 - Transaction model: aborted writes reject instead of hanging
+  ---
+  duration_ms: 0.886914
+  type: 'test'
+  ...
+# Subtest: Transaction model: a later retry can commit after a write failure
+ok 33 - Transaction model: a later retry can commit after a write failure
+  ---
+  duration_ms: 0.972412
+  type: 'test'
+  ...
+# Subtest: Transaction model: legacy records can be loaded and upgraded safely
+ok 34 - Transaction model: legacy records can be loaded and upgraded safely
+  ---
+  duration_ms: 1.292928
+  type: 'test'
+  ...
+# Subtest: Transaction model: checkpoints exclude source stores and run history
+ok 35 - Transaction model: checkpoints exclude source stores and run history
+  ---
+  duration_ms: 16.687149
+  type: 'test'
+  ...
+# Subtest: Transaction model: checkpoints retain parameter values and disclose that scope
+ok 36 - Transaction model: checkpoints retain parameter values and disclose that scope
+  ---
+  duration_ms: 5.462654
+  type: 'test'
+  ...
+# Subtest: Transaction model: automatic checkpoints skip unchanged logic
+ok 37 - Transaction model: automatic checkpoints skip unchanged logic
+  ---
+  duration_ms: 9.188794
+  type: 'test'
+  ...
+# Subtest: Transaction model: checkpoint retention is bounded to 10 records
+ok 38 - Transaction model: checkpoint retention is bounded to 10 records
+  ---
+  duration_ms: 16.191187
+  type: 'test'
+  ...
+# Subtest: Transaction model: oversized logic checkpoint is refused
+ok 39 - Transaction model: oversized logic checkpoint is refused
+  ---
+  duration_ms: 111.223667
+  type: 'test'
+  ...
+# Subtest: SHA-256 checkpoint digest detects accidental content changes
+ok 40 - SHA-256 checkpoint digest detects accidental content changes
+  ---
+  duration_ms: 2.871258
+  type: 'test'
+  ...
+1..40
+# tests 40
+# suites 0
+# pass 40
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1082.901525

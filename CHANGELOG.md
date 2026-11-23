@@ -1,129 +1,68 @@
 # Changelog
 
-## Unreleased
+## 2.1.0-rc2 - 23 November 2026
 
-### Changed
-- **CI on current tooling.** GitHub Actions runs the tests on Node 26 (the current LTS; Node 20 is end-of-life) with `actions/checkout@v7`, `setup-node@v7`, `setup-python@v7` and `setup-java@v6`, which removes the Node 20 deprecation warnings. Checkout no longer keeps the repository token, since neither job pushes.
+Re-qualification of rc1 on a clean install from PyPI with the patched FastAPI, a full
+dependency audit and a working Chromium origin gate. Each defect below was reproduced
+against the unmodified rc1 code before it was fixed. The new regression tests in
+`tests/test_rc2_fixes.py` were run against rc1: 11 of the 13 fail there and all pass in rc2.
+The other two are coverage that rc1 already satisfied: the first passing preflight, and one
+malformed-file variant rc1 already rejected.
 
-## 1.5.0
+### Security and availability
 
-Accessibility, security and polish, found by auditing every view with axe-core, probing generated code with crafted names, and adding every node type to a fresh mapping.
+- **Dependency bound forced a vulnerable cryptography release.** `requirements.txt` capped
+  `cryptography<48`, so every install resolved to 47.x, which has GHSA-537c-gmf6-5ccf,
+  PYSEC-2026-3552, PYSEC-2026-3553 and PYSEC-2026-3554. It now requires `>=50.0.0,<51`.
+  `pip-audit` over the resolved rc2 environment reports no known vulnerabilities.
+- **Successful sign-ins consumed the brute-force budget.** Ten correct sign-ins to one account
+  within 15 minutes locked that account out. Only failed attempts are now counted; failures
+  made before a success still count.
+- **Organization-wide sign-in lockout behind the reverse proxy.** The shipped Caddy template
+  stripped `X-Forwarded-For` and the API ran with proxy headers off. Every user therefore
+  shared the proxy's address, and about 60 sign-ins per 15 minutes across the organization
+  returned HTTP 429 to everyone. The same shared bucket applied to password-recovery and
+  SSO-start throttles.
+  - New `DATAFORGE_TRUSTED_PROXIES` setting: exact IP addresses or networks only. Wildcards
+    and host names are rejected, so clients cannot choose their own address.
+  - `X-Forwarded-For` is read only from those addresses.
+  - The Caddy template now forwards the real client address.
+  - Production preflight has a new `client_addresses` gate requiring the setting.
 
-### Security
-- **Exported code could be hijacked by a crafted name.** Node, mapping and task names were written into comments of the generated code as they were, so a name containing a line break (from a shared link or project file) put its remaining text on a line of its own: real Python in the PySpark export, real SQL in the DuckDB export. Names are now kept on one line wherever they reach generated code, and are single-line when a mapping or workflow is loaded. Snowflake `SET` values double their backslashes (a value ending in `\'` could close the string early), and an Airflow notification message is one single-quoted shell word with Jinja delimiters removed (`$(…)` and backticks no longer run).
-- **Crafted files can no longer exhaust memory.** Project files (`.dfproj`) and Excel workbooks are decompressed with a ceiling (64 MB, or 300 times the file size, at most 512 MB), as share links already were. A small file built to expand to gigabytes is refused with a message instead of freezing or crashing the tab.
+### Fail-closed behavior
 
-### Fixed
-- **Readable text in both themes.** Hints, captions, code comments and the light theme's orange accent now meet the WCAG AA contrast ratio of 4.5:1 (some were as low as 2.5:1), including highlighted rows in the light theme. The muted and faint greys stay distinct, and exported diagrams use the same colors.
-- **Screen readers and keyboard.** The results drawer is a proper tab list: the selected tab is announced, arrow keys, Home and End move between tabs, and every panel can be scrolled from the keyboard. Every button, select and date field has a name (workflow zoom buttons, parameter kind and type, Monitor filters and compare boxes, sort keys, join and lookup conditions, data-contract types), headings follow one outline under a page heading, and the drawer, Monitor and welcome screen are named regions. The command palette is a proper combobox (the search box announces the highlighted result). An automated accessibility check (axe-core) reports no violations in the mapping, results tabs, workflow, monitor, export (every dialect), lineage, About, command palette and phone views, in either theme.
-- **Nodes show their category color again.** Every node on the canvas was orange because a default declared later in the stylesheet overrode the category; sources are teal, transformations orange and targets blue again, as in the legend, the palette and exported diagrams (workflow tasks too).
-- **Clearer validation for new nodes.** A new Router no longer starts with a condition on `total_amount` (a column from the sample) that fails on any other data; it starts with an empty group and asks for a condition. A new Rank asks for its rank-by column instead of showing a DuckDB binder error. Union reports a missing input once ("Connect at least 2 inputs.") instead of twice, and an unconnected reject output no longer reads "Reject reject output".
-- Switching drawer tabs no longer clears the selected dialect in an open Export Code dialog.
-- **Monitor search kept only the first letter.** Every keystroke redrew the Monitor and dropped focus, so typing "retail" searched for "r". Focus, the caret and the list position now survive every redraw, including choosing a run and ticking compare boxes.
-- **Monitor from the keyboard.** Runs and steps can be chosen with Tab and Enter; sorted columns are announced.
-- **Run is always on screen on a phone.** The top bar used to need 900px, so Run and the Properties toggle sat off-screen at phone width and the repository toggle was squeezed to 18px. Below 900px the bar now starts with the mode switch, Run and the engine status, the remaining actions scroll after them, and the Properties toggle stays pinned to the right edge.
-- **Notifications no longer cover the canvas tools.** Toasts appeared at the top of the screen, over the undo and zoom buttons on laptop and phone widths, and blocked them for a few seconds. They now appear at the bottom of the canvas, just above the results drawer. Hovering a notification keeps it open while you read it, and clicking dismisses it.
-- A long mapping name in the top bar ends in an ellipsis instead of being cut mid-word, and hovering it shows the whole name.
-- **About dialog** lists what DataForge does today (Parquet and Excel, profiling, tests, contracts, lineage, privacy, Airflow), shows the shortcuts as a readable key table with a note for ⌘ on a Mac, uses the same logo as the top bar, and its GitHub link follows the theme.
-- **Run right after opening a mapping failed.** A mapping opens at once and its stored source files are re-attached a moment later; a run started in between (for example straight after opening a project file) failed with "needs its file uploaded". Run now waits for the files.
-- Counts read correctly in the singular: "1 row written", "1 column", "1 step", "1 task" (run messages, target summaries, Profile, Tests, the workflow log, the status bar and the exported spec). In the Monitor the status bar shows the number of recorded runs instead of the last workflow's tasks, rows per second are whole numbers, and the Export Code dialog no longer shows an internal "Phase 4" tag.
+- **Preflight crashed on a malformed qualification file.** An entry like
+  `{"browser_origin": "approved"}`, a bare string or a JSON array raised `AttributeError`
+  instead of reporting "not ready". These now fail the `deployment_qualification` gate.
+- **Unclear error when the query sandbox hit a resource limit.** A runner killed by its CPU or
+  memory limit leaves no report. Users saw `Execution failed: Expecting value: line 1 column 1`;
+  the job now fails with an explicit resource-limit message.
 
-### Added
-- **Build mappings from the keyboard.** Tab reaches every node on the canvas and selects it; the arrow keys move the selection (Shift moves further, one undo step per nudge), Enter jumps to its properties, Delete removes it and focuses the next node, and the Menu key or Shift+F10 opens its menu, which now lists **Connect to …** for every node it can link to (also available with a right-click). Context menus can be used with the arrow keys and Escape, and focus returns to the node. The Workflow Designer works the same way for tasks.
-- **Accessibility check in the smoke test.** `npm test` (and GitHub Actions) runs axe-core over the mapping, results tabs, export dialog, workflow and monitor views, the light theme and the properties panel of every node type, and fails on any violation. It also checks keyboard movement between the results tabs, Monitor search, and that Run and the drawer toggles are on screen at phone width.
+### Test and release tooling
 
-## 1.4.0
+- `tests/designer_bridge.py` hard-coded `/usr/bin/chromium` and `--no-sandbox` instead of the
+  shared `launch_browser` helper. It failed on any host without that exact path. Its results
+  file also had no overall status, so a crashed run looked like a clean partial run; it now
+  records `PASS`/`FAIL`.
+- First test of a fully configured production preflight that passes, so the go-live path
+  itself is exercised.
+- Cookie clearing after a password change now uses the same attributes the cookie was set with.
+- Repository-ready: `studio/.gitignore` no longer drops the two checksummed studio evidence logs,
+  and a root `.gitattributes` keeps LF line endings so `SHA256SUMS.release` verifies in any clone.
+- `pip` is upgraded before dependency installation in the README and Dockerfile. pip 24.0 has
+  its own advisories.
 
-### Added
-- **Project lineage and impact** (Project menu ⋯ → Project lineage and impact). Mappings are joined through the files they share: a target that writes `clean.csv` feeds every mapping whose source reads `clean.csv`. Pick a file and column to see everything it feeds downstream, or everything it comes from, across all mappings, with the workflows affected and a flow diagram. Exports as CSV.
-- **Governance and privacy.** Columns holding personal data (email, phone, card number, national ID, date of birth, IP address, name, address) are detected automatically and can be marked sensitive or not by hand. Columns derived from them are listed as inheriting the risk. Optionally masks sensitive values in Data Preview and Profile. Exports a data inventory CSV.
-- **Data contracts on file targets.** List the columns an output promises, with type, Required and Unique. Checked on every run before writing: *Fail* writes nothing and fails the step, *Warn* writes and reports.
-- **Airflow export** (Workflow settings → Export as Airflow DAG). A zip with the DAG, the PySpark job of every mapping it runs, and a README. Sessions, timers, notifications and control tasks are translated; link conditions become trigger rules; the schedule carries over. Anything that cannot be translated is listed for review.
+### Documentation
 
-## 1.3.0
+- Deployment, operations, security, dependency and readiness documents updated for the
+  above.
+- The single-owner approval-policy limitation is now documented in `docs/PIPELINES.md`.
+- rc1 evidence is preserved unchanged under `evidence/rc1/`.
 
-### Added
-- **Parquet and Excel sources and targets.** Excel keeps numbers, dates and booleans as real values, lets you pick the sheet, and freezes the header row on output. Parquet, like JSON, is a DuckDB extension downloaded from extensions.duckdb.org on first use.
-- **Data profiling** (right-click a node → Profile data, or the Profile tab): fill rate, distinct values, range, mean and most common values for every column, with hints for likely keys, constant or empty columns and personal data.
-- **Mapping tests** (Tests tab). A test feeds fixed input rows through the mapping and compares the result with expected rows. "New test from current data" records today's behaviour so later changes that alter the output are caught. Tests are saved with the mapping and the project file.
-- **SQL transformation**: a hand-written SELECT over one or two inputs (`input`, `input2`), with column types detected and exports to every dialect.
-- **Reusable components**: save selected nodes as a component and insert them into any mapping from the Repository.
-- **Password-protected project files** (Project menu ⋯ → Protect with a password): AES-256-GCM with a PBKDF2-SHA-256 key (600,000 iterations). The password is kept in memory for the tab only.
+### Unchanged
 
-### Fixed
-- Exported PySpark jobs with an Excel target failed when the output folder did not exist yet.
-
-## 1.2.0
-
-### Added
-- **Project section** at the top of the left panel: the project name (click to rename), what it contains, and whether your project file is up to date (not saved yet, changed since saving, or up to date). Save and Open sit right there; the ⋯ menu has New project, Save without source data and Export logic only.
-- **`.dfproj` project files.** Save writes the whole project to one compressed file: mappings, workflows, parameter sets, versions, the source data loaded into every mapping, run history and the mapping or workflow that was open. Opening it in a fresh browser session restores all of it, so mappings and workflows run straight away without uploading any file again. Restored data is remembered on the new device.
-- **New project**, which offers to save the current project to a file first.
-- **Drop a project file** onto the page to open it.
-- Smoke test: save a project file, open it in a brand-new browser context, run the restored mappings and workflow, reload, and run again.
-
-### Changed
-- Replacing a project now downloads the backup as a `.dfproj` file that includes source data and run history.
-- The Repository panel's Export Project / Import buttons moved to the Project section. The `.dfproj.json` format is still written by Export logic only and the Workflow Designer, and is still read everywhere.
-- The browser tab title shows the project name.
-
-### Fixed
-- **An uploaded source file was lost when you opened another mapping** unless "Remember source file on this device" was ticked. Uploads are now kept for the whole session, and workflows can use them too.
-
-## 1.1.3
-
-### Changed
-- **Opens in the dark theme again.** Light is used only if you switched to it before on this device; the theme button still toggles.
-
-## 1.1.2
-
-### Changed
-- **Opens in the light theme.** Dark is used only if you switched to it before on this device; the theme button still toggles.
-
-## 1.1.1
-
-Found by running the generated code instead of only generating it.
-
-### Fixed
-- **PySpark export crashed on its first line of logic.** Parameters were written as JSON (`null`, `true`, `false`), which is not Python. Every generated script failed with `NameError: name 'null' is not defined`.
-- **PySpark SCD Type 2** failed with an unresolved `__change_type` column.
-- **PySpark targets** are written to a folder named after the chosen format (`orders.parquet`), not to a Parquet folder called `orders.csv`.
-- **Snowflake and dbt: column names did not resolve.** Generated SQL quoted names in lower case (`"qty"`) while expressions used them unquoted (`qty`, which Snowflake reads as `QTY`). Quoted names are now upper-case throughout, the Snowflake default.
-- **Snowflake and dbt: regular expressions lost their backslashes** (`'\s'` is `'s'` in a Snowflake string), so a "valid email" rule rejected every row. Backslashes in string literals are now doubled.
-- **Snowflake and dbt: `regexp_matches` became `REGEXP_LIKE`**, which must match the whole value. It is now `REGEXP_INSTR(...) > 0`, which finds the pattern anywhere, as DuckDB does.
-- **dbt: `strftime` became Spark's `date_format`**, which Snowflake does not have. It is now `TO_VARCHAR` with a Snowflake format.
-
-### Added
-- **Generated-code test** (`npm run test:codegen`, also in GitHub Actions): executes the DuckDB SQL and PySpark exports of the three samples and checks the Snowflake and dbt exports by parser, name resolution and a DuckDB translation, comparing every target with the app's own output.
-- **JSON in the smoke test:** JSON array and newline-delimited sources and targets now run in CI, including the download of DuckDB's JSON extension.
-
-## 1.1.0
-
-### Fixed
-- **New workflow crashed.** "+ Workflow" and New in the Workflow Designer called a function that did not exist.
-- **Ctrl+Enter in the Workflow Designer** now runs the workflow (it used to try to run the mapping behind it).
-- **First run:** the welcome screen no longer covers the sample menu, and loading a sample dismisses it.
-- **Samples after a reload:** bundled sample data is re-attached, so a sample mapping still runs after the page is reloaded.
-- **Load Sample no longer overwrites the open mapping.** It opens as a new repository mapping.
-- **Project import can be cancelled.** A Merge / Replace / Cancel dialog replaces the old OK = replace, Cancel = merge prompt, and Replace downloads a backup of the current project first.
-- **The last edit is no longer lost** when the tab is closed within a quarter of a second of making it.
-- **Reload reopens the mapping you were working on** instead of the first one in the repository.
-- **`$$WF_ROWS` is reset at the start of every workflow run** instead of accumulating across runs.
-- **DuckDB SQL export** inlines mapping parameters; it used to leave `$$PARAM` tokens that DuckDB cannot parse.
-- Stray "null" text under the data preview and in the export warnings.
-- Dead GitHub links, missing Timer and Notification icons, duplicate top-bar icons, truncated mode selector.
-- Creating a mapping while viewing a historical version left the new mapping read-only.
-
-### Added
-- **In-app dialogs** replace every browser `confirm` / `prompt`; destructive actions are named on the button and Escape always cancels.
-- **Phones and tablets:** below 900px the canvas takes the full width, the repository/palette and properties become slide-in drawers, palette items are added with a tap, and two-finger pinch zooms the canvas. Editing is no longer disabled.
-- **Workflow export:** Save / Ctrl+S in the Workflow Designer downloads the workflow with the mappings and parameter sets it uses as a `.dfproj.json`; Open accepts mapping, workflow and project files.
-- **Engine retry:** if DuckDB cannot be loaded, click the engine status to retry; it also retries when the device comes back online.
-- **Self-hosting:** `node scripts/vendor-duckdb.mjs` copies DuckDB-WASM into `vendor/duckdb/`; the CDN stays as the fallback.
-- **Content-Security-Policy** limiting scripts and connections to the page itself, the DuckDB CDN, the DuckDB extension host and Google Fonts.
-- **Keyboard and screen-reader support for dialogs:** focus moves into a dialog, Tab stays inside it, focus returns to the opener, and canvas shortcuts cannot act on the mapping behind it. The command palette supports the arrow keys.
-- **Multi-tab warning** when the same project is changed in another tab.
-- **Error reporting:** unexpected errors show a message instead of failing silently; storage-full errors explain what to do.
-- **Scheduled workflows** wait for an idle moment, announce themselves and return you to what you had open. Navigation that would load another mapping is blocked while a workflow runs.
-- Share links are size-capped on import and fall back to a copyable field when the clipboard is blocked.
-- End-to-end smoke test (`npm test`) and a GitHub Actions workflow.
+- The API schema is unchanged apart from the version string; `docs/openapi.json` was
+  regenerated and compared.
+- No database migration is required; the schema version is still 2.
+- Upgrading from rc1: install the new requirements and set `DATAFORGE_TRUSTED_PROXIES`.
+  Remove `header_up -X-Forwarded-For` from an existing Caddyfile.
