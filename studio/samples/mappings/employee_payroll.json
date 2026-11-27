@@ -74,8 +74,8 @@
           },
           {
             "name": "tenure_years",
-            "expression": "date_sub('year', hire_date, $$AS_OF_DATE)",
-            "type": "BIGINT",
+            "expression": "ROUND(date_diff('day', hire_date, $$AS_OF_DATE) / 365.25, 1)",
+            "type": "DOUBLE",
             "setVariable": ""
           },
           {

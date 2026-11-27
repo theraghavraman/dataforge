@@ -65,7 +65,7 @@
           },
           {
             "name": "phone",
-            "expression": "regexp_replace(phone, '[^0-9+]', '', 'g')",
+            "expression": "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(TRIM(phone), ' ', ''), '-', ''), '(', ''), ')', ''), '.', '')",
             "type": "VARCHAR",
             "setVariable": ""
           },

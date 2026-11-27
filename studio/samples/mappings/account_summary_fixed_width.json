@@ -49,7 +49,7 @@
           },
           {
             "name": "txn_date",
-            "expression": "CAST(strptime(SUBSTR(column0, 11, 8), '%Y%m%d') AS DATE)",
+            "expression": "CAST(CONCAT(SUBSTR(column0, 11, 4), '-', SUBSTR(column0, 15, 2), '-', SUBSTR(column0, 17, 2)) AS DATE)",
             "type": "DATE",
             "setVariable": ""
           },
@@ -61,7 +61,7 @@
           },
           {
             "name": "amount",
-            "expression": "CAST(CAST(SUBSTR(column0, 21, 12) AS BIGINT) / 100 AS DECIMAL(12,2))",
+            "expression": "CAST(CAST(SUBSTR(column0, 21, 12) AS BIGINT) / 100.0 AS DECIMAL(12,2))",
             "type": "",
             "setVariable": ""
           },
