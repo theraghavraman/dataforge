@@ -1,0 +1,287 @@
+{
+  "version": "1.0",
+  "mapping": {
+    "id": "m_sample_employee_payroll",
+    "name": "Employee payroll (CSV to flat file)",
+    "description": "Reads the semicolon-delimited employees.csv, keeps active employees, derives monthly gross pay and tenure for the $$PAY_PERIOD parameter, writes a pipe-delimited payroll_extract.txt flat file and a department_summary.csv.",
+    "createdAt": "2025-11-30T00:00:00.000Z",
+    "updatedAt": "2025-11-30T00:00:00.000Z"
+  },
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "csv_source",
+      "name": "SRC_employees",
+      "position": {
+        "x": 40,
+        "y": 160
+      },
+      "config": {
+        "fileName": "employees.csv",
+        "delimiter": ";",
+        "header": true,
+        "sampleSize": 20480,
+        "rememberFile": true
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n2",
+      "type": "filter",
+      "name": "FIL_active_employees",
+      "position": {
+        "x": 300,
+        "y": 160
+      },
+      "config": {
+        "condition": "active = true"
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n3",
+      "type": "expression",
+      "name": "EXP_payroll",
+      "position": {
+        "x": 560,
+        "y": 80
+      },
+      "config": {
+        "exclude": [
+          "first_name",
+          "last_name",
+          "active",
+          "annual_salary"
+        ],
+        "fields": [
+          {
+            "name": "employee_name",
+            "expression": "last_name || ', ' || first_name",
+            "type": "VARCHAR",
+            "setVariable": ""
+          },
+          {
+            "name": "monthly_gross",
+            "expression": "ROUND(annual_salary / 12.0, 2)",
+            "type": "DOUBLE",
+            "setVariable": ""
+          },
+          {
+            "name": "tenure_years",
+            "expression": "date_sub('year', hire_date, $$AS_OF_DATE)",
+            "type": "BIGINT",
+            "setVariable": ""
+          },
+          {
+            "name": "pay_period",
+            "expression": "$$PAY_PERIOD",
+            "type": "VARCHAR",
+            "setVariable": ""
+          }
+        ]
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n4",
+      "type": "sorter",
+      "name": "SRT_department_employee",
+      "position": {
+        "x": 820,
+        "y": 80
+      },
+      "config": {
+        "keys": [
+          {
+            "column": "department",
+            "direction": "ASC"
+          },
+          {
+            "column": "emp_id",
+            "direction": "ASC"
+          }
+        ],
+        "distinct": false
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n5",
+      "type": "csv_target",
+      "name": "TGT_payroll_flatfile",
+      "position": {
+        "x": 1080,
+        "y": 20
+      },
+      "config": {
+        "fileName": "payroll_extract.txt",
+        "delimiter": "|",
+        "header": true
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n6",
+      "type": "preview_target",
+      "name": "PREVIEW_payroll",
+      "position": {
+        "x": 1080,
+        "y": 160
+      },
+      "config": {
+        "limit": 1000
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n7",
+      "type": "aggregator",
+      "name": "AGG_department",
+      "position": {
+        "x": 560,
+        "y": 300
+      },
+      "config": {
+        "groupBy": [
+          "department"
+        ],
+        "fields": [
+          {
+            "name": "headcount",
+            "expression": "COUNT(*)",
+            "type": "BIGINT",
+            "setVariable": ""
+          },
+          {
+            "name": "total_annual_salary",
+            "expression": "SUM(annual_salary)",
+            "type": "BIGINT",
+            "setVariable": ""
+          },
+          {
+            "name": "avg_monthly_gross",
+            "expression": "ROUND(AVG(annual_salary) / 12.0, 2)",
+            "type": "DOUBLE",
+            "setVariable": ""
+          }
+        ]
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n8",
+      "type": "sorter",
+      "name": "SRT_department",
+      "position": {
+        "x": 820,
+        "y": 300
+      },
+      "config": {
+        "keys": [
+          {
+            "column": "department",
+            "direction": "ASC"
+          }
+        ],
+        "distinct": false
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n9",
+      "type": "csv_target",
+      "name": "TGT_department_summary",
+      "position": {
+        "x": 1080,
+        "y": 300
+      },
+      "config": {
+        "fileName": "department_summary.csv",
+        "delimiter": ",",
+        "header": true
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    }
+  ],
+  "links": [
+    {
+      "id": "l1",
+      "from": "n1",
+      "to": "n2"
+    },
+    {
+      "id": "l2",
+      "from": "n2",
+      "to": "n3"
+    },
+    {
+      "id": "l3",
+      "from": "n3",
+      "to": "n4"
+    },
+    {
+      "id": "l4",
+      "from": "n4",
+      "to": "n5"
+    },
+    {
+      "id": "l5",
+      "from": "n4",
+      "to": "n6"
+    },
+    {
+      "id": "l6",
+      "from": "n2",
+      "to": "n7"
+    },
+    {
+      "id": "l7",
+      "from": "n7",
+      "to": "n8"
+    },
+    {
+      "id": "l8",
+      "from": "n8",
+      "to": "n9"
+    }
+  ],
+  "parameters": {
+    "$$PAY_PERIOD": {
+      "kind": "parameter",
+      "type": "VARCHAR",
+      "value": "2025-11"
+    },
+    "$$AS_OF_DATE": {
+      "kind": "parameter",
+      "type": "DATE",
+      "value": "2025-11-30"
+    }
+  }
+}

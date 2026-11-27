@@ -1,0 +1,5 @@
+customer_id,first_name,last_name,email,phone,country,signup_date,status,reject_reason,reject_node
+C1003,Rohan,Patel,rohan.patel@example,9845022110,IN,2025-02-19,ACTIVE,Valid email,DQ_customer_checks
+C1008,Karthik,Nair,,9884077665,IN,2025-04-18,ACTIVE,Email required; Valid email,DQ_customer_checks
+,Vikram,Singh,vikram.singh@example.com,+919810055443,IN,2025-06-15,ACTIVE,Customer ID required,DQ_customer_checks
+C1015,Arjun,Rao,arjun.rao(at)example.com,+919900011122,IN,2025-07-07,ACTIVE,Valid email,DQ_customer_checks

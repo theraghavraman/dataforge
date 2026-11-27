@@ -1,0 +1,17 @@
+emp_id;first_name;last_name;department;annual_salary;hire_date;active
+E001;Aarav;Sharma;Engineering;1440000;2019-04-15;true
+E002;Meera;Iyer;Finance;1080000;2020-07-01;true
+E003;Rohan;Patel;Engineering;1260000;2021-01-11;true
+E004;Priya;Reddy;Sales;900000;2018-09-24;true
+E005;Daniel;Brooks;Sales;960000;2022-03-07;false
+E006;Wei;Lim;Engineering;1620000;2017-11-20;true
+E007;Karthik;Nair;Operations;780000;2023-02-13;true
+E008;Emma;Clarke;Finance;1200000;2016-05-30;true
+E009;Lakshmi;Menon;Operations;720000;2024-06-03;true
+E010;Noah;Fischer;Engineering;1380000;2020-10-19;false
+E011;Ananya;Gupta;Sales;840000;2023-08-28;true
+E012;Vikram;Singh;Operations;810000;2019-12-09;true
+E013;Olivia;Martin;Finance;1140000;2021-06-21;true
+E014;Arjun;Rao;Engineering;1500000;2018-02-05;true
+E015;Sneha;Kulkarni;Sales;870000;2025-01-06;true
+E016;Ethan;Wong;Operations;750000;2025-04-14;true

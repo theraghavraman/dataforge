@@ -1,0 +1,12 @@
+category,order_month,revenue,units,order_count
+Electronics,2025-09,480.5,8,5
+Electronics,2025-10,930.0,10,5
+Electronics,2025-11,338.25,4,3
+Furniture,2025-09,498.0,2,1
+Furniture,2025-10,429.5,1,1
+Furniture,2025-11,1176.5,4,3
+Home,2025-10,32.75,1,1
+Home,2025-11,131.0,4,1
+Stationery,2025-09,39.0,4,1
+Stationery,2025-10,97.5,10,1
+Stationery,2025-11,87.75,9,2

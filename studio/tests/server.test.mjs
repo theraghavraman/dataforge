@@ -69,4 +69,14 @@ await test('Runtime symlinks cannot expose files outside the served root', async
     await host({root},async base=>assert.equal((await fetch(base+'/vendor/duckdb/private.js')).status,404));
   } finally {rmSync(root,{recursive:true,force:true});rmSync(outside,{recursive:true,force:true});}
 });
+await test('Published sample files are served read-only with text MIME types', () => host({}, async base => {
+  const catalog = await fetch(base + '/samples/catalog.json'); assert.equal(catalog.status, 200); assert.match(catalog.headers.get('content-type'), /application\/json/);
+  const { samples } = await catalog.json(); assert.ok(samples.length >= 1);
+  const csv = await fetch(base + '/samples/source/customers.csv'); assert.equal(csv.status, 200); assert.match(csv.headers.get('content-type'), /text\/csv/); assert.equal(csv.headers.get('cache-control'), 'no-cache');
+  const flat = await fetch(base + '/samples/source/orders.txt'); assert.equal(flat.status, 200); assert.match(flat.headers.get('content-type'), /text\/plain/);
+  for (const s of samples) assert.equal((await fetch(base + '/samples/mappings/' + s.mapping)).status, 200, s.mapping);
+}));
+await test('Sample routes refuse traversal, listings and other file types', () => host({}, async base => {
+  for (const path of ['/samples/','/samples/source/','/samples/../package.json','/samples/%2e%2e/package.json','/samples/source/..%2f..%2fpackage.json','/samples/source/x.dfproj','/samples/other/customers.csv','/samples/source/.hidden.csv']) assert.equal((await fetch(base+path)).status, 404, path);
+}));
 await test('Invalid deployment network modes fail at startup',()=>assert.throws(()=>createDataForgeServer({network:'typo'}),/must be cdn or local/));

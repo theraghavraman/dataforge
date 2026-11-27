@@ -1,0 +1,22 @@
+ACC1001   20251101CR000000250000Opening deposit               
+ACC1001   20251103DR000000012550Grocery store                 
+ACC1001   20251107DR000000045000Electricity bill              
+ACC1001   20251115CR000000180000Salary November               
+ACC1001   20251121DR000000008975Restaurant                    
+ACC1002   20251101CR000000500000Opening deposit               
+ACC1002   20251105DR000000120000Rent November                 
+ACC1002   20251112DR000000003499Streaming subscription        
+ACC1002   20251118CR000000025000Refund online order           
+ACC1002   20251126DR000000067500Furniture purchase            
+ACC1003   20251102CR000000075000Opening deposit               
+ACC1003   20251109DR000000004250Coffee shop                   
+ACC1003   20251114DR000000015000Mobile recharge               
+ACC1003   20251120CR000000060000Freelance payment             
+ACC1004   20251104CR000001200000Opening deposit               
+ACC1004   20251108DR000000350000Car loan EMI                  
+ACC1004   20251116DR000000022500Fuel station                  
+ACC1004   20251123CR000000410000Salary November               
+ACC1004   20251129DR000000098000Insurance premium             
+ACC1005   20251106CR000000030000Opening deposit               
+ACC1005   20251113DR000000002599Bookstore                     
+ACC1005   20251127DR000000011000Pharmacy                      

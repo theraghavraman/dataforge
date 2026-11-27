@@ -1,0 +1,30 @@
+{
+  "format": "dataforge-samples",
+  "version": 1,
+  "samples": [
+    {
+      "id": "customers_cleanse",
+      "title": "Customer cleanse · CSV to CSV",
+      "summary": "Standardise, data-quality rejects, active filter",
+      "mapping": "customers_cleanse.json"
+    },
+    {
+      "id": "sales_by_category",
+      "title": "Sales by category · flat file to CSV",
+      "summary": "Pipe-delimited orders, product lookup, aggregate",
+      "mapping": "sales_by_category.json"
+    },
+    {
+      "id": "employee_payroll",
+      "title": "Employee payroll · CSV to flat file",
+      "summary": "Semicolon CSV, parameters, pipe-delimited extract",
+      "mapping": "employee_payroll.json"
+    },
+    {
+      "id": "account_summary_fixed_width",
+      "title": "Account summary · fixed-width flat file",
+      "summary": "Cut fields by position, balances per account",
+      "mapping": "account_summary_fixed_width.json"
+    }
+  ]
+}

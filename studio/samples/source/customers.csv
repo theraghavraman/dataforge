@@ -1,0 +1,25 @@
+customer_id,first_name,last_name,email,phone,country,signup_date,status
+C1001,  aarav ,sharma,Aarav.Sharma@Example.com,+91 98400 11223,in,2025-01-14,active
+C1002,Meera,IYER,meera.iyer@example.com,(044) 2345-6789,IN,2025-02-03,ACTIVE
+C1003,Rohan,Patel,rohan.patel@example,98450-22110,in,2025-02-19,active
+C1004,priya,Reddy, PRIYA.REDDY@EXAMPLE.COM ,+91-99620-44551,IN ,2025-03-02,Active
+C1005,Daniel,Brooks,daniel.brooks@example.com,+1 (415) 555-0134,us,2025-03-11,active
+C1006,Sophie,Turner,sophie.turner@example.co.uk,+44 20 7946 0958,gb,2025-03-27,inactive
+C1007,Wei,Lim,wei.lim@example.sg,+65 6123 4567,SG,2025-04-05,active
+C1008,Karthik,Nair,,98840 77665,IN,2025-04-18,active
+C1009,Emma,Clarke,emma.clarke@example.co.uk,+44 161 496 0742,GB,2025-04-30,ACTIVE
+C1010,lakshmi,menon,lakshmi.menon@example.com,0484-2556677,in,2025-05-09,closed
+C1011,Noah,Fischer,noah.fischer@example.de,+49 30 901820,de,2025-05-21,active
+C1012,Ananya,Gupta,ananya.gupta@example.com,+91 98111 22334,IN,2025-06-02,active
+,Vikram,Singh,vikram.singh@example.com,+91 98100 55443,IN,2025-06-15,active
+C1014,Olivia,Martin,olivia.martin@example.com,+1 212 555 0198,US,2025-06-28,active
+C1015,Arjun,Rao,arjun.rao(at)example.com,+91 99000 11122,IN,2025-07-07,active
+C1016,Mia,Schneider,mia.schneider@example.de,+49 89 2019 4410,DE,2025-07-19,inactive
+C1017,  Divya,Das,divya.das@example.com,+91 98300 66778,in,2025-08-01,active
+C1018,Liam,Byrne,liam.byrne@example.ie,+353 1 555 0147,ie,2025-08-12,ACTIVE
+C1019,Sneha,Kulkarni,sneha.kulkarni@example.com,+91 98220 33445,IN,2025-08-25,active
+C1020,Ethan,Wong,ethan.wong@example.sg,+65 6789 0123,sg,2025-09-03,active
+C1021,Pooja,Bose,pooja.bose@example.com,+91 98310 99887,IN,2025-09-16,closed
+C1022,Lucas,Moreau,lucas.moreau@example.fr,+33 1 70 18 99 00,FR,2025-09-29,active
+C1023,Ava,Johnson,ava.johnson@example.com,+1 (617) 555-0175,US,2025-10-08,active
+C1024,Nikhil,Kumar,nikhil.kumar@example.com,+91 99400 12121,IN,2025-10-21,active

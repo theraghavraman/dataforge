@@ -1,0 +1,299 @@
+{
+  "version": "1.0",
+  "mapping": {
+    "id": "m_sample_account_summary",
+    "name": "Account summary (fixed-width flat file to CSV)",
+    "description": "Reads the fixed-width transactions_fixed_width.txt flat file as one text column, cuts it into fields by position (account 1-10, date 11-18, type 19-20, amount in cents 21-32, description 33-62), writes the parsed transactions and a per-account balance summary as CSV.",
+    "createdAt": "2025-11-30T00:00:00.000Z",
+    "updatedAt": "2025-11-30T00:00:00.000Z"
+  },
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "csv_source",
+      "name": "SRC_transactions_fixed_width",
+      "position": {
+        "x": 40,
+        "y": 160
+      },
+      "config": {
+        "fileName": "transactions_fixed_width.txt",
+        "delimiter": "|",
+        "header": false,
+        "sampleSize": 20480,
+        "rememberFile": true
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n2",
+      "type": "expression",
+      "name": "EXP_parse_positions",
+      "position": {
+        "x": 300,
+        "y": 160
+      },
+      "config": {
+        "exclude": [
+          "column0"
+        ],
+        "fields": [
+          {
+            "name": "account_no",
+            "expression": "TRIM(SUBSTR(column0, 1, 10))",
+            "type": "VARCHAR",
+            "setVariable": ""
+          },
+          {
+            "name": "txn_date",
+            "expression": "CAST(strptime(SUBSTR(column0, 11, 8), '%Y%m%d') AS DATE)",
+            "type": "DATE",
+            "setVariable": ""
+          },
+          {
+            "name": "txn_type",
+            "expression": "SUBSTR(column0, 19, 2)",
+            "type": "VARCHAR",
+            "setVariable": ""
+          },
+          {
+            "name": "amount",
+            "expression": "CAST(CAST(SUBSTR(column0, 21, 12) AS BIGINT) / 100 AS DECIMAL(12,2))",
+            "type": "",
+            "setVariable": ""
+          },
+          {
+            "name": "description",
+            "expression": "TRIM(SUBSTR(column0, 33, 30))",
+            "type": "VARCHAR",
+            "setVariable": ""
+          }
+        ]
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n3",
+      "type": "expression",
+      "name": "EXP_signed_amount",
+      "position": {
+        "x": 560,
+        "y": 160
+      },
+      "config": {
+        "exclude": [],
+        "fields": [
+          {
+            "name": "signed_amount",
+            "expression": "CASE WHEN txn_type = 'DR' THEN -amount ELSE amount END",
+            "type": "",
+            "setVariable": ""
+          }
+        ]
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n4",
+      "type": "sorter",
+      "name": "SRT_account_date",
+      "position": {
+        "x": 820,
+        "y": 80
+      },
+      "config": {
+        "keys": [
+          {
+            "column": "account_no",
+            "direction": "ASC"
+          },
+          {
+            "column": "txn_date",
+            "direction": "ASC"
+          }
+        ],
+        "distinct": false
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n5",
+      "type": "csv_target",
+      "name": "TGT_transactions_parsed",
+      "position": {
+        "x": 1080,
+        "y": 80
+      },
+      "config": {
+        "fileName": "transactions_parsed.csv",
+        "delimiter": ",",
+        "header": true
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n6",
+      "type": "aggregator",
+      "name": "AGG_account_summary",
+      "position": {
+        "x": 820,
+        "y": 280
+      },
+      "config": {
+        "groupBy": [
+          "account_no"
+        ],
+        "fields": [
+          {
+            "name": "txn_count",
+            "expression": "COUNT(*)",
+            "type": "BIGINT",
+            "setVariable": ""
+          },
+          {
+            "name": "total_credits",
+            "expression": "SUM(CASE WHEN txn_type = 'CR' THEN amount ELSE 0 END)",
+            "type": "",
+            "setVariable": ""
+          },
+          {
+            "name": "total_debits",
+            "expression": "SUM(CASE WHEN txn_type = 'DR' THEN amount ELSE 0 END)",
+            "type": "",
+            "setVariable": ""
+          },
+          {
+            "name": "closing_balance",
+            "expression": "SUM(signed_amount)",
+            "type": "",
+            "setVariable": ""
+          },
+          {
+            "name": "last_txn_date",
+            "expression": "MAX(txn_date)",
+            "type": "DATE",
+            "setVariable": ""
+          }
+        ]
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n7",
+      "type": "sorter",
+      "name": "SRT_account",
+      "position": {
+        "x": 1080,
+        "y": 280
+      },
+      "config": {
+        "keys": [
+          {
+            "column": "account_no",
+            "direction": "ASC"
+          }
+        ],
+        "distinct": false
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n8",
+      "type": "csv_target",
+      "name": "TGT_account_summary",
+      "position": {
+        "x": 1340,
+        "y": 220
+      },
+      "config": {
+        "fileName": "account_summary.csv",
+        "delimiter": ",",
+        "header": true
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n9",
+      "type": "preview_target",
+      "name": "PREVIEW_account_summary",
+      "position": {
+        "x": 1340,
+        "y": 360
+      },
+      "config": {
+        "limit": 1000
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    }
+  ],
+  "links": [
+    {
+      "id": "l1",
+      "from": "n1",
+      "to": "n2"
+    },
+    {
+      "id": "l2",
+      "from": "n2",
+      "to": "n3"
+    },
+    {
+      "id": "l3",
+      "from": "n3",
+      "to": "n4"
+    },
+    {
+      "id": "l4",
+      "from": "n4",
+      "to": "n5"
+    },
+    {
+      "id": "l5",
+      "from": "n3",
+      "to": "n6"
+    },
+    {
+      "id": "l6",
+      "from": "n6",
+      "to": "n7"
+    },
+    {
+      "id": "l7",
+      "from": "n7",
+      "to": "n8"
+    },
+    {
+      "id": "l8",
+      "from": "n7",
+      "to": "n9"
+    }
+  ],
+  "parameters": {}
+}

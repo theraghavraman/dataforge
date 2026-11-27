@@ -1,0 +1,349 @@
+{
+  "version": "1.0",
+  "mapping": {
+    "id": "m_sample_sales_by_category",
+    "name": "Sales by category (flat file to CSV)",
+    "description": "Reads the pipe-delimited orders.txt flat file, keeps completed orders, looks up product names and categories in products.csv, writes enriched order lines as a pipe-delimited flat file and monthly revenue by category as CSV. Orders for unknown products go to a reject file.",
+    "createdAt": "2025-11-30T00:00:00.000Z",
+    "updatedAt": "2025-11-30T00:00:00.000Z"
+  },
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "csv_source",
+      "name": "SRC_orders_flatfile",
+      "position": {
+        "x": 40,
+        "y": 120
+      },
+      "config": {
+        "fileName": "orders.txt",
+        "delimiter": "|",
+        "header": true,
+        "sampleSize": 20480,
+        "rememberFile": true
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n2",
+      "type": "csv_source",
+      "name": "SRC_products",
+      "position": {
+        "x": 40,
+        "y": 360
+      },
+      "config": {
+        "fileName": "products.csv",
+        "delimiter": ",",
+        "header": true,
+        "sampleSize": 20480,
+        "rememberFile": true
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n3",
+      "type": "filter",
+      "name": "FIL_completed",
+      "position": {
+        "x": 300,
+        "y": 120
+      },
+      "config": {
+        "condition": "status = 'COMPLETED'"
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n4",
+      "type": "expression",
+      "name": "EXP_line_totals",
+      "position": {
+        "x": 560,
+        "y": 120
+      },
+      "config": {
+        "exclude": [],
+        "fields": [
+          {
+            "name": "line_total",
+            "expression": "ROUND(quantity * unit_price, 2)",
+            "type": "DOUBLE",
+            "setVariable": ""
+          },
+          {
+            "name": "order_month",
+            "expression": "strftime(order_date, '%Y-%m')",
+            "type": "VARCHAR",
+            "setVariable": ""
+          }
+        ]
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n5",
+      "type": "lookup",
+      "name": "LKP_product",
+      "position": {
+        "x": 840,
+        "y": 160
+      },
+      "config": {
+        "conditions": [
+          {
+            "input": "product_id",
+            "lookup": "product_id",
+            "inputExpr": "",
+            "lookupExpr": ""
+          }
+        ],
+        "returnColumns": [
+          "product_name",
+          "category"
+        ],
+        "aliases": {},
+        "multipleMatch": "first",
+        "onNoMatch": "reject"
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n6",
+      "type": "sorter",
+      "name": "SRT_order_id",
+      "position": {
+        "x": 1120,
+        "y": 40
+      },
+      "config": {
+        "keys": [
+          {
+            "column": "order_id",
+            "direction": "ASC"
+          }
+        ],
+        "distinct": false
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n7",
+      "type": "csv_target",
+      "name": "TGT_order_lines_flatfile",
+      "position": {
+        "x": 1380,
+        "y": 40
+      },
+      "config": {
+        "fileName": "order_lines.txt",
+        "delimiter": "|",
+        "header": true
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n8",
+      "type": "aggregator",
+      "name": "AGG_category_month",
+      "position": {
+        "x": 1120,
+        "y": 200
+      },
+      "config": {
+        "groupBy": [
+          "category",
+          "order_month"
+        ],
+        "fields": [
+          {
+            "name": "revenue",
+            "expression": "ROUND(SUM(line_total), 2)",
+            "type": "DOUBLE",
+            "setVariable": ""
+          },
+          {
+            "name": "units",
+            "expression": "SUM(quantity)",
+            "type": "BIGINT",
+            "setVariable": ""
+          },
+          {
+            "name": "order_count",
+            "expression": "COUNT(*)",
+            "type": "BIGINT",
+            "setVariable": ""
+          }
+        ]
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n9",
+      "type": "sorter",
+      "name": "SRT_category_month",
+      "position": {
+        "x": 1380,
+        "y": 200
+      },
+      "config": {
+        "keys": [
+          {
+            "column": "category",
+            "direction": "ASC"
+          },
+          {
+            "column": "order_month",
+            "direction": "ASC"
+          }
+        ],
+        "distinct": false
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n10",
+      "type": "csv_target",
+      "name": "TGT_sales_by_category",
+      "position": {
+        "x": 1640,
+        "y": 140
+      },
+      "config": {
+        "fileName": "sales_by_category.csv",
+        "delimiter": ",",
+        "header": true
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n11",
+      "type": "preview_target",
+      "name": "PREVIEW_sales",
+      "position": {
+        "x": 1640,
+        "y": 290
+      },
+      "config": {
+        "limit": 1000
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    },
+    {
+      "id": "n12",
+      "type": "reject_target",
+      "name": "REJECT_unknown_products",
+      "position": {
+        "x": 1120,
+        "y": 400
+      },
+      "config": {
+        "fileName": "orders_unknown_product.csv",
+        "delimiter": ",",
+        "header": true
+      },
+      "ports": {
+        "in": [],
+        "out": []
+      }
+    }
+  ],
+  "links": [
+    {
+      "id": "l1",
+      "from": "n1",
+      "to": "n3"
+    },
+    {
+      "id": "l2",
+      "from": "n3",
+      "to": "n4"
+    },
+    {
+      "id": "l3",
+      "from": "n4",
+      "to": "n5",
+      "toPort": "input"
+    },
+    {
+      "id": "l4",
+      "from": "n2",
+      "to": "n5",
+      "toPort": "lookup"
+    },
+    {
+      "id": "l5",
+      "from": "n5",
+      "to": "n6",
+      "fromPort": "out"
+    },
+    {
+      "id": "l6",
+      "from": "n6",
+      "to": "n7"
+    },
+    {
+      "id": "l7",
+      "from": "n5",
+      "to": "n8",
+      "fromPort": "out"
+    },
+    {
+      "id": "l8",
+      "from": "n8",
+      "to": "n9"
+    },
+    {
+      "id": "l9",
+      "from": "n9",
+      "to": "n10"
+    },
+    {
+      "id": "l10",
+      "from": "n9",
+      "to": "n11"
+    },
+    {
+      "id": "l11",
+      "from": "n5",
+      "to": "n12",
+      "fromPort": "reject",
+      "toPort": "reject"
+    }
+  ],
+  "parameters": {}
+}

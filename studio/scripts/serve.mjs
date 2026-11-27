@@ -23,7 +23,7 @@ export function createDataForgeServer({ root = resolve(dirname(fileURLToPath(imp
     'Referrer-Policy': 'no-referrer', 'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
     'Cross-Origin-Opener-Policy': 'same-origin', 'Cache-Control': 'no-store'
   };
-  const mime = { '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.wasm': 'application/wasm', '.json': 'application/json; charset=utf-8' };
+  const mime = { '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.wasm': 'application/wasm', '.json': 'application/json; charset=utf-8', '.csv': 'text/csv; charset=utf-8', '.txt': 'text/plain; charset=utf-8', '.md': 'text/markdown; charset=utf-8' };
   const server = createServer((req, res) => {
     for (const [key,value] of Object.entries(headers)) res.setHeader(key,value);
     const respond = (status, type, bytes) => {
@@ -38,8 +38,10 @@ export function createDataForgeServer({ root = resolve(dirname(fileURLToPath(imp
       if (pathname === '/healthz') {
         respond(200,'application/json; charset=utf-8',JSON.stringify({ status: 'ok', service: 'dataforge-static', appVersion: version, networkMode: network, localEngineAssetsPresent: ['duckdb.mjs','duckdb-eh.wasm','duckdb-browser-eh.worker.js'].every(f => existsSync(resolve(base,'vendor/duckdb',f))), engineExecutionValidated: false })); return;
       }
-      // Expose only runtime assets and the license, never arbitrary files or directory listings.
-      if (!/^\/vendor\/duckdb\/[A-Za-z0-9_-]+\.(?:wasm|js|mjs|json)$/.test(pathname) && pathname !== '/LICENSE') { respond(404,'text/plain; charset=utf-8','Not found\n'); return; }
+      // Expose only runtime assets, the published sample files and the license, never arbitrary files or directory listings.
+      const runtime = /^\/vendor\/duckdb\/[A-Za-z0-9_-]+\.(?:wasm|js|mjs|json)$/.test(pathname);
+      const sample = /^\/samples\/(?:(?:source|target|mappings)\/)?[A-Za-z0-9][A-Za-z0-9_-]*(?:\.[A-Za-z0-9_-]+)*\.(?:csv|txt|json|md)$/.test(pathname);
+      if (!runtime && !sample && pathname !== '/LICENSE') { respond(404,'text/plain; charset=utf-8','Not found\n'); return; }
       const path = realpathSync(resolve(base,'.' + pathname));
       if (!path.startsWith(base + sep) || !statSync(path).isFile()) { respond(404,'text/plain; charset=utf-8','Not found\n'); return; }
       const bytes = readFileSync(path);

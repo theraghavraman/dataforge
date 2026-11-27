@@ -17,6 +17,8 @@
     "check": "node scripts/check.mjs",
     "test:unit": "node --test tests/unit.mjs",
     "test:persistence": "node tests/persistence.mjs",
+    "test:samples": "node tests/samples.mjs",
+    "check:samples": "node scripts/check-samples.mjs",
     "test:local": "npm run check && npm run test:server && npm run test:unit && npm run test:ui && npm run test:business"
   },
   "devDependencies": {

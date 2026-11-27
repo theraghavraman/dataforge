@@ -1,12 +1,18 @@
 name: Pages
 
-# Publishes only the browser studio (studio/) as the site root, so
-# https://theraghavraman.github.io/dataforge/ opens the app directly.
+# Publishes the browser studio as the site root, so https://theraghavraman.github.io/dataforge/ opens the app
+# directly. Nothing goes live until the build is checked and every sample mapping in studio/samples has run in a
+# real browser and reproduced the files in studio/samples/target. Only what a visitor needs is published:
+# index.html, LICENSE and samples/ (catalog, mappings, source and target files). Tests, scripts, package files
+# and release evidence stay in the repository.
 # Requires Settings > Pages > Source: GitHub Actions.
 
 on:
   push:
     branches: [main]
+    paths:
+      - 'studio/**'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -17,23 +23,84 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: read
+    defaults:
+      run:
+        working-directory: studio
+    outputs:
+      index_sha256: ${{ steps.site.outputs.index_sha256 }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false   # this job never pushes
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+
+      - name: Inline scripts parse and match the CSP hash
+        run: node scripts/check.mjs
+      - name: Server and unit tests
+        run: node --test tests/server.test.mjs tests/unit.mjs
+      - name: Sample folders are consistent
+        run: node scripts/check-samples.mjs
+
+      - name: Install the browser test runner
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Sample mappings run and match samples/target
+        run: node tests/samples.mjs
+
+      - name: Assemble the site
+        id: site
+        run: |
+          rm -rf ../_site && mkdir ../_site
+          cp index.html LICENSE ../_site/
+          cp -R samples ../_site/samples
+          echo "Publishing $(find ../_site -type f | wc -l) files:"
+          (cd ../_site && find . -type f | sort)
+          echo "index_sha256=$(sha256sum index.html | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
-      contents: read
       pages: write
       id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v7
-        with:
-          persist-credentials: false   # this job never pushes
-      - uses: actions/configure-pages@v6
-      - uses: actions/upload-pages-artifact@v5
-        with:
-          path: studio
       - id: deployment
         uses: actions/deploy-pages@v5
+
+      - name: Check the live site
+        env:
+          SITE: ${{ steps.deployment.outputs.page_url }}
+          WANT: ${{ needs.build.outputs.index_sha256 }}
+        run: |
+          set -euo pipefail
+          for path in "" samples/catalog.json samples/source/customers.csv samples/target/customers_clean.csv; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "${SITE}${path}")
+            echo "${code} ${SITE}${path}"
+            [ "$code" = 200 ] || { echo "::error::${SITE}${path} returned HTTP ${code}"; exit 1; }
+          done
+          # The Pages CDN can serve the previous copy for a short while after a deploy.
+          for attempt in $(seq 1 12); do
+            got=$(curl -s -H 'Cache-Control: no-cache' "${SITE}" | sha256sum | cut -d' ' -f1)
+            if [ "$got" = "$WANT" ]; then echo "Live index.html matches this build (${got})."; exit 0; fi
+            sleep 10
+          done
+          echo "::warning::The live index.html did not match this build within 2 minutes (CDN cache); check ${SITE} again shortly."

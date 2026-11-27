@@ -1,0 +1,17 @@
+customer_id,first_name,last_name,email,phone,country,signup_date,dq_flags,full_name,signup_month
+C1001,Aarav,Sharma,aarav.sharma@example.com,+919840011223,IN,2025-01-14,"",Aarav Sharma,2025-01
+C1002,Meera,Iyer,meera.iyer@example.com,04423456789,IN,2025-02-03,"",Meera Iyer,2025-02
+C1004,Priya,Reddy,priya.reddy@example.com,+919962044551,IN,2025-03-02,"",Priya Reddy,2025-03
+C1005,Daniel,Brooks,daniel.brooks@example.com,+14155550134,US,2025-03-11,"",Daniel Brooks,2025-03
+C1007,Wei,Lim,wei.lim@example.sg,+6561234567,SG,2025-04-05,"",Wei Lim,2025-04
+C1009,Emma,Clarke,emma.clarke@example.co.uk,+441614960742,GB,2025-04-30,"",Emma Clarke,2025-04
+C1011,Noah,Fischer,noah.fischer@example.de,+4930901820,DE,2025-05-21,"",Noah Fischer,2025-05
+C1012,Ananya,Gupta,ananya.gupta@example.com,+919811122334,IN,2025-06-02,"",Ananya Gupta,2025-06
+C1014,Olivia,Martin,olivia.martin@example.com,+12125550198,US,2025-06-28,"",Olivia Martin,2025-06
+C1017,Divya,Das,divya.das@example.com,+919830066778,IN,2025-08-01,"",Divya Das,2025-08
+C1018,Liam,Byrne,liam.byrne@example.ie,+35315550147,IE,2025-08-12,"",Liam Byrne,2025-08
+C1019,Sneha,Kulkarni,sneha.kulkarni@example.com,+919822033445,IN,2025-08-25,"",Sneha Kulkarni,2025-08
+C1020,Ethan,Wong,ethan.wong@example.sg,+6567890123,SG,2025-09-03,"",Ethan Wong,2025-09
+C1022,Lucas,Moreau,lucas.moreau@example.fr,+33170189900,FR,2025-09-29,Known country,Lucas Moreau,2025-09
+C1023,Ava,Johnson,ava.johnson@example.com,+16175550175,US,2025-10-08,"",Ava Johnson,2025-10
+C1024,Nikhil,Kumar,nikhil.kumar@example.com,+919940012121,IN,2025-10-21,"",Nikhil Kumar,2025-10
